@@ -1,0 +1,88 @@
+{
+  "observationDate": "2026-08-29",
+  "capturedAt": "2026-08-29T06:37:04.783Z",
+  "snapshotId": "snapshot-69d9ec4f302b99839f8f",
+  "contentHash": "1d967e2fd0070696c167e5ccdf70c6d3248c7a3d5eba193446d5c8488444d904",
+  "market": {
+    "riskLevel": "Level 3",
+    "riskScore": -0.2306694187,
+    "targetExposure": 0.7,
+    "signalDate": "2026-08-28T00:00:00.000",
+    "effectiveDate": "2026-08-31T00:00:00.000",
+    "regimeState": "中性",
+    "regimeScore": 47.158218126,
+    "regimeDate": "2026-08-28T00:00:00.000",
+    "breadth": 0.5480953209,
+    "breadthDate": "2026-08-28T00:00:00.000",
+    "pillars": [
+      {
+        "name": "Financial Stress",
+        "state": "建设性",
+        "score": 25.4224270353
+      },
+      {
+        "name": "Fragility",
+        "state": "压力",
+        "score": 83.5637480799
+      },
+      {
+        "name": "Market Risk",
+        "state": "谨慎",
+        "score": 55.5299539171
+      },
+      {
+        "name": "Participation",
+        "state": "建设性",
+        "score": 24.1167434716
+      }
+    ]
+  },
+  "brief": {
+    "asOf": "2026-09",
+    "headline": "存在 1 条严重告警，今日先处理风险与数据问题",
+    "posture": "综合状态 中性，得分 47.2 / 100，市场宽度 55%。",
+    "dataStatus": "4/4 数据源最新，4/4 质量门禁可用"
+  },
+  "sources": [
+    {
+      "id": "marketResearch",
+      "name": "市场研究",
+      "asOf": "2026-08-28",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "strategyPerformance",
+      "name": "策略表现",
+      "asOf": "2026-08-28",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "holdings",
+      "name": "持仓档案",
+      "asOf": "2026-09",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "fomc",
+      "name": "FOMC 政策研究",
+      "asOf": "2026-07-29",
+      "status": "current",
+      "qualityStatus": "pass"
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "critical",
+      "title": "市场脆弱度处于高位",
+      "detail": "Fragility 84 / 100"
+    },
+    {
+      "severity": "warning",
+      "title": "市场参与度偏低",
+      "detail": "Participation 24 / 100"
+    }
+  ]
+}

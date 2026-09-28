@@ -1,0 +1,83 @@
+{
+  "observationDate": "2026-09-19",
+  "capturedAt": "2026-09-19T05:49:44.819Z",
+  "snapshotId": "snapshot-bffa0f18c7c3c4471202",
+  "contentHash": "f421235e754e63af311baff0eb647bf433d0a6a1ea639f58cb0ca722ea4a35b7",
+  "market": {
+    "riskLevel": "Level 4",
+    "riskScore": -0.0294622778,
+    "targetExposure": 0.5,
+    "signalDate": "2026-09-11T00:00:00.000",
+    "effectiveDate": "2026-09-14T00:00:00.000",
+    "regimeState": "谨慎",
+    "regimeScore": 61.0599078341,
+    "regimeDate": "2026-09-18T00:00:00.000",
+    "breadth": 0.4639834168,
+    "breadthDate": "2026-09-18T00:00:00.000",
+    "pillars": [
+      {
+        "name": "Financial Stress",
+        "state": "建设性",
+        "score": 33.3333333333
+      },
+      {
+        "name": "Fragility",
+        "state": "压力",
+        "score": 92.9339477727
+      },
+      {
+        "name": "Market Risk",
+        "state": "谨慎",
+        "score": 60.9831029186
+      },
+      {
+        "name": "Participation",
+        "state": "谨慎",
+        "score": 56.9892473118
+      }
+    ]
+  },
+  "brief": {
+    "asOf": "2026-09-18",
+    "headline": "存在 1 条严重告警，今日先处理风险与数据问题",
+    "posture": "综合状态 谨慎，得分 61.1 / 100，市场宽度 46%。",
+    "dataStatus": "3/4 数据源最新，4/4 质量门禁可用"
+  },
+  "sources": [
+    {
+      "id": "marketResearch",
+      "name": "市场研究",
+      "asOf": "2026-09-18",
+      "status": "stale",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "strategyPerformance",
+      "name": "策略表现",
+      "asOf": "2026-09-18",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "holdings",
+      "name": "持仓档案",
+      "asOf": "2026-09",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "fomc",
+      "name": "FOMC 政策研究",
+      "asOf": "2026-09-16",
+      "status": "current",
+      "qualityStatus": "pass"
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "critical",
+      "title": "市场脆弱度处于高位",
+      "detail": "Fragility 93 / 100"
+    }
+  ]
+}

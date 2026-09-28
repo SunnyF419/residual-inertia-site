@@ -1,0 +1,8 @@
+dist/
+.preview/
+__pycache__/
+*.pyc
+.env*
+*.local.json
+node_modules/
+*.log

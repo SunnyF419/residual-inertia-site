@@ -1,0 +1,77 @@
+{
+  "observationDate": "2026-09-03",
+  "capturedAt": "2026-09-03T02:12:19.130Z",
+  "snapshotId": "snapshot-ce929e02b0587e837627",
+  "contentHash": "dcc6fd299f1315ea0b9ec584eb0f2a185b572fe74097f7a47bc403966adc173c",
+  "market": {
+    "riskLevel": "Level 3",
+    "riskScore": -0.242160116,
+    "targetExposure": 0.7,
+    "signalDate": "2026-08-28T00:00:00.000",
+    "effectiveDate": "2026-08-31T00:00:00.000",
+    "regimeState": "中性",
+    "regimeScore": 44.4892473118,
+    "regimeDate": "2026-09-02T00:00:00.000",
+    "breadth": 0.5280625543,
+    "breadthDate": "2026-09-02T00:00:00.000",
+    "pillars": [
+      {
+        "name": "Financial Stress",
+        "state": "建设性",
+        "score": 34.1013824885
+      },
+      {
+        "name": "Fragility",
+        "state": "谨慎",
+        "score": 51.6129032258
+      },
+      {
+        "name": "Market Risk",
+        "state": "中性",
+        "score": 49.1551459293
+      },
+      {
+        "name": "Participation",
+        "state": "中性",
+        "score": 43.0875576037
+      }
+    ]
+  },
+  "brief": {
+    "asOf": "2026-09-02",
+    "headline": "中性，目标仓位 70%",
+    "posture": "综合状态 中性，得分 44.5 / 100，市场宽度 53%。",
+    "dataStatus": "4/4 数据源最新，4/4 质量门禁可用"
+  },
+  "sources": [
+    {
+      "id": "marketResearch",
+      "name": "市场研究",
+      "asOf": "2026-09-02",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "strategyPerformance",
+      "name": "策略表现",
+      "asOf": "2026-09-02",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "holdings",
+      "name": "持仓档案",
+      "asOf": "2026-09",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "fomc",
+      "name": "FOMC 政策研究",
+      "asOf": "2026-07-29",
+      "status": "current",
+      "qualityStatus": "pass"
+    }
+  ],
+  "alerts": []
+}
