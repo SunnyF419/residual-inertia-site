@@ -36,7 +36,7 @@ def anchor(target, text, cls=''):
 
 def shell(title, content, section='', description=None):
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
-        ('home', 'index.html', '概览'), ('snapshots', 'snapshots/index.html', '每日快照'),
+        ('home', 'index.html', '首页'), ('overview', 'overview.html', '市场概览'), ('snapshots', 'snapshots/index.html', '每日快照'),
         ('research', 'research/index.html', '研究'), ('about', 'about.html', '关于余势')])
     canonical = 'https://' + CONFIG['domain'] + '/' + ROUTE.replace('index.html', '')
     return f'''<!doctype html>
@@ -48,7 +48,7 @@ def shell(title, content, section='', description=None):
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-color.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
-<footer class="wrap"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p></div><div><p>What remains persists.</p><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
+<footer class="wrap"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p></div><div><p>{E(CONFIG['motto'])}</p><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
 
 
 def write(route, title, render, section='', description=None):
@@ -62,6 +62,22 @@ def write(route, title, render, section='', description=None):
 
 def head(kicker, title, text=''):
     return f'<div class="pagehead"><p class="eyebrow">{E(kicker)}</p><h1>{E(title)}</h1><p class="lede">{E(text)}</p></div>'
+
+
+def cover():
+    motto = E(CONFIG['motto']).replace(', ', ',<br>')
+    return f'''<section class="brand-cover" aria-label="余势品牌封面">
+<div class="cover-copy"><p class="eyebrow">RESIDUAL INERTIA | 余势</p>
+<h1>{motto}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
+<p>独立投资研究与决策系统<span>Independent Investment Research &amp; Systems</span></p></div>
+<div class="cover-actions">{anchor('research/index.html', '阅读研究', 'cover-primary')}{anchor('overview.html', '进入市场概览 ↗', 'cover-secondary')}</div></div>
+<aside class="founder-panel" aria-label="品牌与创始人"><div class="cover-symbol"><img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="Residual Inertia 品牌标志" width="232" height="164"></div>
+<div class="founder-identity"><p class="eyebrow">FOUNDER / 创始人</p><h2>{E(CONFIG['founder'])}</h2><p>Residual Inertia | 余势</p></div></aside></section>
+<section class="cover-directory" aria-label="探索余势">
+{anchor('research/index.html', '<span class="mono">01 / RESEARCH</span><h2>研究</h2><p>保留证据、方法与局限，让每一份判断有据可循。</p><span class="directory-link">阅读研究档案 ↗</span>')}
+{anchor('overview.html', '<span class="mono">02 / OBSERVATORY</span><h2>市场观察</h2><p>从风险、市场状态与参与度，观察市场留下的信号。</p><span class="directory-link">查看市场概览 ↗</span>')}
+{anchor('snapshots/index.html', '<span class="mono">03 / ARCHIVE</span><h2>每日快照</h2><p>保存每个观察日的真实记录，让变化可以回溯。</p><span class="directory-link">浏览每日归档 ↗</span>')}
+</section>'''
 
 
 def metrics(s):
@@ -158,14 +174,15 @@ def main():
     OUT.mkdir()
     shutil.copytree(ROOT/'assets', OUT/'assets')
     latest=snapshots[-1]
-    def home():
+    def overview():
         intro=f'<div class="home-head"><div><p class="eyebrow">RESIDUAL INERTIA / RESEARCH OBSERVATORY</p><h1>市场留下的信号。</h1><p class="lede">每日记录市场状态，让研究保留时间的刻度。</p></div><div class="edition"><span>最新归档观察日</span><strong class="mono">{latest["observationDate"]}</strong>{anchor("snapshots/"+latest["observationDate"]+".html","阅读完整快照 ↗")}</div></div>'
         intro+=f'<div class="dateline"><span>DAILY OBSERVATION</span><span>市场信号截至 {shortdate(latest["market"]["signalDate"])} · 历史归档，非实时行情</span></div>'+metrics(latest)
         intro+='<div class="two-col">'+history_chart(snapshots)+pillars(latest)+'</div>'
         intro+='<section class="section"><div class="section-title"><h2>每日快照</h2>'+anchor('snapshots/index.html',f'全部 {len(snapshots)} 份归档 ↗')+'</div>'+snapshot_rows(snapshots,5)+'</section>'
         intro+='<section class="section"><div class="section-title"><h2>研究与观察</h2>'+anchor('research/index.html','研究档案 ↗')+'</div>'+research_cards(research)+'</section>'
         return intro
-    write('index.html','市场观察与独立研究',home,'home')
+    write('index.html','独立研究，从简出发',cover,'home')
+    write('overview.html','市场概览',overview,'overview')
     write('snapshots/index.html','每日快照',lambda: head('DAILY ARCHIVE','把每一天，留在它发生的时点。',f'{len(snapshots)} 份真实归档 · {snapshots[0]["observationDate"]} — {latest["observationDate"]}。没有归档的日期不补造记录。')+snapshot_rows(snapshots),'snapshots')
     for i,s in enumerate(snapshots):
         write('snapshots/'+s['observationDate']+'.html',s['observationDate']+' 市场快照',lambda s=s,i=i: snapshot_page(s,snapshots[i-1] if i else None,snapshots[i+1] if i+1<len(snapshots) else None),'snapshots')
@@ -174,11 +191,11 @@ def main():
         def article(r=r):
             return anchor('research/index.html','← 研究档案','back')+head(r['category']+' / RESEARCH ARCHIVE',r['title'],f'原报告生成日 {r["published"]} · 数据截至 {r["dataThrough"]}')+f'<div class="notice">{E(r["note"])}</div><article class="prose">'+markdown(r['markdown'])+'<h2>来源与局限</h2><p>来源：Residual Inertia 研究门户的历史报告。本文未重新计算策略收益或回测；情景分析与收益归因的口径见原文说明。历史信号不代表当前市场状态，策略篮子的等权分析不代表实际资金配置。</p><p>仅供研究，不构成投资建议。历史表现不代表未来结果。</p></article>'
         write('research/'+r['slug']+'.html',r['title'],article,'research',r['summary'])
-    write('about.html','关于余势',lambda:head('ABOUT / METHODOLOGY','Residual Inertia | 余势','独立投资研究与决策系统')+'<article class="prose"><h2>What remains persists.</h2><p>从市场状态、风险与参与度出发，建立可以追溯的观察记录。研究与系统是核心，结论随证据变化。</p><h2>如何阅读每日快照</h2><p>观察日是快照建立的北京时间日期；数据截止日属于具体信号。周度风险、日频市场状态和政策研究有不同更新节奏。网站展示保存下来的研究结果，不提供实时行情，也不在线执行策略。</p><h2>数据与方法</h2><p>快照来自既有研究门户的每日归档。数值、风险等级和质量状态沿用原始输出，网站不重新计算模型；同一个信号可能在多个观察日保持不变。研究文章保留原报告的方法、数据时点与局限。</p><h2>披露</h2><p>内容仅用于独立研究和信息分享，不构成针对任何个人的投资建议。模型仓位不代表实际账户仓位。回测、估算及历史表现均不能保证未来结果。</p></article>','about')
+    write('about.html','关于余势',lambda:head('ABOUT / METHODOLOGY','Residual Inertia | 余势','独立投资研究与决策系统')+f'<article class="prose"><h2>{E(CONFIG["motto"])}</h2><p>创始人：{E(CONFIG["founder"])}</p><p>从市场状态、风险与参与度出发，建立可以追溯的观察记录。研究与系统是核心，结论随证据变化。</p><h2>如何阅读每日快照</h2><p>观察日是快照建立的北京时间日期；数据截止日属于具体信号。周度风险、日频市场状态和政策研究有不同更新节奏。网站展示保存下来的研究结果，不提供实时行情，也不在线执行策略。</p><h2>数据与方法</h2><p>快照来自既有研究门户的每日归档。数值、风险等级和质量状态沿用原始输出，网站不重新计算模型；同一个信号可能在多个观察日保持不变。研究文章保留原报告的方法、数据时点与局限。</p><h2>披露</h2><p>内容仅用于独立研究和信息分享，不构成针对任何个人的投资建议。模型仓位不代表实际账户仓位。回测、估算及历史表现均不能保证未来结果。</p></article>','about')
     write('404.html','页面未找到',lambda:head('404','这页记录还不存在。','请从快照档案或研究目录继续阅读。')+f'<p><a href="https://{CONFIG["domain"]}/">返回首页</a></p>')
     # A custom-domain 404 can be served from arbitrary depths.
     p=OUT/'404.html'
-    p.write_text(p.read_text(encoding='utf-8').replace('href="assets/', 'href="/assets/').replace('src="assets/','src="/assets/').replace('href="index.html"','href="/"').replace('href="snapshots/index.html"','href="/snapshots/"').replace('href="research/index.html"','href="/research/"').replace('href="about.html"','href="/about.html"'),encoding='utf-8')
+    p.write_text(p.read_text(encoding='utf-8').replace('href="assets/', 'href="/assets/').replace('src="assets/','src="/assets/').replace('href="index.html"','href="/"').replace('href="overview.html"','href="/overview.html"').replace('href="snapshots/index.html"','href="/snapshots/"').replace('href="research/index.html"','href="/research/"').replace('href="about.html"','href="/about.html"'),encoding='utf-8')
     (OUT/'.nojekyll').write_text('',encoding='utf-8')
     (OUT/'CNAME').write_text(CONFIG['domain']+'\n',encoding='utf-8')
     origin='https://'+CONFIG['domain']

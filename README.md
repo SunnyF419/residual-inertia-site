@@ -19,6 +19,12 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 
 浏览器打开 `http://127.0.0.1:8788`。亦可直接打开 `dist/index.html`，正常页面的导航和本地资源使用相对路径。
 
+## 首页与导航
+
+首页为 RI 品牌封面，展示正式 Logo、创始人 Sunny 和座右铭。原首页的指标、图表与近期记录移至 `overview.html`（市场概览）；已有快照和研究文章网址保持不变。
+
+在 `site.json` 修改 `founder` 和 `motto`，即可同步更新首页、关于页及页脚。
+
 ## 内容与编辑
 
 - `content/snapshots/*.json`：每日市场归档的公开字段；已接入 2026-08-24 至 2026-09-28 的 31 份档案。
