@@ -17,11 +17,15 @@ python scripts/check.py
 python -m http.server 8788 --bind 127.0.0.1 --directory dist
 ```
 
-浏览器打开 `http://127.0.0.1:8788`。亦可直接打开 `dist/index.html`，正常页面的导航和本地资源使用相对路径。
+浏览器打开 `http://127.0.0.1:8788`。首页与 Logo 链接使用站点根路径 `/`，请通过本地服务器预览。
 
 ## 首页与导航
 
 首页为 RI 品牌封面，展示正式 Logo、创始人 Sunny 和座右铭。原首页的指标、图表与近期记录移至 `overview.html`（市场概览）；已有快照和研究文章网址保持不变。
+
+每日快照归入市场概览的 `#daily-snapshots` 区域，最近 5 份直接展示，其余记录可展开；旧快照目录自动跳转至该区域。研究按 `market`（周报与月报）、`personal`（个人专题，如 WQS）、`fomc`（FOMC 政策研究）分目录。文章可用 `collection` 字段指定目录；未指定的周报/月报自动归入市场类，其他文章归入个人专题。尚未收录的目录明确显示待整理。
+
+风险柱颜色按原模型状态映射：建设性为绿，谨慎/中性/防御为黄，压力为红；不修改分数或评级。
 
 在 `site.json` 修改 `founder` 和 `motto`，即可同步更新首页、关于页及页脚。
 
@@ -53,4 +57,4 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 
 ## 部署
 
-见 [DEPLOY.md](DEPLOY.md)。GitHub 仓库和 Pages 已启用；剩余 Cloudflare DNS、自定义域名与该域名的 HTTPS 验证。
+见 [DEPLOY.md](DEPLOY.md)。GitHub Pages 已绑定 `https://residualinertia.com/`，自定义域名与 HTTPS 已启用。
