@@ -53,7 +53,7 @@ def shell(title, content, section='', description=None):
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-color.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
-<footer class="wrap"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p></div><div><p>{E(CONFIG['motto'])}</p><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
+<footer class="wrap"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p></div><div><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p><small>{E(CONFIG['motto'])} · 仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
 
 
 def write(route, title, render, section='', description=None):
@@ -83,14 +83,15 @@ def head(kicker, title, text=''):
 
 
 def cover():
-    motto = E(CONFIG['motto']).replace(', ', ',<br>')
+    hero = E(CONFIG.get('hero',''))
+    motto = E(CONFIG['motto'])
     return f'''<section class="brand-cover" aria-label="余势品牌封面">
 <div class="cover-copy"><p class="eyebrow">RESIDUAL INERTIA | 余势</p>
-<h1>{motto}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
+<h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
 <p>独立投资研究与决策系统<span>Independent Investment Research &amp; Systems</span></p></div>
 <div class="cover-actions">{anchor('research/index.html', '阅读研究', 'cover-primary')}{anchor('overview.html', '进入市场概览 ↗', 'cover-secondary')}</div></div>
 <aside class="founder-panel" aria-label="品牌与创始人"><div class="cover-symbol"><img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="Residual Inertia 品牌标志" width="232" height="164"></div>
-<div class="founder-identity"><p class="eyebrow">FOUNDER / 创始人</p><h2>{E(CONFIG['founder'])}</h2><p>Residual Inertia | 余势</p></div></aside></section>
+<div class="founder-identity"><p class="eyebrow">FOUNDER / 创始人</p><h2>{E(CONFIG['founder'])}</h2><p>{motto}</p></div></aside></section>
 <section class="cover-directory" aria-label="探索余势">
 {anchor('research/index.html', '<span class="mono">01 / RESEARCH</span><h2>研究</h2><p>保留证据、方法与局限，让每一份判断有据可循。</p><span class="directory-link">阅读研究档案 ↗</span>')}
 {anchor('overview.html', '<span class="mono">02 / OBSERVATORY</span><h2>市场概览</h2><p>观察风险、市场状态与参与度，以每日快照保存变化的轨迹。</p><span class="directory-link">查看市场概览 ↗</span>')}
