@@ -53,7 +53,7 @@ def shell(title, content, section='', description=None):
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-color.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
-<footer class="wrap"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p></div><div><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p><small>{E(CONFIG['motto'])} · 仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
+<footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-links" aria-label="页脚导航">{anchor('index.html','首页')}{anchor('overview.html','市场概览')}{anchor('research/index.html','研究档案')}{anchor('about.html#principles','研究原则')}{anchor('about.html#founder','创始人')}{anchor('about.html#disclosure','披露')}</div></div><div class="footer-bottom"><p>{E(CONFIG['motto'])}</p><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
 
 
 def write(route, title, render, section='', description=None):
@@ -95,7 +95,17 @@ def cover():
 <section class="cover-directory" aria-label="探索余势">
 {anchor('research/index.html', '<span class="mono">01 / RESEARCH</span><h2>研究</h2><p>保留证据、方法与局限，让每一份判断有据可循。</p><span class="directory-link">阅读研究档案 ↗</span>')}
 {anchor('overview.html', '<span class="mono">02 / OBSERVATORY</span><h2>市场概览</h2><p>观察风险、市场状态与参与度，以每日快照保存变化的轨迹。</p><span class="directory-link">查看市场概览 ↗</span>')}
-</section>'''
+</section>'''+principles()
+
+
+def principles():
+    items = [
+        ('Evidence', '证据', '以数据与可检验的依据形成判断，也保留结论的边界。'),
+        ('Simplicity', '简洁', '理解复杂性之后做取舍，让重要的问题与判断清楚可见。'),
+        ('System', '系统', '把观察、研究与复盘连接起来，让方法可以积累、检验与修正。'),
+        ('Independence', '独立', '保持独立思考，在新的证据出现时保留改变观点的能力。'),
+    ]
+    return '<section class="principles" id="principles" aria-labelledby="principles-title"><p class="eyebrow">OUR PRINCIPLES</p><h2 id="principles-title">研究的四个原则</h2><div class="principle-grid">'+''.join(f'<div><h3>{en}<span>{cn}</span></h3><p>{text}</p></div>' for en,cn,text in items)+'</div></section>'
 
 
 def metrics(s):
@@ -162,8 +172,8 @@ def research_folders(research):
 
 
 def about():
-    return head('ABOUT / RESIDUAL INERTIA', '关于余势', '从复杂中提炼判断，为思考留下空间。') + f'''<article class="prose">
-<h2>{E(CONFIG['motto'])}</h2>
+    return head('ABOUT / RESIDUAL INERTIA', '关于余势', '从复杂中提炼判断，为思考留下空间。') + principles() + f'''<article class="prose">
+<h2 id="founder">{E(CONFIG['motto'])}</h2>
 <p>余势由 {E(CONFIG['founder'])} 创立，是一个独立投资研究与思考的空间。这里连接持续的市场观察、专题研究与投资方法，希望把零散的信息转化为可以积累、检验和修正的认识。</p>
 <h2>为什么建立余势</h2>
 <p>市场每天产生新的信息，但信息的增加并不必然带来更好的判断。余势希望保留真正影响判断的线索，让日常观察沉淀为研究，让研究逐渐形成自己的方法。</p>
@@ -174,7 +184,7 @@ def about():
 <p>以证据形成判断，也为不确定性保留位置。关注一项观点为什么成立、在什么条件下可能失效，而不只关注它曾经取得的结果。</p>
 <p>把风险理解放在收益期待之前。市场状态、参与度和脆弱性提供不同视角；单一指标无法解释一切，模型也需要边界。希望通过持续研究，形成更清楚、更有纪律的决策过程。</p>
 <p>保持独立，也保持修正的能力。记录判断的依据，在新的证据出现时重新审视，让方法随认识一起成长。</p>
-<h2>披露</h2><p>内容仅用于独立研究和信息分享，不构成针对任何个人的投资建议。模型仓位不代表实际账户仓位。回测、估算及历史表现均不能保证未来结果。</p></article>'''
+<h2 id="disclosure">披露</h2><p>内容仅用于独立研究和信息分享，不构成针对任何个人的投资建议。模型仓位不代表实际账户仓位。回测、估算及历史表现均不能保证未来结果。</p></article>'''
 
 
 def inline(text):
