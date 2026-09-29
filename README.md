@@ -47,7 +47,13 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 .\Update Website.ps1 -PortalPath 'E:\QuantResearchHub\recurring_workflows\quant_research_portal'
 ```
 
-检查后，加 `-Publish` 可将新增公开内容提交并推送，触发 Pages 更新；需要本机已登录 GitHub，且首次部署已完成。它不自动创建 Windows 计划任务。当前也没有把该命令接入原有日更任务。
+检查后，加 `-Publish` 可将新增公开内容提交并推送，触发 Pages 更新；需要本机已登录 GitHub。`PortalPath` 默认使用同级 `quant_research_portal`。
+
+已接入原有 Windows 任务 `Residual Inertia Investing - Daily Portal Archive`：周一至周六 10:00 更新数据，成功建档后运行网站发布。当天已存在快照时，仅补做网站同步。同步失败会让任务失败并沿用每 15 分钟、最多 3 次的重试设置；失败不删除快照，不替换线上部署。构建或校验失败时不推送，GitHub Pages 构建失败时保留之前的线上版本。
+
+任务以 THINKBOOK 登录会话运行，电脑需开机、该用户已登录并能联网；错过时间使用原任务的补跑设置。周日不创建快照。门户内手动更新不会立即推送，需等待任务或运行 `Update Website.ps1 -Publish`。新研究正文仍需单独整理发布，此流程自动同步的是每日市场快照。
+
+运行日志在门户的 `.runtime/daily-archive/logs/windows-task.log`；网站成功推送不等于 Pages 已完成上线，部署结果见 GitHub Actions。入口脚本的备份位于 `automation/Run Daily Portal Archive.ps1`，实际任务执行的是门户目录中的同名文件。网站有未提交代码或已有暂存修改时，自动发布停止，避免混入正在编辑的内容。
 
 导出采用字段白名单：市场风险、状态、宽度、风险支柱、数据日期、公开风险提示、来源质量状态、快照核验标识。不导出实际账户、个股持仓清单、FOMC 未复核原文、数据库路径、任务日志、localhost 地址或密钥。
 
