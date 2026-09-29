@@ -32,6 +32,12 @@ def main():
         parser.feed(text)
         parsed[p.resolve()]=parser
         assert '<h1>' in text and '<title>' in text, p
+        for target in parser.targets:
+            assert not urlsplit(target).path.endswith('.html') or (p.name == '404.html' and urlsplit(target).path == '/404.html'), (p, 'Non-clean page link', target)
+        if p.name != 'index.html' and p.name != '404.html':
+            target = '/' + p.relative_to(OUT).with_suffix('').as_posix() + '/'
+            assert f'content="0;url={target}"' in text, (p, 'Missing legacy redirect')
+            assert (OUT / target.strip('/') / 'index.html').is_file(), p
     for p,parser in parsed.items():
         for target in parser.targets:
             u=urlsplit(target)
@@ -56,6 +62,8 @@ def main():
         assert set(s)=={'observationDate','capturedAt','snapshotId','contentHash','market','brief','sources','alerts'}
         assert s['observationDate']==p.stem
         assert (OUT/'snapshots'/f'{p.stem}.html').is_file()
+        assert (OUT/'snapshots'/p.stem/'index.html').is_file()
+    assert '.html' not in (OUT/'sitemap.xml').read_text(encoding='utf-8')
     assert (OUT/'CNAME').read_text().strip()=='residualinertia.com'
     assert not list(OUT.rglob('*.py')) and not (OUT/'.git').exists()
     print(f'PASS: {len(pages)} pages, all local links/assets, {len(snapshots)} snapshot exports, public-content scan.')

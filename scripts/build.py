@@ -17,9 +17,12 @@ PATHS = []
 
 
 def url(path):
-    if path == 'index.html':
-        return '/'
-    return '../' * (len(Path(ROUTE).parts) - 1) + path
+    page, marker, fragment = path.partition('#')
+    if page.endswith('index.html'):
+        page = page[:-10]
+    elif page.endswith('.html') and page != '404.html':
+        page = page[:-5] + '/'
+    return '/' + page.lstrip('/') + (marker + fragment if marker else '')
 
 
 def number(value, pct=False):
@@ -40,7 +43,7 @@ def shell(title, content, section='', description=None):
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
         ('home', 'index.html', '首页'), ('overview', 'overview.html', '市场概览'),
         ('research', 'research/index.html', '研究'), ('about', 'about.html', '关于余势')])
-    canonical = 'https://' + CONFIG['domain'] + '/' + ROUTE.replace('index.html', '')
+    canonical = 'https://' + CONFIG['domain'] + url(ROUTE)
     return f'''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)} · Residual Inertia | 余势</title><meta name="description" content="{E(description or CONFIG['description'])}">
@@ -55,11 +58,24 @@ def shell(title, content, section='', description=None):
 
 def write(route, title, render, section='', description=None):
     global ROUTE
-    ROUTE = route
-    p = OUT / route
+    destination = route if route.endswith('index.html') or route == '404.html' else route[:-5] + '/index.html'
+    ROUTE = destination
+    p = OUT / destination
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(shell(title, render(), section, description), encoding='utf-8')
-    PATHS.append(route)
+    PATHS.append(destination)
+    if destination != route:
+        redirect(route, url(destination), title)
+
+
+def redirect(route, target, title):
+    p = OUT / route
+    p.parent.mkdir(parents=True, exist_ok=True)
+    canonical = 'https://' + CONFIG['domain'] + target.split('#')[0]
+    p.write_text(f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)} · 余势</title>
+<meta http-equiv="refresh" content="0;url={E(target)}"><link rel="canonical" href="{E(canonical)}">
+</head><body><h1>{E(title)}</h1><p>页面地址已更新。<a href="{E(target)}">继续阅读</a></p></body></html>''', encoding='utf-8')
 
 
 def head(kicker, title, text=''):
@@ -224,9 +240,7 @@ def main():
         return intro
     write('index.html','独立研究，从简出发',cover,'home')
     write('overview.html','市场概览',overview,'overview')
-    legacy=OUT/'snapshots/index.html'
-    legacy.parent.mkdir(parents=True,exist_ok=True)
-    legacy.write_text('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>每日快照 · 市场概览</title><meta http-equiv="refresh" content="0;url=../overview.html#daily-snapshots"><link rel="canonical" href="https://'+CONFIG['domain']+'/overview.html"></head><body><h1>每日快照已纳入市场概览</h1><a href="../overview.html#daily-snapshots">前往市场概览</a></body></html>',encoding='utf-8')
+    redirect('snapshots/index.html', '/overview/#daily-snapshots', '每日快照 · 市场概览')
     for i,s in enumerate(snapshots):
         write('snapshots/'+s['observationDate']+'.html',s['observationDate']+' 市场快照',lambda s=s,i=i: snapshot_page(s,snapshots[i-1] if i else None,snapshots[i+1] if i+1<len(snapshots) else None),'overview')
     write('research/index.html','研究档案',lambda: head('RESEARCH','研究，让观察有据可循。','从市场观察到独立专题，按研究方向阅读。')+research_folders(research),'research')
@@ -241,9 +255,6 @@ def main():
         write('research/'+r['slug']+'.html',r['title'],article,'research',r['summary'])
     write('about.html','关于余势',about,'about')
     write('404.html','页面未找到',lambda:head('404','这页记录还不存在。','请从快照档案或研究目录继续阅读。')+f'<p><a href="https://{CONFIG["domain"]}/">返回首页</a></p>')
-    # A custom-domain 404 can be served from arbitrary depths.
-    p=OUT/'404.html'
-    p.write_text(p.read_text(encoding='utf-8').replace('href="assets/', 'href="/assets/').replace('src="assets/','src="/assets/').replace('href="index.html"','href="/"').replace('href="overview.html"','href="/overview.html"').replace('href="snapshots/index.html"','href="/snapshots/"').replace('href="research/index.html"','href="/research/"').replace('href="about.html"','href="/about.html"'),encoding='utf-8')
     (OUT/'.nojekyll').write_text('',encoding='utf-8')
     (OUT/'CNAME').write_text(CONFIG['domain']+'\n',encoding='utf-8')
     origin='https://'+CONFIG['domain']
