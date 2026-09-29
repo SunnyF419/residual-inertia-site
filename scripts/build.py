@@ -12,6 +12,20 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist'
 CONFIG = json.loads((ROOT / 'site.json').read_text(encoding='utf-8'))
 E = lambda value: html.escape(str(value if value is not None else '—'), quote=True)
+SMART_NAV_JS = '''<script>
+(function(){
+  const header=document.querySelector('.masthead');
+  if(!header)return;
+  let lastY=window.scrollY,ticking=false;
+  function update(){
+    const y=window.scrollY;
+    if(y>lastY&&y>80)header.classList.add('masthead--hidden');
+    else if(y<lastY)header.classList.remove('masthead--hidden');
+    lastY=y;ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});
+})();
+</script>'''
 ROUTE = 'index.html'
 PATHS = []
 
@@ -53,7 +67,7 @@ def shell(title, content, section='', description=None):
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-color.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
-<footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure','披露')}</div></div><div class="footer-bottom"><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
+<footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure','披露')}</div></div><div class="footer-bottom"><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer>{SMART_NAV_JS}</body></html>'''
 
 
 def write(route, title, render, section='', description=None):
