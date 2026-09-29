@@ -68,3 +68,7 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 ## SSRN 论文页面
 
 论文仍使用 `content/research/*.json`，归入 `personal`。`summary` 为简介；`published` 搭配 `dateLabel` 标明日期含义，`updated` 为可选修订日期；`author`、`subtitle` 展示作者与副标题。`pdf` 指向 `assets/papers/` 下的真实 PDF，`pdfSha256` 保存文件校验值；`ssrnUrl` 链接到原文。`note` 明确网站下载版本，`sourceNote` 记录来源与研究局限。替换 PDF 时同步更新版本说明与校验值。
+
+## 七段首页
+
+首页依次展示 Hero、市场状态、最新研究、研究方向、Systems、Founder、品牌理念。市场摘要与完整概览共用最新归档，最新研究按报告日期排列。系统与创始人导航指向首页对应区块，Dashboard 指向市场概览；文章及快照保持简洁地址。
