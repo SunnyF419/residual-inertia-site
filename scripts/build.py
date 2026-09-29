@@ -41,9 +41,8 @@ def anchor(target, text, cls=''):
 
 def shell(title, content, section='', description=None):
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
-        ('home', 'index.html', '首页'), ('overview', 'overview.html', '市场概览 Dashboard'),
-        ('research', 'research/index.html', '研究'), ('systems', 'index.html#systems', '系统 Systems'),
-        ('founder', 'index.html#founder', '创始人 Founder'), ('about', 'about.html', '关于余势')])
+        ('home', 'index.html', '首页'), ('overview', 'overview.html', '市场概览'),
+        ('research', 'research/index.html', '研究'), ('about', 'about.html', '关于')])
     canonical = 'https://' + CONFIG['domain'] + url(ROUTE)
     return f'''<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -54,7 +53,7 @@ def shell(title, content, section='', description=None):
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-color.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
-<footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-links" aria-label="页脚导航">{anchor('index.html','首页')}{anchor('overview.html','市场概览')}{anchor('research/index.html','研究档案')}{anchor('about.html#principles','研究原则')}{anchor('index.html#systems','系统')}{anchor('index.html#founder','创始人')}{anchor('about.html#disclosure','披露')}</div></div><div class="footer-bottom"><p>{E(CONFIG['motto'])}</p><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
+<footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure','披露')}</div></div><div class="footer-bottom"><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer></body></html>'''
 
 
 def write(route, title, render, section='', description=None):
@@ -92,13 +91,13 @@ def cover():
 <p>独立投资研究与决策系统<span>Independent Investment Research &amp; Systems</span></p></div>
 <div class="cover-actions">{anchor('research/index.html', '阅读研究', 'cover-primary')}{anchor('overview.html', '进入市场概览 ↗', 'cover-secondary')}</div></div>
 <aside class="founder-panel" aria-label="品牌与创始人"><div class="cover-symbol"><img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="Residual Inertia 品牌标志" width="232" height="164"></div>
-<div class="founder-identity"><p class="eyebrow">FOUNDER / 创始人</p><h2>{E(CONFIG['founder'])}</h2><p>{motto}</p></div></aside></section>
+<div class="founder-identity"><p class="eyebrow">FOUNDER / 创始人</p><h2>{E(CONFIG['founder'])}</h2><p>{E(CONFIG.get('brandLine',''))}</p></div></aside></section>
 '''
 
 
 def homepage(latest, research):
     return cover() + f'''<section class="home-section" id="dashboard" aria-labelledby="market-title">
-<div class="section-title"><div><p class="eyebrow">02 / DASHBOARD</p><h2 id="market-title">市场状态</h2></div>{anchor('overview.html','进入市场概览 ↗')}</div>
+<div class="section-title"><div><p class="eyebrow">02 / OBSERVATORY</p><h2 id="market-title">市场状态</h2></div>{anchor('overview.html','进入市场概览 ↗')}</div>
 <p class="section-intro">最新归档观察日 <span class="mono">{E(latest['observationDate'])}</span> · 从风险、趋势与市场参与度观察变化。</p>
 {metrics(latest)}<p class="caption">历史归档，非实时行情。各项数据的截止日期分别标注；每日快照与完整风险观察收录于市场概览。</p></section>
 <section class="home-section" id="latest-research" aria-labelledby="latest-title">
@@ -106,16 +105,7 @@ def homepage(latest, research):
 {research_cards(research[:2])}</section>
 <section class="home-section" id="research-directions" aria-labelledby="directions-title">
 <p class="eyebrow">04 / RESEARCH DIRECTIONS</p><h2 id="directions-title">研究方向</h2>
-<p class="section-intro">把日常市场观察、独立专题与政策研究，放在各自适合的时间尺度上。</p>{research_folders(research)}</section>
-<section class="home-section" id="systems" aria-labelledby="systems-title">
-<p class="eyebrow">05 / SYSTEMS</p><h2 id="systems-title">让研究成为持续运转的系统</h2>
-<p class="section-intro">从记录到复盘，为判断保留依据。网站公开观察结果、研究报告与历史档案。</p>
-<div class="system-grid"><article><span class="mono">01 / OBSERVE</span><h3>市场观察</h3><p>并列观察金融压力、市场脆弱度、市场风险与参与度，让不同维度相互补充。</p>{anchor('overview.html','查看市场状态 ↗')}</article>
-<article><span class="mono">02 / ARCHIVE</span><h3>每日归档</h3><p>保存观察日的真实状态与数据截止日期，让变化可以回看，判断可以追溯。</p>{anchor('overview.html#daily-snapshots','浏览每日记录 ↗')}</article>
-<article><span class="mono">03 / REVIEW</span><h3>研究与复盘</h3><p>将问题、方法与局限整理成报告，保留论文版本和原文入口，让认识持续积累。</p>{anchor('research/index.html','阅读研究档案 ↗')}</article></div></section>
-<section class="home-section founder-section" id="founder" aria-labelledby="founder-title">
-<div><p class="eyebrow">06 / FOUNDER</p><h2 id="founder-title">{E(CONFIG['founder'])}</h2><p class="founder-role">Residual Inertia | 余势 · 创始人</p></div>
-<div><p class="founder-motto">{E(CONFIG['motto'])}</p><p>以余势为独立研究与思考的空间，连接市场观察、专题研究与投资方法。关注判断的依据，也为不确定性与修正留下位置。</p>{anchor('about.html#founder','了解创始人与投资理念 ↗')}</div></section>''' + principles()
+<p class="section-intro">把日常市场观察、独立专题与政策研究，放在各自适合的时间尺度上。</p>{research_folders(research)}</section>''' + principles()
 
 
 def principles():
