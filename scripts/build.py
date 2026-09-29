@@ -98,28 +98,17 @@ def head(kicker, title, text=''):
 
 def cover():
     hero = E(CONFIG.get('hero','')).replace('，', '，<br>')
-    motto = E(CONFIG['motto'])
     return f'''<section class="brand-cover" id="hero" aria-label="余势品牌封面">
 <div class="cover-copy"><p class="eyebrow">RESIDUAL INERTIA | 余势</p>
 <h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
 <p>独立投资研究与决策系统<span>Independent Investment Research &amp; Systems</span></p></div>
 <div class="cover-actions">{anchor('research/index.html', '阅读研究', 'cover-primary')}{anchor('overview.html', '进入市场概览 ↗', 'cover-secondary')}</div></div>
-<aside class="founder-panel" aria-label="品牌与创始人"><div class="cover-symbol"><img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="Residual Inertia 品牌标志" width="232" height="164"></div>
-<div class="founder-identity"><p class="eyebrow">FOUNDER / 创始人</p><h2>{E(CONFIG['founder'])}</h2><p>{E(CONFIG.get('brandLine',''))}</p></div></aside></section>
+</section>
 '''
 
 
 def homepage(latest, research):
-    return cover() + f'''<section class="home-section" id="dashboard" aria-labelledby="market-title">
-<div class="section-title"><div><p class="eyebrow">02 / OBSERVATORY</p><h2 id="market-title">市场状态</h2></div>{anchor('overview.html','进入市场概览 ↗')}</div>
-<p class="section-intro">最新归档观察日 <span class="mono">{E(latest['observationDate'])}</span> · 从风险、趋势与市场参与度观察变化。</p>
-{metrics(latest)}<p class="caption">历史归档，非实时行情。各项数据的截止日期分别标注；每日快照与完整风险观察收录于市场概览。</p></section>
-<section class="home-section" id="latest-research" aria-labelledby="latest-title">
-<div class="section-title"><div><p class="eyebrow">03 / LATEST RESEARCH</p><h2 id="latest-title">最新研究</h2></div>{anchor('research/index.html','全部研究 ↗')}</div>
-{research_cards(research[:2])}</section>
-<section class="home-section" id="research-directions" aria-labelledby="directions-title">
-<p class="eyebrow">04 / RESEARCH DIRECTIONS</p><h2 id="directions-title">研究方向</h2>
-<p class="section-intro">把日常市场观察、独立专题与政策研究，放在各自适合的时间尺度上。</p>{research_folders(research)}</section>''' + principles()
+    return cover()
 
 
 def principles():
@@ -196,18 +185,21 @@ def research_folders(research):
 
 
 def about():
-    return head('ABOUT / RESIDUAL INERTIA', '关于余势', '从复杂中提炼判断，为思考留下空间。') + principles() + f'''<article class="prose">
-<h2 id="founder">{E(CONFIG['motto'])}</h2>
-<p>余势由 {E(CONFIG['founder'])} 创立，是一个独立投资研究与思考的空间。这里连接持续的市场观察、专题研究与投资方法，希望把零散的信息转化为可以积累、检验和修正的认识。</p>
-<h2>为什么建立余势</h2>
-<p>市场每天产生新的信息，但信息的增加并不必然带来更好的判断。余势希望保留真正影响判断的线索，让日常观察沉淀为研究，让研究逐渐形成自己的方法。</p>
-<p>市场概览记录变化，周报与月报梳理阶段性的认识，专题研究则为值得追问的问题留出更长的时间。这里既是个人研究的档案，也是与读者分享思考的窗口。</p>
-<h2>少而清楚，简而有据</h2>
-<p>Less is more，是把注意力放在少数重要的问题上；simple is complex，是承认清晰的表达背后，需要充分理解复杂性。简洁不意味着省略必要的推敲，而是在理解之后做出取舍。</p>
-<h2>投资理念</h2>
-<p>以证据形成判断，也为不确定性保留位置。关注一项观点为什么成立、在什么条件下可能失效，而不只关注它曾经取得的结果。</p>
-<p>把风险理解放在收益期待之前。市场状态、参与度和脆弱性提供不同视角；单一指标无法解释一切，模型也需要边界。希望通过持续研究，形成更清楚、更有纪律的决策过程。</p>
-<p>保持独立，也保持修正的能力。记录判断的依据，在新的证据出现时重新审视，让方法随认识一起成长。</p>
+    founder_intro = f'''<section class="founder-section" id="founder" aria-labelledby="founder-title">
+<div class="founder-card">
+<div class="founder-portrait"><img src="{url('assets/brand/founder-sunny.jpg')}" alt="{E(CONFIG['founder'])} 肖像" width="320" height="400"></div>
+<div class="founder-bio">
+<p class="eyebrow" id="founder-title">FOUNDER / 创始人</p>
+<h2>{E(CONFIG['founder'])}</h2>
+<p class="brand-line">{E(CONFIG.get('brandLine',''))}</p>
+<p>创建 Residual Inertia｜余势，致力于把市场观察、实证研究与决策系统整合为可重复、可验证的研究基础设施。</p>
+</div>
+</div>
+</section>'''
+    return head('ABOUT / RESIDUAL INERTIA', '关于余势', '从复杂中提炼判断，为思考留下空间。') + f'''<article class="prose about-intro">
+<p>Residual Inertia｜余势是由 {E(CONFIG['founder'])} 创建的独立投资研究与决策系统平台。平台聚焦量化投资、资产定价、宏观市场、金融数据与 AI 驱动的研究基础设施，并将市场观察、实证研究、模型与工具整合进一个可重复、可验证的研究流程。</p>
+<p>Residual Inertia 相信，好的研究并不一定来自更复杂的模型，而来自更清晰的问题、更可靠的证据，以及能够被持续检验和改进的方法。平台坚持 Evidence before narrative. Process before prediction. 从市场状态监测、专题研究，到 Dashboard、数据系统与研究工作流，Residual Inertia 希望逐步建立一套能够长期积累、持续迭代，并真正服务于投资决策的研究基础设施。</p>
+</article>''' + principles() + founder_intro + '''<article class="prose">
 <h2 id="disclosure">披露</h2><p>内容仅用于独立研究和信息分享，不构成针对任何个人的投资建议。模型仓位不代表实际账户仓位。回测、估算及历史表现均不能保证未来结果。</p></article>'''
 
 
