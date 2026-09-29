@@ -2,6 +2,15 @@
 
 目标域名：`residualinertia.com`。GitHub：`SunnyF419`。仓库名：`residual-inertia-site`。
 
+## 当前状态
+
+- 仓库已创建并推送；Pages 已启用。
+- 首次成功部署：https://github.com/SunnyF419/residual-inertia-site/actions/runs/36506747793
+- 当前网站：https://sunnyf419.github.io/residual-inertia-site/
+- 线上桌面和手机页面、字体图片、导航、研究表格检查通过。
+- 根域名与 www 尚无有效网站解析；Cloudflare 操作等待账号/浏览器连接。
+- 以下第 1–2 步为重新部署参考，当前无需重复创建仓库。
+
 ## 1. GitHub 仓库
 
 在 https://github.com/new 创建名为 `residual-inertia-site` 的空仓库，不添加初始 README。使用 GitHub Free 时，GitHub Pages 需要公开仓库；如需私有源码，先确认账号套餐支持私有仓库 Pages。发布的网站本身是公开的。

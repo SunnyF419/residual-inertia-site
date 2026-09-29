@@ -1,6 +1,11 @@
 # Residual Inertia | 余势
 
-面向 `residualinertia.com` 的纯静态研究网站。GitHub 账号：`SunnyF419`；计划仓库：`residual-inertia-site`。
+面向 `residualinertia.com` 的纯静态研究网站。GitHub 账号：`SunnyF419`；仓库：`residual-inertia-site`。
+
+网站已发布：https://sunnyf419.github.io/residual-inertia-site/
+源码仓库：https://github.com/SunnyF419/residual-inertia-site
+
+GitHub Actions 已通过构建、公开内容检查与 Pages 部署，线上桌面/手机页面及导航检查通过。自定义域名暂未绑定，等待 Cloudflare DNS 接入。
 
 ## 本地查看
 
@@ -42,4 +47,4 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 
 ## 部署
 
-见 [DEPLOY.md](DEPLOY.md)。已准备 GitHub Actions；发布前还需要 GitHub 登录、创建远程仓库、启用 Pages 和配置 Cloudflare DNS。
+见 [DEPLOY.md](DEPLOY.md)。GitHub 仓库和 Pages 已启用；剩余 Cloudflare DNS、自定义域名与该域名的 HTTPS 验证。

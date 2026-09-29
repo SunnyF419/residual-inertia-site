@@ -6,9 +6,9 @@ $ErrorActionPreference = 'Stop'
 Push-Location $PSScriptRoot
 try {
     if ($Publish) {
-        git diff --cached --quiet
+        git -c "safe.directory=$PSScriptRoot" diff --cached --quiet
         if ($LASTEXITCODE -ne 0) { throw 'Review or commit already-staged changes before publishing website content.' }
-        $branch = git branch --show-current
+        $branch = git -c "safe.directory=$PSScriptRoot" branch --show-current
         if ($LASTEXITCODE -ne 0 -or $branch -ne 'main') { throw 'Publish from the main branch.' }
     }
     python scripts/import_portal.py --portal $PortalPath
@@ -18,15 +18,15 @@ try {
     python scripts/check.py
     if ($LASTEXITCODE -ne 0) { throw 'Public output validation failed.' }
     if ($Publish) {
-        git add -- content
+        git -c "safe.directory=$PSScriptRoot" add -- content
         if ($LASTEXITCODE -ne 0) { throw 'Could not stage public content.' }
-        git diff --cached --quiet
+        git -c "safe.directory=$PSScriptRoot" diff --cached --quiet
         $stagedExit = $LASTEXITCODE
         if ($stagedExit -eq 1) {
-            git commit -m "content: update published research archives"
+            git -c "safe.directory=$PSScriptRoot" commit -m "content: update published research archives"
             if ($LASTEXITCODE -ne 0) { throw 'Commit failed.' }
         } elseif ($stagedExit -ne 0) { throw 'Could not inspect staged changes.' }
-        git push origin main
+        git -c "safe.directory=$PSScriptRoot" push origin main
         if ($LASTEXITCODE -ne 0) { throw 'Push failed; local content remains available.' }
     }
 } finally { Pop-Location }
