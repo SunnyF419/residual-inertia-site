@@ -64,3 +64,7 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 ## 部署
 
 见 [DEPLOY.md](DEPLOY.md)。GitHub Pages 已绑定 `https://residualinertia.com/`，自定义域名与 HTTPS 已启用。
+
+## SSRN 论文页面
+
+论文仍使用 `content/research/*.json`，归入 `personal`。`summary` 为简介；`published` 搭配 `dateLabel` 标明日期含义，`updated` 为可选修订日期；`author`、`subtitle` 展示作者与副标题。`pdf` 指向 `assets/papers/` 下的真实 PDF，`pdfSha256` 保存文件校验值；`ssrnUrl` 链接到原文。`note` 明确网站下载版本，`sourceNote` 记录来源与研究局限。替换 PDF 时同步更新版本说明与校验值。

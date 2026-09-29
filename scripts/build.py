@@ -137,7 +137,7 @@ def snapshot_rows(snapshots, limit=None):
 
 
 def research_cards(research):
-    return '<div class="research-grid">'+''.join(f'<article class="research-card"><p class="eyebrow">{E(r["category"])} <span class="mono">{E(r["published"])}</span></p><h3>{anchor("research/"+r["slug"]+".html",E(r["title"]))}</h3><p>{E(r["summary"])}</p><div class="card-foot"><span>数据截至 {E(r["dataThrough"])}</span>{anchor("research/"+r["slug"]+".html","阅读全文 ↗")}</div></article>' for r in research)+'</div>'
+    return '<div class="research-grid">'+''.join(f'<article class="research-card"><p class="eyebrow">{E(r["category"])} <span class="mono">{E(r["published"])}</span></p><h3>{anchor("research/"+r["slug"]+".html",E(r["title"]))}</h3><p>{E(r["summary"])}</p><div class="card-foot"><span>{E("数据截至 "+r["dataThrough"] if r.get("dataThrough") else r.get("dateLabel", "发表于")+" "+r["published"])}</span>{anchor("research/"+r["slug"]+".html","阅读全文 ↗")}</div></article>' for r in research)+'</div>'
 
 
 COLLECTIONS = {
@@ -178,6 +178,37 @@ def about():
 
 def inline(text):
     return re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', E(text))
+
+
+def research_article(r):
+    body = anchor('research/'+collection(r)+'/index.html', '← '+COLLECTIONS[collection(r)][0], 'back')
+    dates = f'{r.get("dateLabel", "原报告生成日")} {r["published"]}'
+    if r.get('updated'):
+        dates += f' · 修订于 {r["updated"]}'
+    if r.get('dataThrough'):
+        dates += f' · 数据截至 {r["dataThrough"]}'
+    body += head(r['category']+' / RESEARCH', r['title'], dates)
+    if r.get('subtitle'):
+        body += '<p class="paper-subtitle">'+E(r['subtitle'])+'</p>'
+    body += '<article class="prose"><section class="article-intro"><h2>简介</h2><p>'+E(r['summary'])+'</p>'
+    if r.get('author'):
+        body += '<p class="caption">作者：'+E(r['author'])+'</p>'
+    if r.get('pdf'):
+        pdf = r['pdf']
+        local = (ROOT / pdf).resolve()
+        assert local.is_relative_to((ROOT/'assets/papers').resolve()) and local.is_file(), 'PDF must be a published asset'
+        assert local.read_bytes().startswith(b'%PDF-'), 'Invalid PDF file'
+        size = local.stat().st_size / 1024 / 1024
+        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(url(pdf))}" download>下载 PDF ↓</a><span class="caption">PDF · {size:.1f} MB</span></div>'
+    if r.get('ssrnUrl'):
+        assert r['ssrnUrl'].startswith('https://papers.ssrn.com/'), 'Expected SSRN paper URL'
+        body += f'<p><a href="{E(r["ssrnUrl"])}" target="_blank" rel="noopener noreferrer">查看 SSRN 原文 ↗</a></p>'
+    body += '</section>'
+    if r.get('note'):
+        body += '<div class="notice">'+E(r['note'])+'</div>'
+    body += markdown(r.get('markdown', ''))
+    source = r.get('sourceNote', '来源：Residual Inertia 研究门户的历史报告。本文未重新计算策略收益或回测；情景分析与收益归因的口径见原文说明。历史信号不代表当前市场状态，策略篮子的等权分析不代表实际资金配置。')
+    return body+'<h2>来源与局限</h2><p>'+E(source)+'</p><p>仅供研究，不构成投资建议。历史表现不代表未来结果。</p></article>'
 
 
 def markdown(text):
@@ -221,6 +252,7 @@ def snapshot_page(s, previous, following):
 def main():
     snapshots=[json.loads(p.read_text(encoding='utf-8')) for p in sorted((ROOT/'content/snapshots').glob('*.json'))]
     research=[json.loads(p.read_text(encoding='utf-8')) for p in sorted((ROOT/'content/research').glob('*.json'),reverse=True)]
+    research.sort(key=lambda r: r['published'], reverse=True)
     assert snapshots, 'Import snapshots before building.'
     # Delete only generated output in this checkout; never touch source archives.
     assert OUT.resolve().parent == ROOT.resolve() and OUT.name == 'dist' and not OUT.is_symlink()
@@ -236,7 +268,7 @@ def main():
         if len(snapshots)>5:
             intro+='<details class="archive-more"><summary>展开其余 '+str(len(snapshots)-5)+' 份历史快照</summary>'+snapshot_rows(snapshots[:-5])+'</details>'
         intro+='</section>'
-        intro+='<section class="section"><div class="section-title"><h2>研究与观察</h2>'+anchor('research/index.html','研究档案 ↗')+'</div>'+research_cards(research)+'</section>'
+        intro+='<section class="section"><div class="section-title"><h2>研究与观察</h2>'+anchor('research/index.html','研究档案 ↗')+'</div>'+research_cards([r for r in research if collection(r)=='market'])+'</section>'
         return intro
     write('index.html','独立研究，从简出发',cover,'home')
     write('overview.html','市场概览',overview,'overview')
@@ -250,9 +282,7 @@ def main():
             return anchor('research/index.html','← 研究目录','back')+head(label,title,description)+(research_cards(reports) if reports else '<div class="empty-research"><h2>研究档案待整理</h2><p>这一目录尚未发布报告，整理完成后将在这里收录。</p></div>')
         write(f'research/{key}/index.html',title,folder,'research')
     for r in research:
-        def article(r=r):
-            return anchor('research/'+collection(r)+'/index.html','← '+COLLECTIONS[collection(r)][0],'back')+head(r['category']+' / RESEARCH ARCHIVE',r['title'],f'原报告生成日 {r["published"]} · 数据截至 {r["dataThrough"]}')+f'<div class="notice">{E(r["note"])}</div><article class="prose">'+markdown(r['markdown'])+'<h2>来源与局限</h2><p>来源：Residual Inertia 研究门户的历史报告。本文未重新计算策略收益或回测；情景分析与收益归因的口径见原文说明。历史信号不代表当前市场状态，策略篮子的等权分析不代表实际资金配置。</p><p>仅供研究，不构成投资建议。历史表现不代表未来结果。</p></article>'
-        write('research/'+r['slug']+'.html',r['title'],article,'research',r['summary'])
+        write('research/'+r['slug']+'.html',r['title'],lambda r=r: research_article(r),'research',r['summary'])
     write('about.html','关于余势',about,'about')
     write('404.html','页面未找到',lambda:head('404','这页记录还不存在。','请从快照档案或研究目录继续阅读。')+f'<p><a href="https://{CONFIG["domain"]}/">返回首页</a></p>')
     (OUT/'.nojekyll').write_text('',encoding='utf-8')

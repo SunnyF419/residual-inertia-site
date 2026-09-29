@@ -1,0 +1,18 @@
+{
+  "slug": "winners-glide-losers-stumble",
+  "title": "Winners Glide, Losers Stumble",
+  "subtitle": "A Behavioral Reversal Tilt to Momentum",
+  "published": "2026-07-10",
+  "dateLabel": "SSRN 首次发布",
+  "updated": "2026-07-18",
+  "author": "Juncheng Wen；Taiyang Feng",
+  "summary": "研究动量策略中赢家与输家不同的短期价格路径，并将近期收益与传统动量相结合，构建不额外引入参数的反转倾斜。论文关注改进为何集中在空头端，以及股票规模、可交易性与套利限制如何约束实际效果。",
+  "note": "下载版本：作者稿，PDF 封面标注 This version: June 2026，共 29 页。上方发布与修订日期来自 SSRN 条目；本地文件未核验为 SSRN 当前下载版本，最新版本请查看原文页。",
+  "sourceNote": "来源：作者论文 Winners Glide, Losers Stumble 及 SSRN 7019599 条目。研究区分全样本等权结果与可投资股票范围的效果；可交易性约束会显著缩小收益改进，不能将全样本历史结果视为可实现收益。",
+  "markdown": "## 研究问题\n为什么过去赢家的延续相对平稳，而过去输家的反弹更容易扰动动量策略的空头端？\n## 方法与边界\n论文以传统 12–1 动量为基础，逐股乘以最近一个月的总收益因子，研究短期反转与既有趋势的交互作用。在美国及多个国际市场进行比较，并检验规模与可交易范围对结果的影响。\n完整实证、稳健性检验与讨论见 PDF。",
+  "ssrnUrl": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7019599",
+  "category": "SSRN 论文",
+  "collection": "personal",
+  "pdf": "assets/papers/winners-glide-losers-stumble.pdf",
+  "pdfSha256": "5682f99660bf8cdcf24f76492f46c33e1f003b8a820c002f91f8fd6b1b938699"
+}

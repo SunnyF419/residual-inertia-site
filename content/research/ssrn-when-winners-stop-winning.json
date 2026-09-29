@@ -1,0 +1,17 @@
+{
+  "slug": "when-winners-stop-winning",
+  "title": "When Winners Stop Winning",
+  "subtitle": "Simple and Weighted Market Momentum Fragility Signals for U.S. Equity Left-Tail Risk",
+  "published": "2026-05-09",
+  "dateLabel": "论文日期",
+  "author": "Taiyang Feng；Jingyi Feng",
+  "summary": "研究 QS 与 WQS 动量脆弱性信号能否提前识别美股左尾风险。论文比较道琼斯、纳斯达克和标普 500 的月度动量状态，强调信号提前确定的时间优势，以及它们在风险预算中的作用。",
+  "note": "下载版本：本地保存的 SSRN 6739181 PDF，论文日期为 2026 年 5 月 9 日。最新修订请以 SSRN 原文页为准。",
+  "sourceNote": "来源：作者论文 When Winners Stop Winning，SSRN 6739181。信号是低频风险状态指标；论文并未主张它能替代使用更近期信息的移动平均规则。研究结果不代表实时预测或实际投资收益。",
+  "markdown": "## 研究问题\n当市场动量开始走弱时，能否在明显下跌发生之前识别风险状态？\n## 方法与边界\n论文利用跳过最近一个月的 12–1 动量，构建简单及加权的快慢动量差。研究重点是动量恶化状态与后续左尾风险的关系，信号的提前量与独立分类能力需要分别理解。\n完整方法、结果、图表及局限见 PDF。",
+  "ssrnUrl": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6739181",
+  "category": "SSRN 论文",
+  "collection": "personal",
+  "pdf": "assets/papers/when-winners-stop-winning.pdf",
+  "pdfSha256": "d5ab653846d0b8c7ddbd6a04498b0bb55f092a948a25c25b1493f32948fd3f5b"
+}
