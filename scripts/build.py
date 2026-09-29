@@ -65,7 +65,7 @@ def shell(title, content, section='', description=None):
 <meta property="og:description" content="{E(description or CONFIG['description'])}"><meta property="og:type" content="website">
 <link rel="icon" href="{url('assets/brand/RI_favicon.svg')}" type="image/svg+xml"><link rel="stylesheet" href="{url('assets/site.css')}">
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
-{anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-color.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
+{anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
 <footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>独立投资研究与决策系统</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure','披露')}</div></div><div class="footer-bottom"><small>仅供研究，不构成投资建议。历史结果不代表未来表现。</small></div></footer>{SMART_NAV_JS}</body></html>'''
 
