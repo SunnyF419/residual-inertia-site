@@ -20,10 +20,15 @@ I18N = {
     # Nav
     'nav_home': ('首页', 'Home'),
     'nav_overview': ('市场概览', 'Market'),
+    'nav_global': ('全球态势', 'Global Pulse'),
     'nav_research': ('研究', 'Research'),
     'nav_about': ('关于', 'About'),
     'skip': ('跳转正文', 'Skip to content'),
     'nav_aria': ('主导航', 'Main navigation'),
+    'global_title': ('全球态势', 'Global Pulse'),
+    'global_intro': ('追踪全球事件与航运变化，数据持续更新。', 'Follow global events and maritime developments with continuously updated data.'),
+    'global_open': ('全屏打开 ↗', 'Open full screen ↗'),
+    'global_note': ('若嵌入页面未显示，请全屏打开。管理登录在新窗口中进行。', 'If the embedded view is unavailable, open the full-screen version. Management login opens in a new tab.'),
     # Footer
     'footer_system': ('独立投资研究与决策系统', 'Independent Investment Research & Systems'),
     'footer_disclosure': ('披露', 'Disclosure'),
@@ -290,6 +295,7 @@ def shell(title, content, section='', description=None):
     lang_attr = 'en' if LANG == 'en' else 'zh-CN'
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
         ('home', 'index.html', L('nav_home')), ('overview', 'overview.html', L('nav_overview')),
+        ('global', 'global/index.html', L('nav_global')),
         ('research', 'research/index.html', L('nav_research')), ('about', 'about.html', L('nav_about'))])
     toggle_label = 'EN' if LANG == 'zh' else '中文'
     canonical = 'https://' + CONFIG['domain'] + url(ROUTE)
@@ -302,7 +308,7 @@ def shell(title, content, section='', description=None):
 <link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}">
 </head><body><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
-<nav aria-label="{L('nav_aria')}">{nav}<a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap">{content}</main>
+<nav aria-label="{L('nav_aria')}">{nav}<a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
 <footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>{L('footer_system')}</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure', L('footer_disclosure'))}</div></div><div class="footer-bottom"><small>{L('footer_disclaimer')}</small></div></footer>{SMART_NAV_JS}</body></html>'''
 
 
@@ -386,7 +392,10 @@ def principles():
         ('System', L('principle_system'), L('principle_system_desc')),
         ('Independence', L('principle_independence'), L('principle_independence_desc')),
     ]
-    return '<section class="principles" id="principles" aria-labelledby="principles-title"><p class="eyebrow">' + L('principles_eyebrow') + '</p><h2 id="principles-title">' + L('principles_title') + '</h2><div class="principle-grid">' + ''.join(f'<div><h3>{en}<span>{cn}</span></h3><p>{text}</p></div>' for en, cn, text in items) + '</div></section>'
+    def card(en, cn, text):
+        span = f'<span>{cn}</span>' if cn != en else ''
+        return f'<div><h3>{en}{span}</h3><p>{text}</p></div>'
+    return '<section class="principles" id="principles" aria-labelledby="principles-title"><p class="eyebrow">' + L('principles_eyebrow') + '</p><h2 id="principles-title">' + L('principles_title') + '</h2><div class="principle-grid">' + ''.join(card(*item) for item in items) + '</div></section>'
 
 
 def metrics(s):
@@ -604,6 +613,12 @@ def snapshot_page(s, previous, following):
     return body
 
 
+def global_pulse():
+    return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><a href="https://global.residualinertia.com/" target="_blank" rel="noopener">{L('global_open')}</a></section>
+<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1" title="{L('global_title')}" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<p class="global-note">{L('global_note')}</p>'''
+
+
 def build_language(snapshots, research, latest):
     """Build all pages for the current LANG."""
     PATHS.clear()
@@ -619,6 +634,7 @@ def build_language(snapshots, research, latest):
 
     write('index.html', L('home_title'), lambda: homepage(latest, research), 'home')
     write('overview.html', L('overview_title'), overview, 'overview')
+    write('global/index.html', L('global_title'), global_pulse, 'global', L('global_intro'))
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None), 'overview')

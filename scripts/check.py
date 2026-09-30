@@ -80,6 +80,15 @@ def main():
     overview_en = (OUT/'en/overview/index.html').read_text(encoding='utf-8')
     assert history['windowStart'] in overview_en and history['windowEnd'] in overview_en and 'Rolling 5-year' in overview_en
     assert (OUT/'CNAME').read_text().strip()=='residualinertia.com'
+    for route in ('global/index.html', 'en/global/index.html'):
+        embedded=(OUT/route).read_text(encoding='utf-8')
+        assert '<iframe class="global-frame"' in embedded
+        assert 'src="https://global.residualinertia.com/?embed=1"' in embedded
+        assert 'allowfullscreen' in embedded
+        assert 'https://global.residualinertia.com/' in embedded
+        assert ('https://residualinertia.com/'+route.replace('index.html','')) in embedded
+    assert 'href="/global/"' in (OUT/'index.html').read_text(encoding='utf-8')
+    assert 'href="/en/global/"' in (OUT/'en/index.html').read_text(encoding='utf-8')
     assert not list(OUT.rglob('*.py')) and not (OUT/'.git').exists()
     print(f'PASS: {len(pages)} pages, all local links/assets, {len(snapshots)} snapshot exports, public-content scan.')
 
