@@ -309,7 +309,7 @@ def shell(title, content, section='', description=None):
 <link rel="canonical" href="{canonical}"><meta property="og:title" content="{E(title)} · Residual Inertia">
 <meta property="og:description" content="{E(desc)}"><meta property="og:type" content="website">
 <link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
-</head><body><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
+</head><body{' class="global-page"' if section == 'global' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
 <footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>{L('footer_system')}</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure', L('footer_disclosure'))}</div></div><div class="footer-bottom"><small>{L('footer_disclaimer')}</small></div></footer>{SMART_NAV_JS}</body></html>'''
@@ -618,7 +618,7 @@ def snapshot_page(s, previous, following):
 
 def global_pulse():
     return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><div class="global-actions"><a class="global-login" href="https://global.residualinertia.com/auth/login" target="_blank" rel="noopener">{L('global_login')}</a><a href="https://global.residualinertia.com/" target="_blank" rel="noopener">{L('global_open')}</a></div></section>
-<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1" title="{L('global_title')}" width="1280" height="800" style="display:block;width:100%;height:calc(100dvh - 240px);min-height:700px;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1" title="{L('global_title')}" width="1280" height="800" style="display:block;flex:1;min-height:0;width:100%;height:0;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
 <p class="global-note">{L('global_note')}</p>'''
 
 

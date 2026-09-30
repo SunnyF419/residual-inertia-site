@@ -64,6 +64,11 @@ footer.site-footer{display:block;padding-top:var(--sp-8)}.footer-main{display:fl
 .global-actions{display:flex;align-items:center;gap:24px;flex-shrink:0}.global-actions a{white-space:nowrap;font-size:14px}.global-actions .global-login{color:var(--slate);text-decoration:none;border:1px solid var(--grid);border-radius:var(--radius-sm);padding:6px 12px}.global-actions .global-login:hover{color:var(--ink);border-color:var(--ink)}
 @media(max-width:600px){.global-heading{flex-wrap:wrap;gap:16px}.global-actions{gap:16px}.global-actions a{font-size:12px}}
 
+/* The global observatory is a fixed workspace; its panels own their scrolling. */
+body.global-page{height:100vh;height:100dvh;overflow:hidden;overscroll-behavior:none;display:flex;flex-direction:column}.global-page .masthead{position:relative;flex:0 0 auto}.global-page .masthead--hidden{transform:none}.global-page .global-main{flex:1 1 0%;min-height:0;display:flex;flex-direction:column;padding-bottom:12px}.global-page .global-heading{flex:0 0 auto;padding:12px 0}.global-page .global-heading h1{font-size:22px}.global-page .global-heading .eyebrow{display:none}.global-page .global-heading p{font-size:12px}.global-page .global-frame{flex:1 1 0%;height:0;min-height:0;overscroll-behavior:none}.global-page .global-note,.global-page .site-footer{display:none}
+@media(max-width:1100px){.global-page .header-inner{min-height:64px;padding:8px 0;gap:8px 24px}.global-page .brand img{width:200px;height:48px}.global-page nav{gap:20px}}
+@media(max-width:600px){.global-page .header-inner{min-height:0;padding:6px 0}.global-page .brand img{width:160px;height:40px}.global-page nav{width:100%;overflow-x:auto;gap:20px}.global-page nav a{padding:6px 0;font-size:13px}.global-page .global-heading{padding:8px 0;gap:8px}.global-page .global-heading p{display:none}.global-page .global-heading h1{font-size:18px}.global-page .global-main{padding-bottom:6px}}
+
 /* Overview page: editorial observatory */
 .overview-hero{padding:var(--sp-10) 0 var(--sp-8);border-bottom:1px solid var(--grid)}
 .overview-hero h1{font-size:clamp(40px,4.5vw,64px);letter-spacing:-.035em;line-height:1.15;margin-top:var(--sp-4)}

@@ -85,7 +85,8 @@ def main():
         assert '<iframe class="global-frame"' in embedded
         assert 'src="https://global.residualinertia.com/?embed=1"' in embedded
         assert 'allowfullscreen' in embedded
-        assert 'width="1280" height="800"' in embedded and 'style="display:block;width:100%;' in embedded
+        assert 'width="1280" height="800"' in embedded and 'flex:1;min-height:0;width:100%;height:0;' in embedded
+        assert '<body class="global-page">' in embedded
         assert re.search(r'href="/assets/site\.css\?v=[a-f0-9]{12}"',embedded)
         assert 'https://global.residualinertia.com/' in embedded
         assert 'class="global-actions"' in embedded
