@@ -1,6 +1,8 @@
 """Validate generated links, public-content boundaries, and source/output counts."""
 import json
 import re
+import math
+from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -64,6 +66,15 @@ def main():
         assert (OUT/'snapshots'/f'{p.stem}.html').is_file()
         assert (OUT/'snapshots'/p.stem/'index.html').is_file()
     assert '.html' not in (OUT/'sitemap.xml').read_text(encoding='utf-8')
+    history = json.loads((ROOT/'content/market/regime-history.json').read_text(encoding='utf-8'))
+    start, end = date.fromisoformat(history['windowStart']), date.fromisoformat(history['windowEnd'])
+    assert end.year-start.year == 5 and 1825 <= (end-start).days <= 1827
+    days = [date.fromisoformat(p['date']) for p in history['points']]
+    assert days == sorted(set(days)) and start <= days[0] <= days[-1] <= end
+    assert (days[0]-start).days <= 7 and (end-days[-1]).days <= 7
+    assert all(math.isfinite(p['score']) and 0 <= p['score'] <= 100 for p in history['points'])
+    overview = (OUT/'overview/index.html').read_text(encoding='utf-8')
+    assert history['windowStart'] in overview and history['windowEnd'] in overview and '滚动 5 年' in overview
     assert (OUT/'CNAME').read_text().strip()=='residualinertia.com'
     assert not list(OUT.rglob('*.py')) and not (OUT/'.git').exists()
     print(f'PASS: {len(pages)} pages, all local links/assets, {len(snapshots)} snapshot exports, public-content scan.')

@@ -184,14 +184,17 @@ def pillars(s):
 
 
 def history_chart(snapshots):
-    usable = [s for s in snapshots if isinstance(s['market'].get('regimeScore'), (int,float))]
-    start = date.fromisoformat(usable[0]['observationDate']).toordinal()
-    end = date.fromisoformat(usable[-1]['observationDate']).toordinal()
-    points = ' '.join(f"{48+((date.fromisoformat(s['observationDate']).toordinal()-start)/max(end-start,1))*600:.2f},{178-s['market']['regimeScore']*1.45:.2f}" for s in usable)
+    history = json.loads((ROOT/'content/market/regime-history.json').read_text(encoding='utf-8'))
+    usable = history['points']
+    start = date.fromisoformat(history['windowStart']).toordinal()
+    end = date.fromisoformat(history['windowEnd']).toordinal()
+    points = ' '.join(f"{48+(date.fromisoformat(p['date']).toordinal()-start)/max(end-start,1)*600:.2f},{178-p['score']*1.45:.2f}" for p in usable)
     grid = ''.join(f'<line x1="48" y1="{178-v*1.45}" x2="648" y2="{178-v*1.45}"/><text x="8" y="{183-v*1.45}">{v}</text>' for v in [0,50,100])
-    return f'''<section class="panel chart"><div class="section-title"><h2>市场状态的变化</h2><span class="mono">{len(usable)} 个观察日</span></div>
-<svg viewBox="0 0 684 224" role="img" aria-labelledby="history-title history-desc"><title id="history-title">每日快照中的市场状态分数</title><desc id="history-desc">横轴为归档观察日，纵轴为综合分数，范围 0 到 100。最新分数 {number(usable[-1]['market']['regimeScore'])}。每日数值见快照档案。</desc><g class="grid">{grid}</g><polyline class="series" points="{points}"/><text x="48" y="212">{usable[0]['observationDate']}</text><text x="648" y="212" text-anchor="end">{usable[-1]['observationDate']}</text></svg>
-<p class="caption">按归档观察日排列；周度或未更新的源信号可能连续数日相同。</p></section>'''
+    ticks = ''.join(f'<text x="{48+(date(y,1,1).toordinal()-start)/max(end-start,1)*600:.2f}" y="212" text-anchor="middle">{y}</text>' for y in range(date.fromordinal(start).year+1,date.fromordinal(end).year+1))
+    return f'''<section class="panel chart"><div class="section-title"><h2>市场状态的变化</h2><span class="mono">滚动 5 年</span></div>
+<svg viewBox="0 0 684 224" role="img" aria-labelledby="history-title history-desc"><title id="history-title">过去五年的市场状态分数</title><desc id="history-desc">{history['windowStart']} 至 {history['windowEnd']}，共 {len(usable)} 个模型数据点。综合分数范围为 0 到 100。</desc><g class="grid">{grid}</g><polyline class="series" points="{points}"/>{ticks}</svg>
+<p class="caption">{history['windowStart']} — {history['windowEnd']} · {len(usable)} 个模型数据点。窗口随每日归档的数据截止日向前滚动。</p>
+<p class="caption">来源：市场研究 Dashboard 历史序列，沿用当前模型口径，可能随源数据修订；不等同于当时保存的每日快照。未补造缺失日期。</p></section>'''
 
 
 def snapshot_rows(snapshots, limit=None):

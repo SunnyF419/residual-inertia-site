@@ -3,9 +3,39 @@ import argparse
 import hashlib
 import json
 import re
+import math
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def import_regime_history(portal, asof):
+    import duckdb  # Local importer only; GitHub builds from the exported JSON.
+    config = json.loads((portal/'portal.config.json').read_text(encoding='utf-8-sig'))
+    signals = Path(config['sources']['marketResearch'])
+    database = signals.parent.parent/'data/dashboard.duckdb'
+    end = date.fromisoformat(asof[:10])
+    try:
+        start = end.replace(year=end.year-5)
+    except ValueError:
+        start = end.replace(year=end.year-5, day=28)
+    with duckdb.connect(str(database), read_only=True) as con:
+        rows = con.execute('SELECT date, regime_score, regime_state_zh FROM market_regime_history WHERE date >= ? AND date <= ? ORDER BY date', [start, end]).fetchall()
+    points = []
+    for day, score, state in rows:
+        if score is None:
+            continue
+        assert math.isfinite(score) and 0 <= score <= 100, 'Invalid historical regime score'
+        points.append(dict(date=day.date().isoformat(), score=score, state=state))
+    assert points and (date.fromisoformat(points[0]['date'])-start).days <= 7, 'Five-year history incomplete'
+    assert (end-date.fromisoformat(points[-1]['date'])).days <= 7, 'Historical regime data is stale'
+    assert len({p['date'] for p in points}) == len(points), 'Duplicate history dates'
+    output = dict(windowStart=start.isoformat(), windowEnd=end.isoformat(), source='市场研究 Dashboard · market_regime_history', points=points)
+    target = ROOT/'content/market/regime-history.json'
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(output, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+    print(f'Imported {len(points)} regime history points: {start} to {end}.')
 
 
 def select(obj, keys):
@@ -47,6 +77,9 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         if not target.exists():
             target.write_text(encoded, encoding='utf-8')
+
+    latest = json.loads(pending[-1][1])
+    import_regime_history(args.portal, latest['market']['regimeDate'])
 
     reports = [
         ('residual-inertia-monthly-2026-08-15T03-06-59-344Z.md', '2026-08-15-market-review', '2026-08-15', '2026-08-14', '市场月报 · 2026 年 8 月', '月报'),

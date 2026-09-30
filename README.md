@@ -72,3 +72,9 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 ## 七段首页
 
 首页依次展示 Hero、市场状态、最新研究、研究方向、Systems、Founder、品牌理念。市场摘要与完整概览共用最新归档，最新研究按报告日期排列。系统与创始人导航指向首页对应区块，Dashboard 指向市场概览；文章及快照保持简洁地址。
+
+## 五年市场状态历史
+
+市场概览图读取 `content/market/regime-history.json`。每日同步时，导入器从门户配置中的市场研究项目定位 `data/dashboard.duckdb`，只读 `market_regime_history` 的日期、综合分数和中文状态。以最新归档的 `regimeDate` 为窗口终点，保留前五个日历年的数据，不补齐缺失日期。该历史序列沿用当前模型口径，源数据修订可能影响历史分数，不替代不可变的每日快照。
+
+本地导入需要现有 Python 环境中的 `duckdb`；GitHub 构建只读取已导出的 JSON，仍无数据库依赖。历史源不可读取、覆盖不足或数值非法时，同步失败并阻止推送，保留线上版本。
