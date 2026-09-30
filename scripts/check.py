@@ -35,7 +35,7 @@ def main():
         parsed[p.resolve()]=parser
         assert '<h1>' in text and '<title>' in text, p
         for target in parser.targets:
-            assert not urlsplit(target).path.endswith('.html') or (p.name == '404.html' and urlsplit(target).path == '/404.html'), (p, 'Non-clean page link', target)
+            assert not urlsplit(target).path.endswith('.html') or (p.name == '404.html' and urlsplit(target).path in ('/404.html', '/en/404.html')), (p, 'Non-clean page link', target)
         if p.name != 'index.html' and p.name != '404.html':
             target = '/' + p.relative_to(OUT).with_suffix('').as_posix() + '/'
             assert f'content="0;url={target}"' in text, (p, 'Missing legacy redirect')
@@ -65,6 +65,8 @@ def main():
         assert s['observationDate']==p.stem
         assert (OUT/'snapshots'/f'{p.stem}.html').is_file()
         assert (OUT/'snapshots'/p.stem/'index.html').is_file()
+        assert (OUT/'en/snapshots'/f'{p.stem}.html').is_file()
+        assert (OUT/'en/snapshots'/p.stem/'index.html').is_file()
     assert '.html' not in (OUT/'sitemap.xml').read_text(encoding='utf-8')
     history = json.loads((ROOT/'content/market/regime-history.json').read_text(encoding='utf-8'))
     start, end = date.fromisoformat(history['windowStart']), date.fromisoformat(history['windowEnd'])
@@ -75,6 +77,8 @@ def main():
     assert all(math.isfinite(p['score']) and 0 <= p['score'] <= 100 for p in history['points'])
     overview = (OUT/'overview/index.html').read_text(encoding='utf-8')
     assert history['windowStart'] in overview and history['windowEnd'] in overview and '滚动 5 年' in overview
+    overview_en = (OUT/'en/overview/index.html').read_text(encoding='utf-8')
+    assert history['windowStart'] in overview_en and history['windowEnd'] in overview_en and 'Rolling 5-year' in overview_en
     assert (OUT/'CNAME').read_text().strip()=='residualinertia.com'
     assert not list(OUT.rglob('*.py')) and not (OUT/'.git').exists()
     print(f'PASS: {len(pages)} pages, all local links/assets, {len(snapshots)} snapshot exports, public-content scan.')

@@ -14,5 +14,6 @@
   "category": "SSRN 论文",
   "collection": "personal",
   "pdf": "assets/papers/winners-glide-losers-stumble.pdf",
-  "pdfSha256": "5682f99660bf8cdcf24f76492f46c33e1f003b8a820c002f91f8fd6b1b938699"
+  "pdfSha256": "5682f99660bf8cdcf24f76492f46c33e1f003b8a820c002f91f8fd6b1b938699",
+  "summary_en": "Studies the different short-term price paths of winners and losers in momentum, combining recent returns with traditional momentum to build a reversal tilt without additional parameters."
 }
