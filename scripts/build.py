@@ -15,15 +15,28 @@ E = lambda value: html.escape(str(value if value is not None else '—'), quote=
 SMART_NAV_JS = '''<script>
 (function(){
   const header=document.querySelector('.masthead');
-  if(!header)return;
+  const klineClip=document.getElementById('kline-clip-rect');
+  const flipCard=document.querySelector('.founder-flip-card');
   let lastY=window.scrollY,ticking=false;
   function update(){
     const y=window.scrollY;
-    if(y>lastY&&y>80)header.classList.add('masthead--hidden');
-    else if(y<lastY)header.classList.remove('masthead--hidden');
+    if(header){
+      if(y>lastY&&y>80)header.classList.add('masthead--hidden');
+      else if(y<lastY)header.classList.remove('masthead--hidden');
+    }
+    if(klineClip){
+      const maxScroll=Math.max(200,document.body.scrollHeight-window.innerHeight);
+      const progress=Math.min(1,Math.max(0,y/maxScroll));
+      klineClip.setAttribute('width',(720*progress).toFixed(1));
+    }
     lastY=y;ticking=false;
   }
   window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});
+  if(flipCard){
+    function toggleFlip(){flipCard.classList.toggle('flipped');}
+    flipCard.addEventListener('click',toggleFlip);
+    flipCard.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFlip();}});
+  }
 })();
 </script>'''
 ROUTE = 'index.html'
@@ -96,9 +109,38 @@ def head(kicker, title, text=''):
     return f'<div class="pagehead"><p class="eyebrow">{E(kicker)}</p><h1>{E(title)}</h1><p class="lede">{E(text)}</p></div>'
 
 
+def cover_kline():
+    n = 18
+    width = 720
+    height = 120
+    gap = width / n
+    candle_w = gap * 0.55
+    svg = []
+    y = 60
+    for i in range(n):
+        change = math.sin(i * 0.8) * 14 + math.cos(i * 1.4) * 8
+        open_y = y
+        close_y = max(15, min(105, 60 + change))
+        high_y = min(115, max(open_y, close_y) + 8 + (i % 3) * 3)
+        low_y = max(5, min(open_y, close_y) - 8 - (i % 4) * 2)
+        y = close_y
+        x = i * gap + gap / 2
+        bullish = close_y <= open_y
+        color = '#5d8f7e' if bullish else '#c86159'
+        body_top = min(open_y, close_y)
+        body_h = max(2, abs(close_y - open_y))
+        svg.append(f'<line x1="{x:.1f}" y1="{low_y:.1f}" x2="{x:.1f}" y2="{high_y:.1f}" stroke="{color}" stroke-width="1.5" opacity="0.75"/>')
+        svg.append(f'<rect x="{x - candle_w/2:.1f}" y="{body_top:.1f}" width="{candle_w:.1f}" height="{body_h:.1f}" fill="{color}" rx="1" opacity="0.9"/>')
+    return f'''<svg class="cover-kline" viewBox="0 0 {width} {height}" preserveAspectRatio="none" aria-hidden="true">
+<defs><clipPath id="kline-clip"><rect id="kline-clip-rect" x="0" y="0" width="0" height="{height}"/></clipPath></defs>
+<g clip-path="url(#kline-clip)">{''.join(svg)}</g>
+</svg>'''
+
+
 def cover():
     hero = E(CONFIG.get('hero','')).replace('，', '，<br>')
     return f'''<section class="brand-cover" id="hero" aria-label="余势品牌封面">
+{cover_kline()}
 <div class="cover-copy"><p class="eyebrow">RESIDUAL INERTIA | 余势</p>
 <h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
 <p>独立投资研究与决策系统<span>Independent Investment Research &amp; Systems</span></p></div>
@@ -187,7 +229,17 @@ def research_folders(research):
 def about():
     founder_intro = f'''<section class="founder-section" id="founder" aria-labelledby="founder-title">
 <div class="founder-card">
-<div class="founder-portrait"><img src="{url('assets/brand/founder-sunny.jpg')}" alt="{E(CONFIG['founder'])} 肖像" width="320" height="400"></div>
+<div class="founder-flip-card" role="button" tabindex="0" aria-label="点击翻转显示创始人照片">
+<div class="founder-flip-inner">
+<div class="founder-flip-front">
+<img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="Residual Inertia" width="120" height="85">
+<span>点击翻转</span>
+</div>
+<div class="founder-flip-back">
+<img src="{url('assets/brand/founder-sunny.jpg')}" alt="{E(CONFIG['founder'])} 肖像" width="320" height="400">
+</div>
+</div>
+</div>
 <div class="founder-bio">
 <p class="eyebrow" id="founder-title">FOUNDER / 创始人</p>
 <h2>{E(CONFIG['founder'])}</h2>
