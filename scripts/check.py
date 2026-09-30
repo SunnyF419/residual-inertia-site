@@ -92,7 +92,7 @@ def main():
         assert re.search(r'href="/assets/site\.css\?v=[a-f0-9]{12}"',embedded)
         assert 'https://global.residualinertia.com/' in embedded
         assert 'class="global-actions"' in embedded
-        assert 'class="global-login" href="https://global.residualinertia.com/auth/login" target="_blank" rel="noopener"' in embedded
+        assert 'class="global-login" href="https://global.residualinertia.com/?manage=1" target="_blank" rel="noopener"' in embedded
         assert ('https://residualinertia.com/'+route.replace('index.html','')) in embedded
     assert 'href="/global/"' in (OUT/'index.html').read_text(encoding='utf-8')
     assert 'href="/en/global/"' in (OUT/'en/index.html').read_text(encoding='utf-8')
