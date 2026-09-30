@@ -83,7 +83,9 @@ def main():
     for route in ('global/index.html', 'en/global/index.html'):
         embedded=(OUT/route).read_text(encoding='utf-8')
         assert '<iframe class="global-frame"' in embedded
-        assert 'src="https://global.residualinertia.com/?embed=1"' in embedded
+        language='en' if route.startswith('en/') else 'zh'
+        assert f'src="https://global.residualinertia.com/?embed=1&amp;lang={language}"' in embedded
+        assert f'href="https://global.residualinertia.com/?focus=1&amp;lang={language}"' in embedded
         assert 'allowfullscreen' in embedded
         assert 'width="1280" height="800"' in embedded and 'flex:1;min-height:0;width:100%;height:0;' in embedded
         assert '<body class="global-page">' in embedded

@@ -617,8 +617,8 @@ def snapshot_page(s, previous, following):
 
 
 def global_pulse():
-    return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><div class="global-actions"><a class="global-login" href="https://global.residualinertia.com/auth/login" target="_blank" rel="noopener">{L('global_login')}</a><a href="https://global.residualinertia.com/?focus=1" target="_blank" rel="noopener">{L('global_open')}</a></div></section>
-<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1" title="{L('global_title')}" width="1280" height="800" style="display:block;flex:1;min-height:0;width:100%;height:0;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><div class="global-actions"><a class="global-login" href="https://global.residualinertia.com/auth/login" target="_blank" rel="noopener">{L('global_login')}</a><a href="https://global.residualinertia.com/?focus=1&amp;lang={'en' if LANG == 'en' else 'zh'}" target="_blank" rel="noopener">{L('global_open')}</a></div></section>
+<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" style="display:block;flex:1;min-height:0;width:100%;height:0;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
 <p class="global-note">{L('global_note')}</p>'''
 
 
