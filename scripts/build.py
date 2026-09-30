@@ -76,7 +76,7 @@ def shell(title, content, section='', description=None):
 <title>{E(title)} · Residual Inertia | 余势</title><meta name="description" content="{E(description or CONFIG['description'])}">
 <link rel="canonical" href="{canonical}"><meta property="og:title" content="{E(title)} · Residual Inertia">
 <meta property="og:description" content="{E(description or CONFIG['description'])}"><meta property="og:type" content="website">
-<link rel="icon" href="{url('assets/brand/RI_favicon.svg')}" type="image/svg+xml"><link rel="stylesheet" href="{url('assets/site.css')}">
+<link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}">
 </head><body><a class="skip" href="#main">跳转正文</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="主导航">{nav}</nav></div></header><main id="main" class="wrap">{content}</main>
@@ -367,6 +367,7 @@ def main():
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir()
     shutil.copytree(ROOT/'assets', OUT/'assets')
+    shutil.copy2(ROOT/'assets/brand/favicon.ico', OUT/'favicon.ico')
     latest=snapshots[-1]
     def overview():
         intro=f'<section class="overview-hero"><p class="eyebrow">RESEARCH OBSERVATORY / 市场观测</p><h1>市场留下的信号</h1><p class="lede">每日记录市场状态，把数据归档为可回看的观察。这里不是实时行情，而是有刻度的研究笔记。</p></section>'
