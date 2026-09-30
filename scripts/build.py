@@ -373,7 +373,7 @@ def main():
         intro=f'<section class="overview-hero"><p class="eyebrow">RESEARCH OBSERVATORY / 市场观测</p><h1>市场留下的信号</h1><p class="lede">每日记录市场状态，把数据归档为可回看的观察。这里不是实时行情，而是有刻度的研究笔记。</p></section>'
         intro+=overview_reading(latest)
         intro+=f'<section class="overview-pillars"><p class="eyebrow">WHAT WE WATCH / 四个维度</p><h2>风险与结构的持续跟踪</h2><p class="section-intro">从金融压力、市场脆弱度、风险与参与度四个角度理解状态。分数越高，越需要关注。</p>{overview_pillars(latest)}</section>'
-        intro+=f'<section class="overview-trend"><p class="eyebrow">TREND / 变化</p><h2>市场状态的长期变化</h2><p class="section-intro">过去五年的模型综合分数变化，窗口随数据截止日滚动。</p>{history_chart(snapshots, embedded=True)}</section>'
+        intro+=f'<section class="overview-trend"><p class="eyebrow">TREND / 变化</p><h2>市场状态的长期变化</h2><p class="section-intro">滚动 5 年的模型综合分数变化，窗口随数据截止日向前滚动。</p>{history_chart(snapshots, embedded=True)}</section>'
         intro+=f'<section class="overview-archive" id="daily-snapshots"><p class="eyebrow">ARCHIVE / 每日快照</p><h2>历史观察记录</h2><p class="section-intro">选择日期回看当时的市场状态。共 {len(snapshots)} 份归档。</p>{overview_snapshot_list(snapshots)}</section>'
         intro+=f'<section class="overview-research"><p class="eyebrow">RESEARCH / 研究</p><h2>近期市场研究</h2>{research_cards([r for r in research if collection(r)=="market"][:2])}</section>'
         return intro
