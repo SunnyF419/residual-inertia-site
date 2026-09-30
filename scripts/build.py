@@ -30,6 +30,7 @@ I18N = {
     'global_title': ('全球态势', 'Global Pulse'),
     'global_intro': ('追踪全球事件与航运变化，数据持续更新。', 'Follow global events and maritime developments with continuously updated data.'),
     'global_open': ('全屏打开 ↗', 'Open full screen ↗'),
+    'global_login': ('管理登录', 'Admin login'),
     'global_note': ('若嵌入页面未显示，请全屏打开。管理登录在新窗口中进行。', 'If the embedded view is unavailable, open the full-screen version. Management login opens in a new tab.'),
     # Footer
     'footer_system': ('独立投资研究与决策系统', 'Independent Investment Research & Systems'),
@@ -616,7 +617,7 @@ def snapshot_page(s, previous, following):
 
 
 def global_pulse():
-    return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><a href="https://global.residualinertia.com/" target="_blank" rel="noopener">{L('global_open')}</a></section>
+    return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><div class="global-actions"><a class="global-login" href="https://global.residualinertia.com/auth/login" target="_blank" rel="noopener">{L('global_login')}</a><a href="https://global.residualinertia.com/" target="_blank" rel="noopener">{L('global_open')}</a></div></section>
 <iframe class="global-frame" src="https://global.residualinertia.com/?embed=1" title="{L('global_title')}" width="1280" height="800" style="display:block;width:100%;height:calc(100dvh - 240px);min-height:700px;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
 <p class="global-note">{L('global_note')}</p>'''
 
