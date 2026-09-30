@@ -56,3 +56,37 @@ footer.site-footer{display:block;padding-top:var(--sp-8)}.footer-main{display:fl
 @media(max-width:600px){.home-section{padding:var(--sp-8) 0}.masthead nav{display:flex;gap:var(--sp-6)}}
 
 @media(max-width:600px){.cover-copy h1{font-size:clamp(30px,8.4vw,44px)}}
+
+/* Overview page: editorial observatory */
+.overview-hero{padding:var(--sp-10) 0 var(--sp-8);border-bottom:1px solid var(--grid)}
+.overview-hero h1{font-size:clamp(40px,4.5vw,64px);letter-spacing:-.035em;line-height:1.15;margin-top:var(--sp-4)}
+.overview-hero .lede{max-width:720px;font-size:18px;line-height:1.8}
+.reading-card{display:grid;grid-template-columns:1fr minmax(160px,220px);gap:var(--sp-8);align-items:center;margin:var(--sp-12) 0;padding:var(--sp-8);background:var(--surface);border-radius:var(--radius-md);border:1px solid var(--grid)}
+.reading-card .eyebrow{margin-bottom:var(--sp-3)}
+.reading-card h2{font-family:Plex,sans-serif;font-size:clamp(36px,4vw,56px);font-weight:400;letter-spacing:-.03em;line-height:1.1}
+.reading-posture{font-size:18px;line-height:1.8;color:var(--slate);max-width:640px;margin:var(--sp-4) 0 var(--sp-5)}
+.reading-caption{font-size:14px;color:var(--slate)}
+.reading-score{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;border-left:1px solid var(--grid);padding-left:var(--sp-6)}
+.reading-score .mono{font-size:64px;line-height:1;font-weight:400;letter-spacing:-.04em}
+.reading-score small{font-size:18px;color:var(--slate);margin-top:var(--sp-2)}
+.reading-score .score-label{font-size:13px;letter-spacing:.08em;color:var(--slate);margin-top:var(--sp-3);text-transform:uppercase}
+.overview-pillars,.overview-trend,.overview-archive,.overview-research{border-top:1px solid var(--grid);padding:var(--sp-12) 0}
+.overview-pillars h2,.overview-trend h2,.overview-archive h2,.overview-research h2{font-size:28px;letter-spacing:-.025em;margin-top:var(--sp-3)}
+.overview-pillar-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-6) var(--sp-8);margin-top:var(--sp-8)}
+.overview-pillar{padding:var(--sp-5) 0;border-bottom:1px solid var(--grid)}
+.overview-pillar .pillar-label{display:flex;justify-content:space-between;gap:var(--sp-4);font-size:15px;margin-bottom:var(--sp-3)}
+.overview-pillar .pillar-label span:last-child{color:var(--slate)}
+.overview-pillar .pillar-track{height:4px;background:var(--tint);border-radius:2px;position:relative}
+.overview-pillar .pillar-track span{height:100%;display:block;border-radius:2px;transition:width 1s ease}
+.overview-pillar .pillar-value{font-family:Mono,monospace;font-size:14px;color:var(--slate);margin-top:var(--sp-2);text-align:right}
+.chart-embedded svg{width:100%;height:auto;display:block;margin-top:var(--sp-6)}
+.chart-embedded .caption{margin-top:var(--sp-4);font-size:14px;color:var(--slate)}
+.snapshot-list{list-style:none;padding:0;margin:var(--sp-8) 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+.snapshot-item a{display:grid;grid-template-columns:120px 1fr auto auto;align-items:center;gap:var(--sp-4);padding:var(--sp-4) var(--sp-5);border:1px solid var(--grid);border-radius:var(--radius-sm);text-decoration:none;color:var(--ink);background:var(--surface);transition:background .2s,border-color .2s}
+.snapshot-item a:hover{border-color:var(--blue);background:var(--tint)}
+.snapshot-date{color:var(--slate);font-size:14px}
+.snapshot-state{font-size:15px}
+.snapshot-score{font-size:15px;color:var(--slate);text-align:right}
+.snapshot-link{font-size:14px;color:var(--blue)}
+@media(max-width:900px){.reading-card{grid-template-columns:1fr}.reading-score{border-left:0;border-top:1px solid var(--grid);padding-left:0;padding-top:var(--sp-6);align-items:flex-start}.overview-pillar-grid{grid-template-columns:1fr}.snapshot-list{grid-template-columns:1fr}}
+@media(max-width:600px){.overview-hero h1{font-size:36px}.reading-score .mono{font-size:48px}.snapshot-item a{grid-template-columns:1fr auto;gap:var(--sp-2) var(--sp-4)}.snapshot-state{grid-column:1}.snapshot-score,.snapshot-link{grid-column:2;text-align:right}.snapshot-date{grid-column:1 / -1}.overview-pillars h2,.overview-trend h2,.overview-archive h2,.overview-research h2{font-size:24px}}

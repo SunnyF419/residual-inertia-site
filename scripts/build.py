@@ -183,7 +183,7 @@ def pillars(s):
     return f'<section class="panel"><div class="section-title"><h2>风险的四个维度</h2><span class="mono">/ 100</span></div>{rows}<p class="caption">原模型分数与状态；各支柱含义不同，不作为统一买卖阈值。</p></section>'
 
 
-def history_chart(snapshots):
+def history_chart(snapshots, embedded=False):
     history = json.loads((ROOT/'content/market/regime-history.json').read_text(encoding='utf-8'))
     usable = history['points']
     start = date.fromisoformat(history['windowStart']).toordinal()
@@ -191,10 +191,11 @@ def history_chart(snapshots):
     points = ' '.join(f"{48+(date.fromisoformat(p['date']).toordinal()-start)/max(end-start,1)*600:.2f},{178-p['score']*1.45:.2f}" for p in usable)
     grid = ''.join(f'<line x1="48" y1="{178-v*1.45}" x2="648" y2="{178-v*1.45}"/><text x="8" y="{183-v*1.45}">{v}</text>' for v in [0,50,100])
     ticks = ''.join(f'<text x="{48+(date(y,1,1).toordinal()-start)/max(end-start,1)*600:.2f}" y="212" text-anchor="middle">{y}</text>' for y in range(date.fromordinal(start).year+1,date.fromordinal(end).year+1))
-    return f'''<section class="panel chart"><div class="section-title"><h2>市场状态的变化</h2><span class="mono">滚动 5 年</span></div>
-<svg viewBox="0 0 684 224" role="img" aria-labelledby="history-title history-desc"><title id="history-title">过去五年的市场状态分数</title><desc id="history-desc">{history['windowStart']} 至 {history['windowEnd']}，共 {len(usable)} 个模型数据点。综合分数范围为 0 到 100。</desc><g class="grid">{grid}</g><polyline class="series" points="{points}"/>{ticks}</svg>
-<p class="caption">{history['windowStart']} — {history['windowEnd']} · {len(usable)} 个模型数据点。窗口随每日归档的数据截止日向前滚动。</p>
-<p class="caption">来源：市场研究 Dashboard 历史序列，沿用当前模型口径，可能随源数据修订；不等同于当时保存的每日快照。未补造缺失日期。</p></section>'''
+    svg = f'<svg viewBox="0 0 684 224" role="img" aria-labelledby="history-title history-desc"><title id="history-title">过去五年的市场状态分数</title><desc id="history-desc">{history["windowStart"]} 至 {history["windowEnd"]}，共 {len(usable)} 个模型数据点。综合分数范围为 0 到 100。</desc><g class="grid">{grid}</g><polyline class="series" points="{points}"/>{ticks}</svg>'
+    caption = f'<p class="caption">{history["windowStart"]} — {history["windowEnd"]} · {len(usable)} 个模型数据点。窗口随每日归档的数据截止日向前滚动。来源：市场研究 Dashboard 历史序列。</p>'
+    if embedded:
+        return f'<div class="chart-embedded">{svg}{caption}</div>'
+    return f'''<section class="panel chart"><div class="section-title"><h2>市场状态的变化</h2><span class="mono">滚动 5 年</span></div>{svg}{caption}</section>'''
 
 
 def snapshot_rows(snapshots, limit=None):
@@ -203,6 +204,32 @@ def snapshot_rows(snapshots, limit=None):
         m=s['market']
         rows.append(f'<tr><td>{anchor("snapshots/"+s["observationDate"]+".html", E(s["observationDate"]), "mono")}</td><td>{E(m["riskLevel"])}</td><td>{E(m["regimeState"])}</td><td class="numeric">{number(m["regimeScore"])}</td><td class="numeric">{number(m["breadth"],True)}</td><td>{shortdate(m["signalDate"])}</td></tr>')
     return '<div class="table-scroll" tabindex="0" role="region" aria-label="每日快照表格"><table><thead><tr><th>观察日</th><th>风险等级</th><th>市场状态</th><th class="numeric">综合分数</th><th class="numeric">市场宽度</th><th>风险信号截至</th></tr></thead><tbody>'+''.join(rows)+'</tbody></table></div>'
+
+
+def overview_pillars(s):
+    names = {'Financial Stress':'金融压力', 'Fragility':'市场脆弱度', 'Market Risk':'市场风险', 'Participation':'市场参与度'}
+    items = []
+    for p in s['market'].get('pillars', []):
+        score = p.get('score')
+        width = min(100, max(0, score)) if isinstance(score, (int,float)) else 0
+        tone = {'建设性': 'positive', '谨慎': 'caution', '中性': 'caution', '防御': 'caution', '压力': 'risk'}.get(p['state'], 'neutral')
+        items.append(f'<div class="overview-pillar"><div class="pillar-label"><span>{E(names.get(p["name"],p["name"]))}</span><span>{E(p["state"])}</span></div><div class="pillar-track"><span class="{tone}" style="width:{width:.4f}%"></span></div><div class="pillar-value">{number(score)}</div></div>')
+    return '<div class="overview-pillar-grid">'+''.join(items)+'</div>'
+
+
+def overview_snapshot_list(snapshots):
+    items = []
+    for s in list(reversed(snapshots))[:8]:
+        m=s['market']
+        items.append(f'<li class="snapshot-item"><a href="{url("snapshots/"+s["observationDate"]+".html")}"><span class="snapshot-date mono">{E(s["observationDate"])}</span><span class="snapshot-state">{E(m["regimeState"])}</span><span class="snapshot-score mono">{number(m["regimeScore"])}</span><span class="snapshot-link">查看 →</span></a></li>')
+    return '<ul class="snapshot-list">'+''.join(items)+'</ul>'
+
+
+def overview_reading(s):
+    m = s['market']
+    brief = s.get('brief', {})
+    posture = brief.get('posture', f"综合状态 {m['regimeState']}。")
+    return f'<section class="reading-card"><div class="reading-main"><p class="eyebrow">LATEST READING / 最新观察</p><h2>{E(m["regimeState"])}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{anchor("snapshots/"+s["observationDate"]+".html","阅读完整快照 ↗")} · 数据截至 {shortdate(m["signalDate"])} · {E(s["observationDate"])} 归档</p></div><div class="reading-score"><span class="mono">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">综合分数</span></div></section>'
 
 
 def research_cards(research):
@@ -232,11 +259,10 @@ def research_folders(research):
 def about():
     founder_intro = f'''<section class="founder-section" id="founder" aria-labelledby="founder-title">
 <div class="founder-card">
-<div class="founder-flip-card" role="button" tabindex="0" aria-label="点击翻转显示创始人照片">
+<div class="founder-flip-card" role="button" tabindex="0" aria-label="创始人卡片，点击查看照片">
 <div class="founder-flip-inner">
 <div class="founder-flip-front">
 <img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="Residual Inertia" width="120" height="85">
-<span>点击翻转</span>
 </div>
 <div class="founder-flip-back">
 <img src="{url('assets/brand/founder-sunny.jpg')}" alt="{E(CONFIG['founder'])} 肖像" width="320" height="400">
@@ -343,14 +369,12 @@ def main():
     shutil.copytree(ROOT/'assets', OUT/'assets')
     latest=snapshots[-1]
     def overview():
-        intro=f'<div class="home-head"><div><p class="eyebrow">RESIDUAL INERTIA / RESEARCH OBSERVATORY</p><h1>市场留下的信号。</h1><p class="lede">每日记录市场状态，让研究保留时间的刻度。</p></div><div class="edition"><span>最新归档观察日</span><strong class="mono">{latest["observationDate"]}</strong>{anchor("snapshots/"+latest["observationDate"]+".html","阅读完整快照 ↗")}</div></div>'
-        intro+=f'<div class="dateline"><span>DAILY OBSERVATION</span><span>市场信号截至 {shortdate(latest["market"]["signalDate"])} · 历史归档，非实时行情</span></div>'+metrics(latest)
-        intro+='<div class="two-col">'+history_chart(snapshots)+pillars(latest)+'</div>'
-        intro+='<section class="section" id="daily-snapshots"><div class="section-title"><h2>每日快照</h2><span class="mono">'+str(len(snapshots))+' 份归档</span></div><p class="lede">市场概览的每日记录。选择观察日，回看当时的市场状态。</p>'+snapshot_rows(snapshots,5)
-        if len(snapshots)>5:
-            intro+='<details class="archive-more"><summary>展开其余 '+str(len(snapshots)-5)+' 份历史快照</summary>'+snapshot_rows(snapshots[:-5])+'</details>'
-        intro+='</section>'
-        intro+='<section class="section"><div class="section-title"><h2>研究与观察</h2>'+anchor('research/index.html','研究档案 ↗')+'</div>'+research_cards([r for r in research if collection(r)=='market'])+'</section>'
+        intro=f'<section class="overview-hero"><p class="eyebrow">RESEARCH OBSERVATORY / 市场观测</p><h1>市场留下的信号</h1><p class="lede">每日记录市场状态，把数据归档为可回看的观察。这里不是实时行情，而是有刻度的研究笔记。</p></section>'
+        intro+=overview_reading(latest)
+        intro+=f'<section class="overview-pillars"><p class="eyebrow">WHAT WE WATCH / 四个维度</p><h2>风险与结构的持续跟踪</h2><p class="section-intro">从金融压力、市场脆弱度、风险与参与度四个角度理解状态。分数越高，越需要关注。</p>{overview_pillars(latest)}</section>'
+        intro+=f'<section class="overview-trend"><p class="eyebrow">TREND / 变化</p><h2>市场状态的长期变化</h2><p class="section-intro">过去五年的模型综合分数变化，窗口随数据截止日滚动。</p>{history_chart(snapshots, embedded=True)}</section>'
+        intro+=f'<section class="overview-archive" id="daily-snapshots"><p class="eyebrow">ARCHIVE / 每日快照</p><h2>历史观察记录</h2><p class="section-intro">选择日期回看当时的市场状态。共 {len(snapshots)} 份归档。</p>{overview_snapshot_list(snapshots)}</section>'
+        intro+=f'<section class="overview-research"><p class="eyebrow">RESEARCH / 研究</p><h2>近期市场研究</h2>{research_cards([r for r in research if collection(r)=="market"][:2])}</section>'
         return intro
     write('index.html','独立研究，从简出发',lambda: homepage(latest,research),'home')
     write('overview.html','市场概览',overview,'overview')
