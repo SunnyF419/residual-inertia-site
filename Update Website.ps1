@@ -20,6 +20,13 @@ try {
         if ($LASTEXITCODE -ne 0 -or $branch -ne 'main') { throw 'Publish from the main branch.' }
         git -c "safe.directory=$PSScriptRoot" diff --quiet -- . ':!content'
         if ($LASTEXITCODE -ne 0) { throw 'Commit website code changes before automatic publication.' }
+        git -c "safe.directory=$PSScriptRoot" fetch origin main
+        if ($LASTEXITCODE -ne 0) { throw 'Could not sync reports uploaded through the website.' }
+        git -c "safe.directory=$PSScriptRoot" merge --no-edit origin/main
+        if ($LASTEXITCODE -ne 0) {
+            git -c "safe.directory=$PSScriptRoot" merge --abort
+            throw 'Could not merge newly uploaded reports; local work is preserved.'
+        }
     }
     python scripts/import_portal.py --portal $PortalPath
     if ($LASTEXITCODE -ne 0) { throw 'Import failed.' }
@@ -36,8 +43,22 @@ try {
             git -c "safe.directory=$PSScriptRoot" commit -m "content: update published research archives"
             if ($LASTEXITCODE -ne 0) { throw 'Commit failed.' }
         } elseif ($stagedExit -ne 0) { throw 'Could not inspect staged changes.' }
-        git -c "safe.directory=$PSScriptRoot" push origin main
-        if ($LASTEXITCODE -ne 0) { throw 'Push failed; local content remains available.' }
+        for ($publishAttempt = 0; $publishAttempt -lt 3; $publishAttempt++) {
+            git -c "safe.directory=$PSScriptRoot" push origin main
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($publishAttempt -eq 2) { throw 'Push failed; local content remains available.' }
+            git -c "safe.directory=$PSScriptRoot" fetch origin main
+            if ($LASTEXITCODE -ne 0) { throw 'Could not fetch concurrent report updates; local content remains available.' }
+            git -c "safe.directory=$PSScriptRoot" merge --no-edit origin/main
+            if ($LASTEXITCODE -ne 0) {
+                git -c "safe.directory=$PSScriptRoot" merge --abort
+                throw 'Concurrent updates need review; local content remains available.'
+            }
+            python scripts/build.py
+            if ($LASTEXITCODE -ne 0) { throw 'Build failed after merging new reports.' }
+            python scripts/check.py
+            if ($LASTEXITCODE -ne 0) { throw 'Validation failed after merging new reports.' }
+        }
     }
 } finally {
     Pop-Location

@@ -81,29 +81,7 @@ def main():
     latest = json.loads(pending[-1][1])
     import_regime_history(args.portal, latest['market']['regimeDate'])
 
-    reports = [
-        ('residual-inertia-monthly-2026-08-15T03-06-59-344Z.md', '2026-08-15-market-review', '2026-08-15', '2026-08-14', '市场月报 · 2026 年 8 月', '月报'),
-        ('residual-inertia-weekly-2026-08-12T05-20-09-343Z.md', '2026-08-12-market-review', '2026-08-12', '2026-08-11', '市场周报 · 2026 年 8 月 12 日', '周报'),
-    ]
-    for filename, slug, date, asof, title, category in reports:
-        target = ROOT / 'content/research' / (slug + '.json')
-        if target.exists():
-            continue
-        path = args.portal / 'reports' / filename
-        if not path.exists():
-            continue
-        raw = path.read_text(encoding='utf-8-sig')
-        # Keep research findings and their caveats, remove local task/error logs.
-        body = raw.split('## 每日决策简报', 1)[1].split('最近任务：', 1)[0]
-        body = '## 每日决策简报' + body
-        item = dict(slug=slug, title=title, published=date, dataThrough=asof, category=category,
-                    summary='市场状态、策略收益归因与组合情景分析，保留原始报告的数据时点和方法说明。',
-                    source=filename, sourceSha256=hashlib.sha256(path.read_bytes()).hexdigest(),
-                    note='整理自当时生成的门户报告；保留历史模型与策略口径，移除本机任务日志。不是当前市场判断。',
-                    markdown=body.strip())
-        encoded = json.dumps(item, ensure_ascii=False, indent=2) + '\n'
-        assert not re.search(r'(?i)localhost|127\.0\.0\.1|\b[A-Z]:[\\/]|api[_-]?key|password', encoded)
-        target.write_text(encoded, encoding='utf-8')
+    # Formal market letters are uploaded by the author; portal reports stay local.
     print(f'Imported {len(pending)} daily archives; original portal files unchanged.')
 
 

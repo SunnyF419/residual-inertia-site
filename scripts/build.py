@@ -23,6 +23,10 @@ I18N = {
     'nav_home': ('首页', 'Home'),
     'nav_overview': ('市场概览', 'Market'),
     'nav_global': ('全球态势', 'Global Pulse'),
+    'account_login': ('登录 / 注册', 'Log in / Sign up'),
+    'account_manage': ('报告管理', 'Manage reports'),
+    'import_report': ('导入报告', 'Import report'),
+    'formal_reports_pending': ('正式报告将于作者发布后显示，周报每周六更新。', 'Author-published reports will appear here. Weekly letters are published on Saturdays.'),
     'nav_research': ('研究', 'Research'),
     'nav_about': ('关于', 'About'),
     'skip': ('跳转正文', 'Skip to content'),
@@ -309,9 +313,10 @@ def shell(title, content, section='', description=None):
 <link rel="canonical" href="{canonical}"><meta property="og:title" content="{E(title)} · Residual Inertia">
 <meta property="og:description" content="{E(desc)}"><meta property="og:type" content="website">
 <link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
+<script defer src="{url('assets/account.js')}"></script>
 </head><body{' class="global-page"' if section == 'global' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
-<nav aria-label="{L('nav_aria')}">{nav}<a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
+<nav aria-label="{L('nav_aria')}">{nav}<a class="account-link" data-account-link data-login="{L('account_login')}" data-manage="{L('account_manage')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
 <footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>{L('footer_system')}</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure', L('footer_disclosure'))}</div></div><div class="footer-bottom"><small>{L('footer_disclaimer')}</small></div></footer>{SMART_NAV_JS}</body></html>'''
 
 
@@ -573,8 +578,8 @@ def research_article(r):
     body += '</section>'
     if r.get('note'):
         body += '<div class="notice">' + E(r['note']) + '</div>'
-    body += markdown(r.get('markdown', ''))
-    source = r.get('sourceNote', '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
+    body += markdown(rfield(r, 'markdown') or '')
+    source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
     return body + '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p><p>' + L('not_advice') + '</p></article>'
 
 
@@ -645,7 +650,7 @@ def build_language(snapshots, research, latest):
     for key, (tkey, lkey, dkey) in COLLECTIONS.items():
         def folder(key=key, lkey=lkey, dkey=dkey):
             reports = [r for r in research if collection(r) == key]
-            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + (research_cards(reports) if reports else '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + L('empty_text') + '</p></div>')
+            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + (f'<p><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + (research_cards(reports) if reports else '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>')
         write(f'research/{key}/index.html', L(tkey), folder, 'research')
     for r in research:
         write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'))
