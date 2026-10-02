@@ -513,12 +513,25 @@ def research_cards(research):
     for r in research:
         title = rfield(r, 'title')
         summary = rfield(r, 'summary')
+        group = collection(r)
+        assert group in COLLECTIONS, 'Unknown research collection'
+        issue, separator, cover_title = title.partition(': ' if LANG == 'en' else '：')
+        if not separator:
+            issue, cover_title = '', title
+        identity = r.get('researchId', '')
+        if not identity and r.get('ssrnUrl'):
+            match = re.search(r'abstract_id=(\d+)', r['ssrnUrl'])
+            identity = 'SSRN / ' + match[1] if match else 'SSRN'
         if r.get('dataThrough'):
             date_note = L('data_through') + ' ' + r['dataThrough']
         else:
             date_note = (r.get('dateLabel_en', L('published_at')) if LANG == 'en' else r.get('dateLabel', L('published_at'))) + ' ' + r['published']
         subtitle = f'<p class="research-subtitle">{E(rfield(r, "subtitle"))}</p>' if r.get('subtitle') else ''
-        cards.append(f'<article class="research-card"><p class="eyebrow">{E(category_label(r["category"]))} <time class="mono" datetime="{E(r["published"])}">{E(r["published"])}</time></p><h3>{anchor("research/"+r["slug"]+".html", E(title))}</h3>{subtitle}<p class="research-summary">{E(summary)}</p><div class="card-foot"><span>{E(r.get("author") or date_note)}</span>{anchor("research/"+r["slug"]+".html", L("read_full_article"))}</div></article>')
+        cover = f'''<a class="report-cover report-cover-{group}" href="{url('research/'+r['slug']+'.html')}" aria-label="{E(title)}">
+<div class="report-cover-top"><span class="report-brand">Residual Inertia | 余势</span><span class="report-category">{E(category_label(r['category']))}</span></div>
+<div class="report-title-block">{('<p class="report-issue">'+E(issue)+'</p>') if issue else ''}<h3>{E(cover_title)}</h3></div>
+<div class="report-cover-bottom"><span class="mono">{E(identity)}</span><span>{E(date_note)}</span></div></a>'''
+        cards.append(f'<article class="research-card report-card">{cover}<div class="report-card-body">{subtitle}<p class="research-summary">{E(summary)}</p><div class="card-foot"><div class="report-byline"><span>{E(r.get("author") or "Residual Inertia")}</span><time class="mono" datetime="{E(r["published"])}">{E(r["published"])}</time></div>{anchor("research/"+r["slug"]+".html", L("read_full_article"))}</div></div></article>')
     return '<div class="research-grid">' + ''.join(cards) + '</div>'
 
 
