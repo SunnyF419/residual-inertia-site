@@ -20,7 +20,7 @@ class Links(HTMLParser):
     def handle_starttag(self,tag,attrs):
         attrs=dict(attrs)
         if attrs.get('id'): self.ids.add(attrs['id'])
-        for key in ['href','src']:
+        for key in ['href','src'] + (['data'] if tag == 'object' else []):
             if attrs.get(key): self.targets.append(attrs[key])
 
 

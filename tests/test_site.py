@@ -1,10 +1,12 @@
 """Regressions for the dashboard's score boundaries and public research paths."""
 import importlib.util
+import hashlib
 import json
 import math
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('site_build', ROOT / 'scripts/build.py')
@@ -26,6 +28,18 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_registered_report_versions_match_published_pdf_bytes(self):
+        registry = json.loads((ROOT/'content/research-registry.json').read_text(encoding='utf-8'))
+        for entry in registry['reports']:
+            report = json.loads((ROOT/'content/research'/(entry['slug']+'.json')).read_text(encoding='utf-8'))
+            data = (ROOT/report['pdf']).read_bytes()
+            self.assertTrue(data.startswith(b'%PDF-'))
+            self.assertEqual(hashlib.sha256(data).hexdigest(), report['pdfSha256'])
+            self.assertEqual(report['pdfSha256'], entry['pdfSha256'])
+            self.assertEqual(report['version'], entry['version'])
+            self.assertEqual(report['researchId'], entry['researchId'])
+            self.assertEqual(report['periodDate'], entry['periodDate'])
+
     def test_report_types_and_weekly_monthly_filters(self):
         for record, expected in [({'category':'周报','collection':'market'},'weekly'),
                                  ({'category':'月报','collection':'market'},'monthly'),
@@ -91,7 +105,14 @@ class SiteTests(unittest.TestCase):
                     self.assertIn(f'href="{path}"', library)
                     article = (ROOT / 'dist' / prefix / 'research' / r['slug'] / 'index.html').read_text(encoding='utf-8')
                     self.assertIn(r['published'], article)
-                    self.assertIn(f'href="/{r["pdf"]}"', article)
+                    pdf_links = [attrs for _,attrs in Elements(article).elements if urlsplit(attrs.get('href','')).path == '/'+r['pdf']]
+                    self.assertTrue(pdf_links)
+                    self.assertTrue(all('download' not in attrs for attrs in pdf_links))
+                    reader = Elements(article).with_class('pdf-document')
+                    self.assertEqual(len(reader),1)
+                    self.assertEqual(urlsplit(reader[0]['data']).path, '/'+r['pdf'])
+                    self.assertEqual(reader[0]['type'],'application/pdf')
+                    self.assertIn('id="pdf-reader"',article)
                     self.assertIn('article-intro', article)
                 overview = (ROOT / 'dist' / prefix / 'overview/index.html').read_text(encoding='utf-8')
                 dom = Elements(overview)

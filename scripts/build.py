@@ -139,7 +139,10 @@ I18N = {
     'research_sub': ('从市场观察到独立专题，按研究方向阅读。', 'From market observations to independent studies, organized by research direction.'),
     'read_full_article': ('阅读全文 ↗', 'Read full text ↗'),
     'view_ssrn': ('查看 SSRN 原文 ↗', 'View on SSRN ↗'),
-    'download_pdf': ('下载 PDF ↓', 'Download PDF ↓'),
+    'view_pdf': ('浏览 PDF', 'Read PDF'),
+    'pdf_reader': ('在线阅读', 'Read online'),
+    'pdf_open': ('在新窗口浏览 ↗', 'Open in a new tab ↗'),
+    'pdf_fallback': ('若浏览器未显示内嵌 PDF，请使用上方入口在新窗口浏览。', 'If the embedded PDF does not appear, use the link above to open it in a new tab.'),
     'intro_heading': ('简介', 'Introduction'),
     'author_label': ('作者：', 'Author: '),
     'report_id_label': ('正式编号：', 'Report ID: '),
@@ -669,25 +672,40 @@ def research_article(r):
     body += head(category_label(r['category']) + ' / RESEARCH', rfield(r, 'title'), dates)
     if r.get('subtitle'):
         body += '<p class="paper-subtitle">' + E(r['subtitle']) + '</p>'
-    body += '<article class="prose"><section class="article-intro"><h2>' + L('intro_heading') + '</h2><p>' + E(rfield(r, 'summary')) + '</p>'
+    intro_label = ('本期判断' if LANG == 'zh' else 'Our view') if r.get('articleBody') else L('intro_heading')
+    body += '<article class="prose"><section class="article-intro"><h2>' + intro_label + '</h2><p>' + E(rfield(r, 'summary')) + '</p>'
     if r.get('author'):
         body += '<p class="caption">' + L('author_label') + E(r['author']) + '</p>'
     if r.get('researchId'):
-        body += '<p class="caption">' + L('report_id_label') + '<span class="mono">' + E(r['researchId']) + '</span></p>'
+        body += '<p class="caption">' + L('report_id_label') + '<span class="mono">' + E(r['researchId']) + ((' · v' + E(r['version'])) if r.get('version') else '') + '</span></p>'
+    reader = ''
     if r.get('pdf'):
         pdf = r['pdf']
         local = (ROOT / pdf).resolve()
         assert local.is_relative_to((ROOT/'assets/papers').resolve()) and local.is_file(), 'PDF must be a published asset'
         assert local.read_bytes().startswith(b'%PDF-'), 'Invalid PDF file'
         size = local.stat().st_size / 1024 / 1024
-        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(url(pdf))}" download>{L("download_pdf")}</a><span class="caption">PDF · {size:.1f} MB</span></div>'
+        digest = hashlib.sha256(local.read_bytes()).hexdigest()[:12]
+        pdf_url = url(pdf) + '?v=' + digest
+        body += f'<div class="paper-actions"><a class="cover-primary" href="#pdf-reader">{L("view_pdf")}<span class="button-icon" aria-hidden="true">↓</span></a><span class="caption">PDF · {size:.1f} MB</span></div>'
+        reader = f'''<section class="pdf-reader" id="pdf-reader" aria-labelledby="pdf-reader-title"><div class="pdf-reader-heading"><h2 id="pdf-reader-title">{L('pdf_reader')}</h2><a href="{E(pdf_url)}" target="_blank" rel="noopener">{L('pdf_open')}</a></div><object class="pdf-document" data="{E(pdf_url)}#view=FitH" type="application/pdf" aria-label="{E(rfield(r,'title'))}"><p>{L('pdf_fallback')}</p><a href="{E(pdf_url)}" target="_blank" rel="noopener">{L('view_pdf')}</a></object><p class="caption">{L('pdf_fallback')}</p></section>'''
     if r.get('ssrnUrl'):
         assert r['ssrnUrl'].startswith('https://papers.ssrn.com/'), 'Expected SSRN paper URL'
         body += f'<p><a href="{E(r["ssrnUrl"])}" target="_blank" rel="noopener noreferrer">{L("view_ssrn")}</a></p>'
     body += '</section>'
     if rfield(r, 'note'):
         body += '<div class="notice">' + E(rfield(r, 'note')) + '</div>'
-    body += markdown(rfield(r, 'markdown') or '')
+    manuscript = (rfield(r, 'articleBody') if r.get('articleBody') else rfield(r, 'markdown')) or ''
+    notes = ''
+    if LANG == 'zh' and '\n## 数据口径\n' in manuscript:
+        manuscript, notes = manuscript.split('\n## 数据口径\n',1)
+        notes = '## 数据口径\n'+notes
+    elif LANG == 'zh' and '\n## 方法与数据\n' in manuscript and r.get('articleBody'):
+        manuscript, notes = manuscript.split('\n## 方法与数据\n',1)
+        notes = '## 方法与数据\n'+notes
+    body += markdown(manuscript) + reader
+    if notes:
+        body += '<details class="report-notes"><summary>数据说明与参考来源</summary>' + markdown(notes) + '</details>'
     source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
     return body + '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p><p>' + L('not_advice') + '</p></article>'
 
