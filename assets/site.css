@@ -196,3 +196,21 @@ a:hover>.button-icon{transform:translateX(3px)}
 @media(max-width:900px){.report-cover{padding:22px 24px;min-height:320px}.report-title-block{max-width:82%}.report-card .report-cover h3{font-size:28px}.report-card-body{padding:22px 24px}.report-cover-top{gap:8px}.report-brand{font-size:10px}}
 @media(max-width:600px){.report-cover{padding:24px 20px;min-height:300px;background-position:center 60%}.report-title-block{max-width:82%}.report-card .report-cover h3{font-size:28px}.report-cover-top{margin-bottom:28px}.report-card-body{padding:20px}.report-cover-bottom{font-size:10px}.report-category{font-size:10px}.report-card .card-foot{gap:12px}.report-card .card-foot a{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.report-card .report-cover h3{transition:none}}
+
+/* Four series: shared brand, distinct artwork, typography and category accents. */
+.report-series{font:500 10px/1.4 Plex,sans-serif;letter-spacing:.15em;color:var(--cover-accent,var(--blue));margin-bottom:14px}
+.report-cover-weekly{--cover-accent:var(--positive);border-top:4px solid var(--positive);background-position:center 62%}
+.report-cover-monthly{--cover-accent:#d2aa68;border-top:4px solid var(--caution);background-color:var(--ink);background-blend-mode:soft-light;background-position:center 80%;color:var(--paper)}
+.report-card .report-cover-monthly h3{color:var(--paper);font-size:clamp(28px,2.4vw,36px)}
+.report-cover-monthly .report-issue,.report-cover-monthly .report-cover-bottom{color:#c6d1c9}
+.report-cover-monthly .report-category,.report-cover-monthly .report-cover-bottom span{background:var(--ink);color:var(--paper);border-color:#45605b}
+.report-cover-personal{--cover-accent:var(--caution);border-top:4px solid var(--caution);background-image:url('brand/research-cover-topography.jpg');background-size:54% auto;background-position:right 60%}
+.report-cover-personal .report-title-block{max-width:78%;background:var(--paper);padding:14px 16px 16px 0}
+.report-card .report-cover-personal h3{font-family:Plex,Noto,sans-serif;font-weight:500;font-size:clamp(25px,2.1vw,30px);line-height:1.32;letter-spacing:-.025em}
+.report-cover-fomc{--cover-accent:var(--blue);border-top:4px solid var(--blue);background-image:url('brand/research-cover-policy.jpg');background-size:66% auto;background-position:right 64%}
+.report-cover-fomc .report-title-block{max-width:72%;background:var(--paper);padding:12px 14px 12px 0;border-left:2px solid var(--blue);padding-left:16px}
+.report-cover .report-category{border-left:3px solid var(--cover-accent,var(--blue))}
+.filter-weekly{--filter-accent:var(--positive)}.filter-monthly{--filter-accent:var(--caution)}.filter-personal{--filter-accent:var(--caution)}.filter-fomc{--filter-accent:var(--blue)}
+.research-filter a:not(.filter-all)::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--filter-accent);flex-shrink:0}
+@media(hover:hover) and (pointer:fine){.report-cover-monthly:hover h3{color:#e6c797}}
+@media(max-width:600px){.report-cover-personal{background-size:58% auto}.report-cover-personal .report-title-block{max-width:80%}.report-card .report-cover-personal h3{font-size:27px}.report-cover-fomc{background-size:70% auto}.report-cover-fomc .report-title-block{max-width:76%;padding-left:12px}.report-card .report-cover-monthly h3{font-size:29px}}

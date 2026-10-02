@@ -26,6 +26,25 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_report_types_and_weekly_monthly_filters(self):
+        for record, expected in [({'category':'周报','collection':'market'},'weekly'),
+                                 ({'category':'月报','collection':'market'},'monthly'),
+                                 ({'category':'SSRN 论文','collection':'personal'},'personal'),
+                                 ({'category':'FOMC研究','collection':'fomc'},'fomc')]:
+            self.assertEqual(build.report_variant(record), expected)
+        research = [json.loads(p.read_text(encoding='utf-8')) for p in (ROOT/'content/research').glob('*.json')]
+        for prefix in ('','en/'):
+            for kind in ('weekly','monthly','personal','fomc'):
+                page = (ROOT/'dist'/prefix/'research'/kind/'index.html').read_text(encoding='utf-8')
+                matching = [r for r in research if build.report_variant(r) == kind]
+                self.assertEqual(len(Elements(page).with_class('report-cover-'+kind)), len(matching))
+                active = [attrs for _,attrs in Elements(page).elements if attrs.get('aria-current') == 'page']
+                self.assertEqual(len(active), 1)
+                self.assertEqual(active[0]['href'], '/'+prefix+'research/'+kind+'/')
+                for r in matching:
+                    article = (ROOT/'dist'/prefix/'research'/r['slug']/'index.html').read_text(encoding='utf-8')
+                    self.assertIn('href="/'+prefix+'research/'+kind+'/"', article)
+
     def test_dashboard_score_boundaries_before_rounding(self):
         # 34.99 and 64.99 round up in display, but must keep their original colors.
         cases = [(0, 'constructive'), (34.99, 'constructive'), (35, 'neutral'),

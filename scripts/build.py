@@ -153,6 +153,10 @@ I18N = {
     'revised_at': ('修订于', 'Revised'),
     # Collections
     'col_market': ('市场周报与月报', 'Market Letters'),
+    'col_weekly': ('市场周报', 'Weekly Letters'),
+    'col_monthly': ('市场月报', 'Monthly Letters'),
+    'col_weekly_desc': ('每周回看市场结构、风险与下一期观察条件。', 'A weekly review of market structure, risk, and conditions to watch next.'),
+    'col_monthly_desc': ('按月整理市场变化与中期研究判断。', 'Monthly reviews of market developments and medium-term research.'),
     'col_market_label': ('MARKET LETTERS', 'MARKET LETTERS'),
     'col_market_desc': ('沿着周度与月度的时间刻度，梳理市场变化、风险与观察。', 'Tracking market changes, risk, and observations along weekly and monthly intervals.'),
     'col_personal': ('个人专题研究', 'Independent Research'),
@@ -515,6 +519,8 @@ def research_cards(research):
         summary = rfield(r, 'summary')
         group = collection(r)
         assert group in COLLECTIONS, 'Unknown research collection'
+        variant = report_variant(r)
+        series = {'weekly':'WEEKLY REVIEW','monthly':'MONTHLY LETTER','personal':'INDEPENDENT RESEARCH','fomc':'POLICY / FOMC'}[variant]
         issue, separator, cover_title = title.partition(': ' if LANG == 'en' else '：')
         if not separator:
             issue, cover_title = '', title
@@ -527,9 +533,9 @@ def research_cards(research):
         else:
             date_note = (r.get('dateLabel_en', L('published_at')) if LANG == 'en' else r.get('dateLabel', L('published_at'))) + ' ' + r['published']
         subtitle = f'<p class="research-subtitle">{E(rfield(r, "subtitle"))}</p>' if r.get('subtitle') else ''
-        cover = f'''<a class="report-cover report-cover-{group}" href="{url('research/'+r['slug']+'.html')}" aria-label="{E(title)}">
+        cover = f'''<a class="report-cover report-cover-{variant}" href="{url('research/'+r['slug']+'.html')}" aria-label="{E(title)}">
 <div class="report-cover-top"><span class="report-brand">Residual Inertia | 余势</span><span class="report-category">{E(category_label(r['category']))}</span></div>
-<div class="report-title-block">{('<p class="report-issue">'+E(issue)+'</p>') if issue else ''}<h3>{E(cover_title)}</h3></div>
+<div class="report-title-block"><p class="report-series">{series}</p>{('<p class="report-issue">'+E(issue)+'</p>') if issue else ''}<h3>{E(cover_title)}</h3></div>
 <div class="report-cover-bottom"><span class="mono">{E(identity)}</span><span>{E(date_note)}</span></div></a>'''
         cards.append(f'<article class="research-card report-card">{cover}<div class="report-card-body">{subtitle}<p class="research-summary">{E(summary)}</p><div class="card-foot"><div class="report-byline"><span>{E(r.get("author") or "Residual Inertia")}</span><time class="mono" datetime="{E(r["published"])}">{E(r["published"])}</time></div>{anchor("research/"+r["slug"]+".html", L("read_full_article"))}</div></div></article>')
     return '<div class="research-grid">' + ''.join(cards) + '</div>'
@@ -546,10 +552,18 @@ def collection(r):
     return r.get('collection', 'market' if r['category'] in ('周报', '月报') else 'personal')
 
 
+def report_variant(r):
+    if r['category'] == '周报':
+        return 'weekly'
+    if r['category'] == '月报':
+        return 'monthly'
+    return 'fomc' if collection(r) == 'fomc' else 'personal'
+
+
 def research_navigation(research, active='all'):
     items = [('all', 'research/index.html', L('research_all'), len(research))]
-    items += [(key, f'research/{key}/index.html', L(tkey), sum(collection(r) == key for r in research)) for key, (tkey, _, _) in COLLECTIONS.items()]
-    links = ''.join(f'<a href="{url(route)}"' + (' aria-current="page"' if key == active else '') + f'>{E(label)}<span class="mono">{count}</span></a>' for key, route, label, count in items)
+    items += [(key, f'research/{key}/index.html', L('col_'+key), sum(report_variant(r) == key for r in research)) for key in ('weekly','monthly','personal','fomc')]
+    links = ''.join(f'<a class="filter-{key}" href="{url(route)}"' + (' aria-current="page"' if key == active else '') + f'>{E(label)}<span class="mono">{count}</span></a>' for key, route, label, count in items)
     return f'<nav class="research-filter" aria-label="{L("research_categories")}">{links}</nav>'
 
 
@@ -608,8 +622,8 @@ def inline(text):
 
 
 def research_article(r):
-    tkey, _, _ = COLLECTIONS[collection(r)]
-    body = anchor('research/' + collection(r) + '/index.html', '← ' + L(tkey), 'back')
+    back_key = report_variant(r) if r['category'] in ('周报', '月报') else collection(r)
+    body = anchor('research/' + back_key + '/index.html', '← ' + L('col_'+back_key), 'back')
     date_label = rfield(r, 'dateLabel') or L('report_date')
     dates = f'{date_label} {r["published"]}'
     if r.get('updated'):
@@ -714,6 +728,12 @@ def build_language(snapshots, research, latest):
             reports = [r for r in research if collection(r) == key]
             return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + '<section class="research-library">' + (research_cards(reports) if reports else '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>') + '</section>'
         write(f'research/{key}/index.html', L(tkey), folder, 'research')
+    for kind, label in [('weekly','WEEKLY LETTERS'),('monthly','MONTHLY LETTERS')]:
+        def period_folder(kind=kind, label=label):
+            reports = [r for r in research if report_variant(r) == kind]
+            empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + L('empty_text') + '</p></div>'
+            return anchor('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p><section class="research-library">' + (research_cards(reports) if reports else empty) + '</section>'
+        write(f'research/{kind}/index.html', L('col_'+kind), period_folder, 'research')
     for r in research:
         write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'))
     write('about.html', L('about_title'), about, 'about')
