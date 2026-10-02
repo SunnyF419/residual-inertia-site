@@ -178,6 +178,10 @@ a:hover>.button-icon{transform:translateX(3px)}
 /* Research cards share the actual reports' mountain cover and editorial type. */
 @font-face{font-family:ReportSerif;src:url('brand/fonts/NotoSerifSC-Report.woff') format('woff');font-weight:550;font-display:swap}
 .research-card.report-card{padding:0;overflow:hidden;background:var(--surface);border-radius:4px}
+.report-card-link{display:flex;flex:1;flex-direction:column;min-width:0;color:var(--ink);text-decoration:none}
+.report-card-link:focus-visible{outline-offset:-4px}
+.report-readmore{color:var(--blue);font-size:14px;white-space:nowrap;border-bottom:1px solid var(--grid);padding-bottom:3px}
+.report-card-link:hover .report-readmore{border-color:var(--blue)}
 .report-cover{display:flex;flex-direction:column;position:relative;min-height:340px;padding:24px 28px;color:var(--ink);text-decoration:none;background:var(--paper) url('brand/research-cover-mountain.jpg') no-repeat center 62%;background-size:cover;border-bottom:1px solid var(--grid)}
 .report-cover-top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:32px}
 .report-brand{font-size:12px;letter-spacing:.025em}.report-category{font-size:11px;color:var(--slate);background:var(--paper);padding:3px 8px;border:1px solid var(--grid);border-radius:3px;white-space:nowrap}
@@ -192,7 +196,7 @@ a:hover>.button-icon{transform:translateX(3px)}
 .report-card .card-foot{margin-top:auto;padding-top:16px;align-items:flex-end}
 .report-byline{display:flex;flex-direction:column;gap:4px}.report-byline time{font-size:11px;color:var(--slate)}
 .report-cover:focus-visible{outline-offset:-5px}
-@media(hover:hover) and (pointer:fine){.report-cover:hover h3{color:var(--blue)}}
+@media(hover:hover) and (pointer:fine){.report-card-link:hover h3{color:var(--blue)}}
 @media(max-width:900px){.report-cover{padding:22px 24px;min-height:320px}.report-title-block{max-width:82%}.report-card .report-cover h3{font-size:28px}.report-card-body{padding:22px 24px}.report-cover-top{gap:8px}.report-brand{font-size:10px}}
 @media(max-width:600px){.report-cover{padding:24px 20px;min-height:300px;background-position:center 60%}.report-title-block{max-width:82%}.report-card .report-cover h3{font-size:28px}.report-cover-top{margin-bottom:28px}.report-card-body{padding:20px}.report-cover-bottom{font-size:10px}.report-category{font-size:10px}.report-card .card-foot{gap:12px}.report-card .card-foot a{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.report-card .report-cover h3{transition:none}}
@@ -212,7 +216,7 @@ a:hover>.button-icon{transform:translateX(3px)}
 .report-cover .report-category{border-left:3px solid var(--cover-accent,var(--blue))}
 .filter-weekly{--filter-accent:var(--positive)}.filter-monthly{--filter-accent:var(--caution)}.filter-personal{--filter-accent:var(--caution)}.filter-fomc{--filter-accent:var(--blue)}
 .research-filter a:not(.filter-all)::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--filter-accent);flex-shrink:0}
-@media(hover:hover) and (pointer:fine){.report-cover-monthly:hover h3{color:#e6c797}}
+@media(hover:hover) and (pointer:fine){.report-card-link:hover .report-cover-monthly h3{color:#e6c797}}
 @media(max-width:600px){.report-cover-personal{background-size:58% auto}.report-cover-personal .report-title-block{max-width:80%}.report-card .report-cover-personal h3{font-size:27px}.report-cover-fomc{background-size:70% auto}.report-cover-fomc .report-title-block{max-width:76%;padding-left:12px}.report-card .report-cover-monthly h3{font-size:29px}}
 
 /* Fixed chart height; coordinates are resized without magnifying typography. */
@@ -251,5 +255,11 @@ footer.site-footer{margin-top:64px;padding:0;background:var(--ink);color:var(--p
 .research-page-numbers{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 .research-page-numbers a{min-width:44px;font-family:Mono,Noto,monospace}
 .research-page-gap{padding:0 4px;color:var(--slate)}
+/* Text stays selectable, with a reading cursor outside editable controls. */
+body{cursor:default}
+input,textarea,[contenteditable=""],[contenteditable="true"],[contenteditable="plaintext-only"]{cursor:text}
+a[href],button,select,summary,[role="button"],input[type="button"],input[type="submit"],input[type="reset"],input[type="checkbox"],input[type="radio"],input[type="range"],input[type="color"],input[type="file"]{cursor:pointer}
+button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:default}
+@media(max-width:600px){.report-readmore{font-size:13px}}
 @media(max-width:600px){.research-pagination nav{gap:12px}.research-pagination .research-page-direction{padding:8px;font-size:13px}.research-page-numbers{order:3;flex-basis:100%;gap:4px}}
 @media(max-width:600px){.market-panel{padding:16px 12px 12px}.market-toolbar{align-items:flex-start;flex-direction:column;gap:12px}.market-latest{gap:6px 10px}.market-latest time{flex-basis:100%}.market-ranges{width:100%;justify-content:space-between}.market-ranges button{flex:1;padding:8px}.market-plot{height:260px}.market-browse{flex-wrap:wrap;gap:8px}.market-browse output{flex-basis:100%;font-size:12px}.market-legend{gap:8px 16px}.market-svg text{font-size:10px}.market-tooltip{font-size:11px;padding:6px 8px;white-space:normal}}
