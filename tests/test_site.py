@@ -108,11 +108,12 @@ class SiteTests(unittest.TestCase):
                     pdf_links = [attrs for _,attrs in Elements(article).elements if urlsplit(attrs.get('href','')).path == '/'+r['pdf']]
                     self.assertTrue(pdf_links)
                     self.assertTrue(all('download' not in attrs for attrs in pdf_links))
-                    reader = Elements(article).with_class('pdf-document')
-                    self.assertEqual(len(reader),1)
-                    self.assertEqual(urlsplit(reader[0]['data']).path, '/'+r['pdf'])
-                    self.assertEqual(reader[0]['type'],'application/pdf')
-                    self.assertIn('id="pdf-reader"',article)
+                    action = Elements(article).with_class('cover-primary')[0]
+                    self.assertEqual(urlsplit(action['href']).path, '/'+r['pdf'])
+                    self.assertTrue(urlsplit(action['href']).query.startswith('v='))
+                    self.assertNotIn('target', action)
+                    self.assertFalse(Elements(article).with_class('pdf-document'))
+                    self.assertNotIn('id="pdf-reader"',article)
                     self.assertIn('article-intro', article)
                 overview = (ROOT / 'dist' / prefix / 'overview/index.html').read_text(encoding='utf-8')
                 dom = Elements(overview)

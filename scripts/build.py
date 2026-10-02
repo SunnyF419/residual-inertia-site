@@ -140,9 +140,6 @@ I18N = {
     'read_full_article': ('阅读全文 ↗', 'Read full text ↗'),
     'view_ssrn': ('查看 SSRN 原文 ↗', 'View on SSRN ↗'),
     'view_pdf': ('浏览 PDF', 'Read PDF'),
-    'pdf_reader': ('在线阅读', 'Read online'),
-    'pdf_open': ('在新窗口浏览 ↗', 'Open in a new tab ↗'),
-    'pdf_fallback': ('若浏览器未显示内嵌 PDF，请使用上方入口在新窗口浏览。', 'If the embedded PDF does not appear, use the link above to open it in a new tab.'),
     'intro_heading': ('简介', 'Introduction'),
     'author_label': ('作者：', 'Author: '),
     'report_id_label': ('正式编号：', 'Report ID: '),
@@ -678,7 +675,6 @@ def research_article(r):
         body += '<p class="caption">' + L('author_label') + E(r['author']) + '</p>'
     if r.get('researchId'):
         body += '<p class="caption">' + L('report_id_label') + '<span class="mono">' + E(r['researchId']) + ((' · v' + E(r['version'])) if r.get('version') else '') + '</span></p>'
-    reader = ''
     if r.get('pdf'):
         pdf = r['pdf']
         local = (ROOT / pdf).resolve()
@@ -687,8 +683,7 @@ def research_article(r):
         size = local.stat().st_size / 1024 / 1024
         digest = hashlib.sha256(local.read_bytes()).hexdigest()[:12]
         pdf_url = url(pdf) + '?v=' + digest
-        body += f'<div class="paper-actions"><a class="cover-primary" href="#pdf-reader">{L("view_pdf")}<span class="button-icon" aria-hidden="true">↓</span></a><span class="caption">PDF · {size:.1f} MB</span></div>'
-        reader = f'''<section class="pdf-reader" id="pdf-reader" aria-labelledby="pdf-reader-title"><div class="pdf-reader-heading"><h2 id="pdf-reader-title">{L('pdf_reader')}</h2><a href="{E(pdf_url)}" target="_blank" rel="noopener">{L('pdf_open')}</a></div><object class="pdf-document" data="{E(pdf_url)}#view=FitH" type="application/pdf" aria-label="{E(rfield(r,'title'))}"><p>{L('pdf_fallback')}</p><a href="{E(pdf_url)}" target="_blank" rel="noopener">{L('view_pdf')}</a></object><p class="caption">{L('pdf_fallback')}</p></section>'''
+        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(pdf_url)}">{L("view_pdf")}<span class="button-icon" aria-hidden="true">→</span></a><span class="caption">PDF · {size:.1f} MB</span></div>'
     if r.get('ssrnUrl'):
         assert r['ssrnUrl'].startswith('https://papers.ssrn.com/'), 'Expected SSRN paper URL'
         body += f'<p><a href="{E(r["ssrnUrl"])}" target="_blank" rel="noopener noreferrer">{L("view_ssrn")}</a></p>'
@@ -703,7 +698,7 @@ def research_article(r):
     elif LANG == 'zh' and '\n## 方法与数据\n' in manuscript and r.get('articleBody'):
         manuscript, notes = manuscript.split('\n## 方法与数据\n',1)
         notes = '## 方法与数据\n'+notes
-    body += markdown(manuscript) + reader
+    body += markdown(manuscript)
     if notes:
         body += '<details class="report-notes"><summary>数据说明与参考来源</summary>' + markdown(notes) + '</details>'
     source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
