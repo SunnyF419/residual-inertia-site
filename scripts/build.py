@@ -140,6 +140,7 @@ I18N = {
     'download_pdf': ('下载 PDF ↓', 'Download PDF ↓'),
     'intro_heading': ('简介', 'Introduction'),
     'author_label': ('作者：', 'Author: '),
+    'report_id_label': ('正式编号：', 'Report ID: '),
     'sources_heading': ('来源与局限', 'Sources & Limitations'),
     'not_advice': ('仅供研究，不构成投资建议。历史表现不代表未来结果。', 'For research purposes only. Not investment advice. Past performance does not guarantee future results.'),
     'empty_title': ('研究档案待整理', 'Research Archive Pending'),
@@ -184,7 +185,7 @@ PILLAR_ZH = {'Financial Stress': '金融压力', 'Fragility': '市场脆弱度',
 SOURCES = {'市场研究': 'Market Research', '策略表现': 'Strategy Performance', '持仓档案': 'Holdings Archive', 'FOMC 政策研究': 'FOMC Policy Research', '全球态势': 'Global Situation', 'ACM 利率观察台': 'ACM Rate Observatory'}
 STATUS = {'current': ('当时已覆盖', 'Covered'), 'stale': ('当时滞后', 'Lagged')}
 QUALITY = {'pass': ('通过', 'Pass'), 'warning': ('存在提示', 'Warning'), 'fail': ('未通过', 'Fail')}
-CATEGORIES = {'周报': ('周报', 'Weekly'), '月报': ('月报', 'Monthly'), 'SSRN 论文': ('SSRN 论文', 'SSRN Paper')}
+CATEGORIES = {'周报': ('周报', 'Weekly'), '月报': ('月报', 'Monthly'), 'SSRN 论文': ('SSRN 论文', 'SSRN Paper'), 'FOMC研究': ('FOMC 政策研究', 'FOMC Policy Research')}
 
 
 def L(key):
@@ -579,7 +580,7 @@ def inline(text):
 def research_article(r):
     tkey, _, _ = COLLECTIONS[collection(r)]
     body = anchor('research/' + collection(r) + '/index.html', '← ' + L(tkey), 'back')
-    date_label = r.get('dateLabel', L('report_date'))
+    date_label = rfield(r, 'dateLabel') or L('report_date')
     dates = f'{date_label} {r["published"]}'
     if r.get('updated'):
         dates += f' · {L("revised_at")} {r["updated"]}'
@@ -591,6 +592,8 @@ def research_article(r):
     body += '<article class="prose"><section class="article-intro"><h2>' + L('intro_heading') + '</h2><p>' + E(rfield(r, 'summary')) + '</p>'
     if r.get('author'):
         body += '<p class="caption">' + L('author_label') + E(r['author']) + '</p>'
+    if r.get('researchId'):
+        body += '<p class="caption">' + L('report_id_label') + '<span class="mono">' + E(r['researchId']) + '</span></p>'
     if r.get('pdf'):
         pdf = r['pdf']
         local = (ROOT / pdf).resolve()
@@ -602,8 +605,8 @@ def research_article(r):
         assert r['ssrnUrl'].startswith('https://papers.ssrn.com/'), 'Expected SSRN paper URL'
         body += f'<p><a href="{E(r["ssrnUrl"])}" target="_blank" rel="noopener noreferrer">{L("view_ssrn")}</a></p>'
     body += '</section>'
-    if r.get('note'):
-        body += '<div class="notice">' + E(r['note']) + '</div>'
+    if rfield(r, 'note'):
+        body += '<div class="notice">' + E(rfield(r, 'note')) + '</div>'
     body += markdown(rfield(r, 'markdown') or '')
     source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
     return body + '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p><p>' + L('not_advice') + '</p></article>'

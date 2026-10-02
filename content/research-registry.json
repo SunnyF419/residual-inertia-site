@@ -1,0 +1,65 @@
+{
+  "brand": "Residual Inertia | 余势",
+  "reports": [
+    {
+      "researchId": "RI-RN-2026-001",
+      "slug": "fomc-september-2026",
+      "title": "FOMC · 2026 年 9 月：从按兵不动到重新加息",
+      "collection": "fomc",
+      "periodDate": "2026-09-16",
+      "preparedDate": "2026-10-02",
+      "registeredDate": "2026-10-02",
+      "version": "1.0",
+      "status": "approved",
+      "pdfSha256": "17388b7894467105000966ccc3c78f537f1e54131bd02f01e2c0bbe6b59d9517"
+    },
+    {
+      "researchId": "RI-WR-2026-W36",
+      "slug": "market-letter-2026-09-05",
+      "title": "市场周报 · 2026-09-05：指数企稳，结构仍脆弱",
+      "collection": "market",
+      "periodDate": "2026-09-05",
+      "preparedDate": "2026-10-02",
+      "registeredDate": "2026-10-02",
+      "version": "1.0",
+      "status": "approved",
+      "pdfSha256": "be52955ca810227794fe6d8eaa7349b515e2b08d023620ca1c3e5e9c87cdc132"
+    },
+    {
+      "researchId": "RI-WR-2026-W37",
+      "slug": "market-letter-2026-09-12",
+      "title": "市场周报 · 2026-09-12：广度收缩，谨慎信号增强",
+      "collection": "market",
+      "periodDate": "2026-09-12",
+      "preparedDate": "2026-10-02",
+      "registeredDate": "2026-10-02",
+      "version": "1.0",
+      "status": "approved",
+      "pdfSha256": "2f6a71ad50751dee409455bdd396a9eb3955041c459bc2768fd84a1c5ed81a82"
+    },
+    {
+      "researchId": "RI-WR-2026-W38",
+      "slug": "market-letter-2026-09-19",
+      "title": "市场周报 · 2026-09-19：加息落地，反弹未修复广度",
+      "collection": "market",
+      "periodDate": "2026-09-19",
+      "preparedDate": "2026-10-02",
+      "registeredDate": "2026-10-02",
+      "version": "1.0",
+      "status": "approved",
+      "pdfSha256": "3d6d249985b2b236808c69ed7558b51af2921ac65cbaf0e51a6762f6e481ae47"
+    },
+    {
+      "researchId": "RI-WR-2026-W39",
+      "slug": "market-letter-2026-09-26",
+      "title": "市场周报 · 2026-09-26：指数反弹，参与面继续走弱",
+      "collection": "market",
+      "periodDate": "2026-09-26",
+      "preparedDate": "2026-10-02",
+      "registeredDate": "2026-10-02",
+      "version": "1.0",
+      "status": "approved",
+      "pdfSha256": "e9b805326e750a02b5dbbb90db2790fae19ee3e92babff1825586bd720eeb50e"
+    }
+  ]
+}
