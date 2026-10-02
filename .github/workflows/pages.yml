@@ -19,6 +19,10 @@ jobs:
         run: python3 scripts/check.py
       - name: Check score boundaries and research navigation
         run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - name: Check motion accessibility and account navigation
+        run: |
+          node tests/site-motion.cjs
+          node tests/account-nav.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

@@ -14,6 +14,7 @@ OUT = ROOT / 'dist'
 CONFIG = json.loads((ROOT / 'site.json').read_text(encoding='utf-8'))
 CSS_VERSION = hashlib.sha256((ROOT / 'assets/site.css').read_bytes()).hexdigest()[:12]
 ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexdigest()[:12]
+MOTION_VERSION = hashlib.sha256((ROOT / 'assets/site-motion.js').read_bytes()).hexdigest()[:12]
 E = lambda value: html.escape(str(value if value is not None else '—'), quote=True)
 
 # ── Bilingual support ─────────────────────────────────────────────────────
@@ -339,7 +340,8 @@ def shell(title, content, section='', description=None):
 <meta property="og:description" content="{E(desc)}"><meta property="og:type" content="website">
 <link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
-</head><body{' class="global-page"' if section == 'global' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
+<script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
+</head><body{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
 <footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>{L('footer_system')}</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure', L('footer_disclosure'))}</div></div><div class="footer-bottom"><small>{L('footer_disclaimer')}</small></div></footer>{SMART_NAV_JS}</body></html>'''
@@ -373,6 +375,21 @@ def head(kicker, title, text=''):
     return f'<div class="pagehead"><p class="eyebrow">{E(kicker)}</p><h1>{E(title)}</h1><p class="lede">{E(text)}</p></div>'
 
 
+def cover_kline():
+    # A decorative brand motif, never market data or a model output.
+    candles = []
+    previous = 60
+    for i in range(18):
+        close = max(15, min(105, 60 + math.sin(i * .8) * 14 + math.cos(i * 1.4) * 8))
+        top = min(previous, close)
+        color = '#5d8f7e' if close <= previous else '#c86159'
+        x = i * 40 + 20
+        candles.append(f'<line x1="{x}" y1="{max(5, top-8-(i%4)*2):.1f}" x2="{x}" y2="{min(115, max(previous,close)+8+(i%3)*3):.1f}" stroke="{color}" stroke-width="1.5"/>')
+        candles.append(f'<rect x="{x-11}" y="{top:.1f}" width="22" height="{max(2, abs(close-previous)):.1f}" fill="{color}" rx="1"/>')
+        previous = close
+    return '<svg class="cover-kline" viewBox="0 0 720 120" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><clipPath id="kline-clip"><rect id="kline-clip-rect" width="720" height="120"/></clipPath></defs><g clip-path="url(#kline-clip)">' + ''.join(candles) + '</g></svg>'
+
+
 def cover():
     hero = E(CONFIG.get('hero_en' if LANG == 'en' else 'hero', '')).replace('，', '，<br>')
     eyebrow = 'RESIDUAL INERTIA' if LANG == 'en' else 'RESIDUAL INERTIA | 余势'
@@ -381,10 +398,10 @@ def cover():
 <h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
 <p>{L('cover_system')}<span>{L('cover_system_sub')}</span></p></div>
 <p class="cover-founder">{L('home_founder')} · {anchor('about.html#founder', E(CONFIG['founder']))}</p>
-<div class="cover-actions">{anchor('research/index.html', L('cover_read'), 'cover-primary')}{anchor('overview.html', L('cover_overview'), 'cover-secondary')}</div></div>
+<div class="cover-actions">{anchor('research/index.html', '<span>'+L('cover_read')+'</span><span class="button-icon" aria-hidden="true">→</span>', 'cover-primary')}{anchor('overview.html', '<span>'+L('cover_overview').removesuffix(' ↗')+'</span><span class="button-icon" aria-hidden="true">↗</span>', 'cover-secondary')}</div></div>
 <div class="cover-emblem"><span class="emblem-wordmark">Residual Inertia | 余势</span>
 <img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="" width="232" height="164">
-<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p><span>{E(CONFIG['motto'])}</span></div></div>
+<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p><span>{E(CONFIG['motto'])}</span></div></div>{cover_kline()}
 </section>
 '''
 
