@@ -78,7 +78,7 @@ def main():
     overview = (OUT/'overview/index.html').read_text(encoding='utf-8')
     assert history['windowStart'] in overview and history['windowEnd'] in overview and '滚动 5 年' in overview
     overview_en = (OUT/'en/overview/index.html').read_text(encoding='utf-8')
-    assert history['windowStart'] in overview_en and history['windowEnd'] in overview_en and 'Rolling 5-year' in overview_en
+    assert history['windowStart'] in overview_en and history['windowEnd'] in overview_en and 'rolling 5-year' in overview_en.lower()
     assert (OUT/'CNAME').read_text().strip()=='residualinertia.com'
     for route in ('global/index.html', 'en/global/index.html'):
         embedded=(OUT/route).read_text(encoding='utf-8')

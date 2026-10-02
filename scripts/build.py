@@ -53,6 +53,16 @@ I18N = {
     'cover_overview': ('进入市场概览 ↗', 'Market Overview ↗'),
     'home_title': ('独立研究，从简出发', 'Independent Research, From Simplicity'),
     'home_desc': ('独立投资研究与决策系统。每日市场快照、风险观察与研究档案。', 'Independent investment research and decision systems. Daily market snapshots, risk observations, and research archives.'),
+    'featured_research': ('精选研究', 'Featured Research'),
+    'browse_research': ('全部研究 ↗', 'All Research ↗'),
+    'recent_updates': ('最近更新', 'Recent Updates'),
+    'research_all': ('全部', 'All'),
+    'research_categories': ('研究分类', 'Research Categories'),
+    'latest_snapshot': ('市场观察归档', 'Market Observation Archive'),
+    'composite_cutoff': ('状态数据截至', 'State data as of'),
+    'score_ranges': ('分数区间', 'Score Ranges'),
+    'archive_older': ('更早的观察记录', 'Earlier Observations'),
+    'home_founder': ('创始人', 'Founder'),
     # Principles
     'principles_eyebrow': ('OUR PRINCIPLES', 'OUR PRINCIPLES'),
     'principles_title': ('研究的四个原则', 'Four Principles of Research'),
@@ -227,7 +237,6 @@ def rfield(r, base):
 SMART_NAV_JS = '''<script>
 (function(){
   const header=document.querySelector('.masthead');
-  const klineClip=document.getElementById('kline-clip-rect');
   const flipCard=document.querySelector('.founder-flip-card');
   let lastY=window.scrollY,ticking=false;
   function update(){
@@ -235,11 +244,6 @@ SMART_NAV_JS = '''<script>
     if(header){
       if(y>lastY&&y>80)header.classList.add('masthead--hidden');
       else if(y<lastY)header.classList.remove('masthead--hidden');
-    }
-    if(klineClip){
-      const maxScroll=Math.max(200,document.body.scrollHeight-window.innerHeight);
-      const progress=Math.min(1,Math.max(0,y/maxScroll));
-      klineClip.setAttribute('width',(720*progress).toFixed(1));
     }
     lastY=y;ticking=false;
   }
@@ -274,6 +278,24 @@ def number(value, pct=False):
     if not isinstance(value, (int, float)) or not math.isfinite(value):
         return '—'
     return f'{value * 100:.1f}%' if pct else f'{value:.1f}'
+
+
+def score_tone(value):
+    """Same raw-score boundaries as the dashboard's Market Regime _color()."""
+    if not isinstance(value, (int, float)) or not math.isfinite(value):
+        return 'unknown'
+    for threshold, tone in [(35, 'constructive'), (50, 'neutral'), (65, 'caution'), (80, 'defensive')]:
+        if value < threshold:
+            return tone
+    return 'stress'
+
+
+def score_legend():
+    states = [('constructive', '建设性', '<35'), ('neutral', '中性', '35–<50'),
+              ('caution', '谨慎', '50–<65'), ('defensive', '防御', '65–<80'), ('stress', '压力', '≥80')]
+    return '<ul class="score-legend" aria-label="' + L('score_ranges') + '">' + ''.join(
+        f'<li class="tone-{tone}"><i aria-hidden="true"></i>{E(state_label(state))} <span class="mono">{E(bounds)}</span></li>'
+        for tone, state, bounds in states) + '</ul>'
 
 
 def shortdate(value):
@@ -350,49 +372,33 @@ def head(kicker, title, text=''):
     return f'<div class="pagehead"><p class="eyebrow">{E(kicker)}</p><h1>{E(title)}</h1><p class="lede">{E(text)}</p></div>'
 
 
-def cover_kline():
-    n = 18
-    width = 720
-    height = 120
-    gap = width / n
-    candle_w = gap * 0.55
-    svg = []
-    y = 60
-    for i in range(n):
-        change = math.sin(i * 0.8) * 14 + math.cos(i * 1.4) * 8
-        open_y = y
-        close_y = max(15, min(105, 60 + change))
-        high_y = min(115, max(open_y, close_y) + 8 + (i % 3) * 3)
-        low_y = max(5, min(open_y, close_y) - 8 - (i % 4) * 2)
-        y = close_y
-        x = i * gap + gap / 2
-        bullish = close_y <= open_y
-        color = '#5d8f7e' if bullish else '#c86159'
-        body_top = min(open_y, close_y)
-        body_h = max(2, abs(close_y - open_y))
-        svg.append(f'<line x1="{x:.1f}" y1="{low_y:.1f}" x2="{x:.1f}" y2="{high_y:.1f}" stroke="{color}" stroke-width="1.5" opacity="0.75"/>')
-        svg.append(f'<rect x="{x - candle_w/2:.1f}" y="{body_top:.1f}" width="{candle_w:.1f}" height="{body_h:.1f}" fill="{color}" rx="1" opacity="0.9"/>')
-    return f'''<svg class="cover-kline" viewBox="0 0 {width} {height}" preserveAspectRatio="none" aria-hidden="true">
-<defs><clipPath id="kline-clip"><rect id="kline-clip-rect" x="0" y="0" width="0" height="{height}"/></clipPath></defs>
-<g clip-path="url(#kline-clip)">{''.join(svg)}</g>
-</svg>'''
-
-
 def cover():
     hero = E(CONFIG.get('hero_en' if LANG == 'en' else 'hero', '')).replace('，', '，<br>')
     eyebrow = 'RESIDUAL INERTIA' if LANG == 'en' else 'RESIDUAL INERTIA | 余势'
     return f'''<section class="brand-cover" id="hero" aria-label="Residual Inertia">
-{cover_kline()}
 <div class="cover-copy"><p class="eyebrow">{eyebrow}</p>
 <h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
 <p>{L('cover_system')}<span>{L('cover_system_sub')}</span></p></div>
+<p class="cover-founder">{L('home_founder')} · {anchor('about.html#founder', E(CONFIG['founder']))}</p>
 <div class="cover-actions">{anchor('research/index.html', L('cover_read'), 'cover-primary')}{anchor('overview.html', L('cover_overview'), 'cover-secondary')}</div></div>
+<div class="cover-emblem"><span class="emblem-wordmark">Residual Inertia | 余势</span>
+<img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="" width="232" height="164">
+<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p><span>{E(CONFIG['motto'])}</span></div></div>
 </section>
 '''
 
 
 def homepage(latest, research):
-    return cover()
+    featured = [r for r in research if r.get('ssrnUrl')][:2] or research[:2]
+    content = cover()
+    if featured:
+        content += f'<section class="home-featured" aria-labelledby="featured-title"><div class="editorial-heading"><div><p class="eyebrow">SELECTED PAPERS</p><h2 id="featured-title">{L("featured_research")}</h2></div>{anchor("research/index.html", L("browse_research"))}</div>{research_cards(featured)}</section>'
+    updates = [(latest['observationDate'], L('latest_snapshot'), L('nav_overview'), 'snapshots/' + latest['observationDate'] + '.html')]
+    updates += [(r['published'], rfield(r, 'title'), category_label(r['category']), 'research/' + r['slug'] + '.html') for r in research]
+    updates.sort(key=lambda item: item[0], reverse=True)
+    rows = ''.join(f'<li><time class="mono" datetime="{E(day)}">{E(day)}</time>{anchor(route, E(title))}<span>{E(kind)}</span></li>' for day, title, kind, route in updates[:3])
+    content += f'<section class="home-updates" aria-labelledby="updates-title"><div><p class="eyebrow">NOTEBOOK</p><h2 id="updates-title">{L("recent_updates")}</h2></div><ul class="update-list">{rows}</ul></section>'
+    return content
 
 
 def principles():
@@ -414,15 +420,15 @@ def metrics(s):
              (L('m_state'), state_label(m['regimeState']), f"{L('score_label')} {number(m['regimeScore'])} / 100", m['regimeDate']),
              (L('m_target'), number(m['targetExposure'], True), L('m_target_d'), m['signalDate']),
              (L('m_breadth'), number(m['breadth'], True), L('m_breadth_d'), m['breadthDate'])]
-    return '<div class="metrics">' + ''.join(f'<section class="metric"><p>{E(label)}</p><strong>{E(value)}</strong><span>{E(detail)}</span><small>{L("data_as_of")} {shortdate(asof)}</small></section>' for label, value, detail, asof in specs) + '</div>'
+    return '<div class="metrics">' + ''.join(f'<section class="metric"><p>{E(label)}</p><strong>{E(value)}</strong><span class="{"score-value tone-" + score_tone(m["regimeScore"]) if i == 1 else ""}">{E(detail)}</span><small>{L("data_as_of")} {shortdate(asof)}</small></section>' for i, (label, value, detail, asof) in enumerate(specs)) + '</div>'
 
 
 def pillars(s):
     rows = ''
     for p in s['market'].get('pillars', []):
         score = p.get('score')
-        width = min(100, max(0, score)) if isinstance(score, (int, float)) else 0
-        tone = {'建设性': 'positive', '谨慎': 'caution', '中性': 'caution', '防御': 'caution', '压力': 'risk'}.get(p['state'], 'neutral')
+        width = min(100, max(0, score)) if isinstance(score, (int, float)) and math.isfinite(score) else 0
+        tone = 'tone-' + score_tone(score)
         label = p['name'] if LANG == 'en' else PILLAR_ZH.get(p['name'], p['name'])
         rows += f'<div class="pillar"><div><span>{E(label)}</span><span>{E(state_label(p["state"]))} <b>{number(score)}</b></span></div><div class="track"><span class="{tone}" style="width:{width:.4f}%"></span></div></div>'
     return f'<section class="panel"><div class="section-title"><h2>{L("pillars_title")}</h2><span class="mono">/ 100</span></div>{rows}<p class="caption">{L("pillars_caption")}</p></section>'
@@ -447,7 +453,7 @@ def snapshot_rows(snapshots, limit=None):
     rows = []
     for s in list(reversed(snapshots))[:limit]:
         m = s['market']
-        rows.append(f'<tr><td>{anchor("snapshots/"+s["observationDate"]+".html", E(s["observationDate"]), "mono")}</td><td>{E(m["riskLevel"])}</td><td>{E(state_label(m["regimeState"]))}</td><td class="numeric">{number(m["regimeScore"])}</td><td class="numeric">{number(m["breadth"],True)}</td><td>{shortdate(m["signalDate"])}</td></tr>')
+        rows.append(f'<tr><td>{anchor("snapshots/"+s["observationDate"]+".html", E(s["observationDate"]), "mono")}</td><td>{E(m["riskLevel"])}</td><td>{E(state_label(m["regimeState"]))}</td><td class="numeric score-value tone-{score_tone(m["regimeScore"])}">{number(m["regimeScore"])}</td><td class="numeric">{number(m["breadth"],True)}</td><td>{shortdate(m["signalDate"])}</td></tr>')
     return '<div class="table-scroll" tabindex="0" role="region" aria-label="Daily snapshots"><table><thead><tr><th>observation</th><th>risk</th><th>state</th><th class="numeric">score</th><th class="numeric">breadth</th><th>signal</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>'
 
 
@@ -455,19 +461,22 @@ def overview_pillars(s):
     items = []
     for p in s['market'].get('pillars', []):
         score = p.get('score')
-        width = min(100, max(0, score)) if isinstance(score, (int, float)) else 0
-        tone = {'建设性': 'positive', '谨慎': 'caution', '中性': 'caution', '防御': 'caution', '压力': 'risk'}.get(p['state'], 'neutral')
+        width = min(100, max(0, score)) if isinstance(score, (int, float)) and math.isfinite(score) else 0
+        tone = 'tone-' + score_tone(score)
         label = p['name'] if LANG == 'en' else PILLAR_ZH.get(p['name'], p['name'])
-        items.append(f'<div class="overview-pillar"><div class="pillar-label"><span>{E(label)}</span><span>{E(state_label(p["state"]))}</span></div><div class="pillar-track"><span class="{tone}" style="width:{width:.4f}%"></span></div><div class="pillar-value">{number(score)}</div></div>')
+        items.append(f'<div class="overview-pillar"><div class="pillar-label"><span>{E(label)}</span><span>{E(state_label(p["state"]))}</span></div><div class="pillar-track"><span class="{tone}" style="width:{width:.4f}%"></span></div><div class="pillar-value score-value {tone}">{number(score)}</div></div>')
     return '<div class="overview-pillar-grid">' + ''.join(items) + '</div>'
 
 
 def overview_snapshot_list(snapshots):
     items = []
-    for s in list(reversed(snapshots))[:8]:
+    for s in reversed(snapshots):
         m = s['market']
-        items.append(f'<li class="snapshot-item"><a href="{url("snapshots/"+s["observationDate"]+".html")}"><span class="snapshot-date mono">{E(s["observationDate"])}</span><span class="snapshot-state">{E(state_label(m["regimeState"]))}</span><span class="snapshot-score mono">{number(m["regimeScore"])}</span><span class="snapshot-link">{L("snapshot_view")}</span></a></li>')
-    return '<ul class="snapshot-list">' + ''.join(items) + '</ul>'
+        items.append(f'<li class="snapshot-item"><a href="{url("snapshots/"+s["observationDate"]+".html")}"><time datetime="{E(s["observationDate"])}" class="snapshot-date mono">{E(s["observationDate"])}</time><span class="snapshot-state">{E(state_label(m["regimeState"]))}</span><span class="snapshot-score mono score-value tone-{score_tone(m["regimeScore"])}">{number(m["regimeScore"])}</span><span class="snapshot-link">{L("snapshot_view")}</span></a></li>')
+    result = '<ul class="snapshot-list">' + ''.join(items[:6]) + '</ul>'
+    if len(items) > 6:
+        result += '<details class="archive-more"><summary>' + L('archive_older') + f' · {len(items)-6}</summary><ul class="snapshot-list">' + ''.join(items[6:]) + '</ul></details>'
+    return result
 
 
 def overview_reading(s):
@@ -477,7 +486,8 @@ def overview_reading(s):
         posture = f"Composite state {state_label(m['regimeState'])}, score {number(m['regimeScore'])} / 100, breadth {number(m['breadth'], True)}."
     else:
         posture = brief.get('posture', f"综合状态 {m['regimeState']}。")
-    return f'<section class="reading-card"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2>{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{anchor("snapshots/"+s["observationDate"]+".html", L("read_full"))} · {L("data_as_of")} {shortdate(m["signalDate"])} · {E(s["observationDate"])} {L("archived_label")}</p></div><div class="reading-score"><span class="mono">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div></section>'
+    tone = 'tone-' + score_tone(m['regimeScore'])
+    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{E(s["observationDate"])} {L("archived_label")}</p></div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{anchor("snapshots/"+s["observationDate"]+".html", L("read_full"))}</div></section>'
 
 
 def research_cards(research):
@@ -488,8 +498,9 @@ def research_cards(research):
         if r.get('dataThrough'):
             date_note = L('data_through') + ' ' + r['dataThrough']
         else:
-            date_note = (r.get('dateLabel', L('published_at'))) + ' ' + r['published']
-        cards.append(f'<article class="research-card"><p class="eyebrow">{E(category_label(r["category"]))} <span class="mono">{E(r["published"])}</span></p><h3>{anchor("research/"+r["slug"]+".html", E(title))}</h3><p>{E(summary)}</p><div class="card-foot"><span>{E(date_note)}</span>{anchor("research/"+r["slug"]+".html", L("read_full_article"))}</div></article>')
+            date_note = (r.get('dateLabel_en', L('published_at')) if LANG == 'en' else r.get('dateLabel', L('published_at'))) + ' ' + r['published']
+        subtitle = f'<p class="research-subtitle">{E(rfield(r, "subtitle"))}</p>' if r.get('subtitle') else ''
+        cards.append(f'<article class="research-card"><p class="eyebrow">{E(category_label(r["category"]))} <time class="mono" datetime="{E(r["published"])}">{E(r["published"])}</time></p><h3>{anchor("research/"+r["slug"]+".html", E(title))}</h3>{subtitle}<p class="research-summary">{E(summary)}</p><div class="card-foot"><span>{E(r.get("author") or date_note)}</span>{anchor("research/"+r["slug"]+".html", L("read_full_article"))}</div></article>')
     return '<div class="research-grid">' + ''.join(cards) + '</div>'
 
 
@@ -502,6 +513,19 @@ COLLECTIONS = {
 
 def collection(r):
     return r.get('collection', 'market' if r['category'] in ('周报', '月报') else 'personal')
+
+
+def research_navigation(research, active='all'):
+    items = [('all', 'research/index.html', L('research_all'), len(research))]
+    items += [(key, f'research/{key}/index.html', L(tkey), sum(collection(r) == key for r in research)) for key, (tkey, _, _) in COLLECTIONS.items()]
+    links = ''.join(f'<a href="{url(route)}"' + (' aria-current="page"' if key == active else '') + f'>{E(label)}<span class="mono">{count}</span></a>' for key, route, label, count in items)
+    return f'<nav class="research-filter" aria-label="{L("research_categories")}">{links}</nav>'
+
+
+def research_landing(research):
+    body = head('RESEARCH ARCHIVE', L('research_head'), L('research_sub')) + research_navigation(research)
+    body += f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>'
+    return body + '<section class="research-library" aria-label="' + L('research_title') + '">' + research_cards(research) + '</section>'
 
 
 def research_folders(research):
@@ -635,11 +659,14 @@ def build_language(snapshots, research, latest):
 
     def overview():
         intro = f'<section class="overview-hero"><p class="eyebrow">{L("ov_eyebrow")}</p><h1>{L("ov_hero")}</h1><p class="lede">{L("ov_lede")}</p></section>'
-        intro += overview_reading(latest)
-        intro += f'<section class="overview-pillars"><p class="eyebrow">{L("ov_pillars_eyebrow")}</p><h2>{L("ov_pillars_title")}</h2><p class="section-intro">{L("ov_pillars_intro")}</p>{overview_pillars(latest)}</section>'
-        intro += f'<section class="overview-trend"><p class="eyebrow">{L("ov_trend_eyebrow")}</p><h2>{L("ov_trend_title")}</h2><p class="section-intro">{L("ov_trend_intro")}</p>{history_chart(snapshots, embedded=True)}</section>'
+        intro += '<div class="overview-current">' + overview_reading(latest)
+        intro += f'<section class="overview-pillars"><p class="eyebrow">{L("ov_pillars_eyebrow")}</p><h2>{L("pillars_title")}</h2>{overview_pillars(latest)}<p class="caption">{L("pillars_caption")}</p></section></div>'
+        intro += score_legend()
+        intro += f'<section class="overview-trend"><div class="editorial-heading"><div><p class="eyebrow">{L("ov_trend_eyebrow")}</p><h2>{L("ov_trend_title")}</h2></div><span class="mono">{L("chart_rolling")}</span></div>{history_chart(snapshots, embedded=True)}</section>'
         intro += f'<section class="overview-archive" id="daily-snapshots"><p class="eyebrow">{L("ov_archive_eyebrow")}</p><h2>{L("ov_archive_title")}</h2><p class="section-intro">{L("ov_archive_intro").format(len(snapshots))}</p>{overview_snapshot_list(snapshots)}</section>'
-        intro += f'<section class="overview-research"><p class="eyebrow">{L("ov_research_eyebrow")}</p><h2>{L("ov_research_title")}</h2>{research_cards([r for r in research if collection(r)=="market"][:2])}</section>'
+        market_reports = [r for r in research if collection(r) == 'market'][:2]
+        if market_reports:
+            intro += f'<section class="overview-research"><p class="eyebrow">{L("ov_research_eyebrow")}</p><h2>{L("ov_research_title")}</h2>{research_cards(market_reports)}</section>'
         return intro
 
     write('index.html', L('home_title'), lambda: homepage(latest, research), 'home')
@@ -648,11 +675,11 @@ def build_language(snapshots, research, latest):
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None), 'overview')
-    write('research/index.html', L('research_title'), lambda: head('RESEARCH', L('research_head'), L('research_sub')) + research_folders(research), 'research')
+    write('research/index.html', L('research_title'), lambda: research_landing(research), 'research')
     for key, (tkey, lkey, dkey) in COLLECTIONS.items():
         def folder(key=key, lkey=lkey, dkey=dkey):
             reports = [r for r in research if collection(r) == key]
-            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + (f'<p><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + (research_cards(reports) if reports else '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>')
+            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + '<section class="research-library">' + (research_cards(reports) if reports else '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>') + '</section>'
         write(f'research/{key}/index.html', L(tkey), folder, 'research')
     for r in research:
         write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'))
