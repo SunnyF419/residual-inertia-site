@@ -329,6 +329,23 @@ def out_dir():
     return OUT / 'en' if LANG == 'en' else OUT
 
 
+def footer():
+    text = lambda cn, en: cn if LANG == 'zh' else en
+    research = ''.join(anchor(f'research/{kind}/index.html', L('col_'+kind)) for kind in ('weekly', 'monthly', 'personal', 'fomc'))
+    market = anchor('overview.html', L('nav_overview')) + anchor('overview.html#daily-snapshots', text('每日快照档案', 'Daily Snapshot Archive')) + anchor('global/index.html', L('nav_global'))
+    account = f'''<a data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a>
+<a href="https://global.residualinertia.com/auth/register">{text('注册读者账户', 'Create Reader Account')}</a>
+<a data-import-report hidden href="https://global.residualinertia.com/auth/login?next=/research/manage">{text('报告管理', 'Manage Reports')}</a>'''
+    about = anchor('about.html', L('nav_about')) + anchor('about.html#founder', L('home_founder')) + anchor('about.html#principles', text('品牌理念', 'Our Principles')) + anchor('about.html#disclosure', L('footer_disclosure'))
+    columns = [(L('nav_research'), research), (text('市场与系统', 'Markets & Systems'), market), ('MyRI', account), ('Residual Inertia', about)]
+    navigation = ''.join(f'<section class="footer-column"><h2>{E(title)}</h2><div>{links}</div></section>' for title, links in columns)
+    return f'''<footer class="site-footer"><div class="wrap footer-inner">
+<nav class="footer-navigation" aria-label="{text('页脚导航', 'Footer navigation')}">{navigation}</nav>
+<div class="footer-signature">{anchor('index.html', '<img src="'+url('assets/brand/RI-symbol-reverse.svg')+'" alt="Residual Inertia | 余势" width="116" height="82">', 'footer-logo')}<p class="footer-brandline">{E(CONFIG['brandLine'])}</p><p class="footer-motto">{E(CONFIG['motto'])}</p></div>
+<div class="footer-bottom"><div><p class="footer-descriptor">{L('footer_system')}</p><p class="footer-disclaimer">{L('footer_disclaimer')}</p><small>© Residual Inertia | 余势</small></div><a class="footer-top" href="#top"><span>{text('返回顶部', 'Back to top')}</span><span aria-hidden="true">↑</span></a></div>
+</div></footer>'''
+
+
 def shell(title, content, section='', description=None):
     lang_attr = 'en' if LANG == 'en' else 'zh-CN'
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
@@ -347,10 +364,10 @@ def shell(title, content, section='', description=None):
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
-</head><body{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
+</head><body{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead" id="top"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
-<footer class="wrap site-footer"><div class="footer-main"><div><strong>Residual Inertia | 余势</strong><p>{L('footer_system')}</p><p class="brand-line">{E(CONFIG.get('brandLine',''))}</p></div><div class="footer-meta"><p>{E(CONFIG['motto'])}</p>{anchor('about.html#disclosure', L('footer_disclosure'))}</div></div><div class="footer-bottom"><small>{L('footer_disclaimer')}</small></div></footer>{SMART_NAV_JS}</body></html>'''
+{footer()}{SMART_NAV_JS}</body></html>'''
 
 
 def write(route, title, render, section='', description=None):

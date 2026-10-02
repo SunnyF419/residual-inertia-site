@@ -216,6 +216,18 @@ a:hover>.button-icon{transform:translateX(3px)}
 @media(max-width:600px){.report-cover-personal{background-size:58% auto}.report-cover-personal .report-title-block{max-width:80%}.report-card .report-cover-personal h3{font-size:27px}.report-cover-fomc{background-size:70% auto}.report-cover-fomc .report-title-block{max-width:76%;padding-left:12px}.report-card .report-cover-monthly h3{font-size:29px}}
 
 /* Fixed chart height; coordinates are resized without magnifying typography. */
+/* Full-width RI directory footer with restrained, high-contrast navigation. */
+footer.site-footer{margin-top:64px;padding:0;background:var(--ink);color:var(--paper);border-top:2px solid var(--blue);font-size:14px}
+.footer-inner{padding:48px 0 24px}.footer-navigation{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:start;gap:32px}
+.footer-column{min-width:0}.footer-column h2{font-size:14px;line-height:1.6;letter-spacing:.06em;font-weight:550;margin-bottom:20px;color:var(--paper)}.footer-column>div{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.footer-navigation a{color:#c7d2cc;font-size:14px;line-height:1.7;white-space:normal;padding:0;text-decoration:none;border-bottom:1px solid transparent;overflow-wrap:anywhere}.footer-navigation a:hover{color:var(--paper);border-color:var(--paper)}
+.site-footer a:focus-visible{outline:2px solid var(--paper);outline-offset:5px}.site-footer [hidden]{display:none!important}
+.footer-signature{display:flex;flex-direction:column;align-items:center;text-align:center;padding:36px 0 32px}.footer-logo{display:inline-block;padding:12px}.footer-logo img{display:block;width:116px;height:82px;object-fit:contain}.footer-signature .footer-brandline{color:var(--paper);font-size:18px;line-height:1.5;margin-top:8px}.footer-signature .footer-motto{color:#c7d2cc;font-size:12px;margin-top:8px}
+.site-footer .footer-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-top:1px solid #304744;margin:0;padding-top:20px}.site-footer .footer-descriptor{font-size:12px;color:#c7d2cc;margin:0}.site-footer .footer-disclaimer{font-size:11px;color:#c7d2cc;line-height:1.7;margin-top:8px;max-width:700px}.site-footer small{display:block;font-size:11px;color:#c7d2cc;margin-top:8px}
+.footer-top{display:inline-flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;min-height:44px;padding:8px 12px;border:1px solid #526260;border-radius:3px;color:var(--paper);text-decoration:none;font-size:12px}.footer-top:hover{color:var(--paper);border-color:var(--paper)}
+@media(max-width:900px){.footer-navigation{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}.footer-inner{padding-top:32px}}
+@media(max-width:600px){footer.site-footer{margin-top:40px}.footer-navigation{gap:28px 20px}.footer-column h2{font-size:13px;margin-bottom:14px}.footer-navigation a{font-size:13px}.footer-signature{padding:28px 0}.site-footer .footer-bottom{align-items:flex-start;flex-direction:column;gap:16px}.footer-top{align-self:flex-end}.footer-signature .footer-brandline{font-size:17px}}
+
 .market-panel{background:var(--surface);border:1px solid var(--grid);border-radius:var(--radius-sm);padding:20px 24px 16px}
 .market-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
 .market-latest{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
