@@ -15,6 +15,7 @@ CONFIG = json.loads((ROOT / 'site.json').read_text(encoding='utf-8'))
 CSS_VERSION = hashlib.sha256((ROOT / 'assets/site.css').read_bytes()).hexdigest()[:12]
 ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexdigest()[:12]
 MOTION_VERSION = hashlib.sha256((ROOT / 'assets/site-motion.js').read_bytes()).hexdigest()[:12]
+CHART_VERSION = hashlib.sha256((ROOT / 'assets/market-chart.js').read_bytes()).hexdigest()[:12]
 E = lambda value: html.escape(str(value if value is not None else '—'), quote=True)
 
 # ── Bilingual support ─────────────────────────────────────────────────────
@@ -345,6 +346,7 @@ def shell(title, content, section='', description=None):
 <link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
+{f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
 </head><body{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
@@ -461,14 +463,31 @@ def history_chart(snapshots, embedded=False):
     usable = history['points']
     start = date.fromisoformat(history['windowStart']).toordinal()
     end = date.fromisoformat(history['windowEnd']).toordinal()
-    points = ' '.join(f"{48+(date.fromisoformat(p['date']).toordinal()-start)/max(end-start,1)*600:.2f},{178-p['score']*1.45:.2f}" for p in usable)
-    grid = ''.join(f'<line x1="48" y1="{178-v*1.45}" x2="648" y2="{178-v*1.45}"/><text x="8" y="{183-v*1.45}">{v}</text>' for v in [0, 50, 100])
-    ticks = ''.join(f'<text x="{48+(date(y,1,1).toordinal()-start)/max(end-start,1)*600:.2f}" y="212" text-anchor="middle">{y}</text>' for y in range(date.fromordinal(start).year+1, date.fromordinal(end).year+1))
-    svg = f'<svg viewBox="0 0 684 224" role="img" aria-labelledby="history-title history-desc"><title id="history-title">{L("chart_svg_title")}</title><desc id="history-desc">{history["windowStart"]} — {history["windowEnd"]}, {len(usable)} {L("chart_caption_suffix")}</desc><g class="grid">{grid}</g><polyline class="series" points="{points}"/>{ticks}</svg>'
-    caption = f'<p class="caption">{history["windowStart"]} — {history["windowEnd"]} · {len(usable)} {L("chart_caption_suffix")}</p>'
-    if embedded:
-        return f'<div class="chart-embedded">{svg}{caption}</div>'
-    return f'''<section class="panel chart"><div class="section-title"><h2>{L("chart_title")}</h2><span class="mono">{L("chart_rolling")}</span></div>{svg}{caption}</section>'''
+    latest = usable[-1]
+    states = [('constructive', '建设性', 0, 35), ('neutral', '中性', 35, 50),
+              ('caution', '谨慎', 50, 65), ('defensive', '防御', 65, 80), ('stress', '压力', 80, 100)]
+    x = lambda day: 40 + (date.fromisoformat(day).toordinal()-start)/max(end-start,1)*1140
+    y = lambda score: 266-score*2.42
+    points = ' '.join(f'{x(p["date"]):.2f},{y(p["score"]):.2f}' for p in usable)
+    bands = ''.join(f'<rect class="market-band tone-{tone}" x="40" y="{y(hi)}" width="1140" height="{(hi-lo)*2.42}"/>' for tone, _, lo, hi in states)
+    grid = ''.join(f'<line x1="40" y1="{y(v)}" x2="1180" y2="{y(v)}"/><text x="30" y="{y(v)+4}" text-anchor="end">{v}</text>' for v in [0, 35, 50, 65, 80, 100])
+    ticks = ''.join(f'<text x="{x(date(yr,1,1).isoformat())}" y="292" text-anchor="middle">{yr}</text>' for yr in range(date.fromordinal(start).year+1, date.fromordinal(end).year+1))
+    svg = f'<svg class="market-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" role="img" aria-labelledby="history-title history-desc"><title id="history-title">{L("chart_svg_title")}</title><desc id="history-desc">{history["windowStart"]} — {history["windowEnd"]}, {len(usable)} {L("chart_caption_suffix")}</desc><g data-chart-bands>{bands}</g><g class="market-grid" data-chart-grid>{grid}</g><polyline class="market-series" data-chart-series points="{points}"/><g data-chart-ticks>{ticks}</g><circle class="market-endpoint tone-{score_tone(latest["score"])}" data-chart-endpoint cx="{x(latest["date"])}" cy="{y(latest["score"])}" r="4"/><g data-chart-cursor hidden><line class="market-cursor"/><circle r="4"/></g></svg>'
+    zh = LANG == 'zh'
+    text = lambda cn, en: cn if zh else en
+    buttons = ''.join(f'<button type="button" data-chart-range="{months}" aria-pressed="{"true" if months == 60 else "false"}">{label}</button>' for months, label in [(1,text('近 1 月','1M')), (6,text('近半年','6M')), (12,text('近 1 年','1Y')), (60,text('近 5 年','5Y'))])
+    legend = ''.join(f'<li class="tone-{tone}"><i aria-hidden="true"></i>{E(state_label(state))}<span>{"≥80" if lo == 80 else "<35" if lo == 0 else str(lo)+"–<"+str(hi)}</span></li>' for tone, state, lo, hi in states)
+    payload = json.dumps({'windowStart':history['windowStart'], 'windowEnd':history['windowEnd'],
+                          'points':[dict(p, label=state_label(p['state'])) for p in usable],
+                          'rangeLabel':text('所选范围','Selected range'), 'countLabel':text('个数据点','data points'),
+                          'scoreLabel':text('综合分数','Composite score')}, ensure_ascii=False, separators=(',',':')).replace('<','\\u003c')
+    return f'''<div class="market-panel" data-market-chart>
+<div class="market-toolbar"><div class="market-latest"><span>{text('历史序列最新值','Latest in history')}</span><strong class="score-value tone-{score_tone(latest['score'])}">{number(latest['score'])}<small> / 100</small></strong><span class="market-status score-value tone-{score_tone(latest['score'])}">{E(state_label(latest['state']))}</span><time class="mono" datetime="{latest['date']}">{latest['date']}</time></div><div class="market-ranges" data-chart-controls hidden role="group" aria-label="{text('图表时间范围','Chart time range')}">{buttons}</div></div>
+<div class="market-plot">{svg}<div class="market-tooltip" data-chart-tooltip hidden></div></div>
+<div class="market-browse" data-chart-controls hidden><label for="market-day">{text('逐日查看','Explore by date')}</label><input id="market-day" data-chart-slider type="range" min="0" max="{len(usable)-1}" value="{len(usable)-1}" aria-label="{text('用方向键查看历史日期和分数','Use arrow keys to explore historical dates and scores')}"><output data-chart-readout for="market-day" aria-live="polite"></output></div>
+<ul class="market-legend" aria-label="{L('score_ranges')}">{legend}</ul>
+<p class="market-window mono" data-chart-window>{history['windowStart']} — {history['windowEnd']} · {len(usable)} {text('个数据点','data points')}</p><p class="market-source">{text('来源：市场研究 Dashboard 历史序列。滚动 5 年；分数越高，越需要关注。色带按原始分数区间划分。','Source: Market Research Dashboard historical series. Rolling 5-year window; higher scores warrant more attention. Bands use raw score thresholds.')}</p>
+<script type="application/json" data-chart-data>{payload}</script></div>'''
 
 
 def snapshot_rows(snapshots, limit=None):

@@ -23,6 +23,7 @@ jobs:
         run: |
           node tests/site-motion.cjs
           node tests/account-nav.cjs
+          node tests/market-chart.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
