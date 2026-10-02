@@ -241,4 +241,15 @@ footer.site-footer{margin-top:64px;padding:0;background:var(--ink);color:var(--p
 .market-window{font-size:11px;color:var(--slate);margin-top:12px}.market-source{font-size:11px;color:var(--slate);line-height:1.6;margin-top:4px!important}
 .market-panel [hidden]{display:none!important}
 .report-notes{margin-top:24px;padding:16px 0;border-top:1px solid var(--grid);font-size:13px;color:var(--slate)}.report-notes summary{cursor:pointer;color:var(--ink);font-size:14px}.report-notes[open] summary{margin-bottom:16px}
+.research-pagination{border-top:1px solid var(--grid);margin-top:32px;padding-top:24px}
+.research-pagination>.caption{margin:0 0 16px;text-align:center}
+.research-pagination nav{justify-content:space-between;gap:16px;flex-wrap:wrap}
+.research-pagination a,.research-pagination .research-page-direction{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;font-size:14px;text-decoration:none;border:1px solid var(--grid);border-radius:4px;color:var(--ink)}
+.research-pagination a:hover{border-color:var(--blue);color:var(--blue)}
+.research-pagination a[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.research-pagination [aria-disabled="true"]{color:var(--slate);border-color:transparent}
+.research-page-numbers{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.research-page-numbers a{min-width:44px;font-family:Mono,Noto,monospace}
+.research-page-gap{padding:0 4px;color:var(--slate)}
+@media(max-width:600px){.research-pagination nav{gap:12px}.research-pagination .research-page-direction{padding:8px;font-size:13px}.research-page-numbers{order:3;flex-basis:100%;gap:4px}}
 @media(max-width:600px){.market-panel{padding:16px 12px 12px}.market-toolbar{align-items:flex-start;flex-direction:column;gap:12px}.market-latest{gap:6px 10px}.market-latest time{flex-basis:100%}.market-ranges{width:100%;justify-content:space-between}.market-ranges button{flex:1;padding:8px}.market-plot{height:260px}.market-browse{flex-wrap:wrap;gap:8px}.market-browse output{flex-basis:100%;font-size:12px}.market-legend{gap:8px 16px}.market-svg text{font-size:10px}.market-tooltip{font-size:11px;padding:6px 8px;white-space:normal}}

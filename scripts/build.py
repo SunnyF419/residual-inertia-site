@@ -137,6 +137,11 @@ I18N = {
     'research_title': ('研究档案', 'Research Archive'),
     'research_head': ('研究，让观察有据可循。', 'Research grounds observation in evidence.'),
     'research_sub': ('从市场观察到独立专题，按研究方向阅读。', 'From market observations to independent studies, organized by research direction.'),
+    'research_pagination': ('研究分页', 'Research pagination'),
+    'research_page_label': ('第 {0} 页', 'Page {0}'),
+    'research_page_range': ('第 {0}–{1} 篇，共 {2} 篇', '{0}–{1} of {2} reports'),
+    'research_previous': ('← 上一页', '← Previous'),
+    'research_next': ('下一页 →', 'Next →'),
     'read_full_article': ('阅读全文 ↗', 'Read full text ↗'),
     'view_ssrn': ('查看 SSRN 原文 ↗', 'View on SSRN ↗'),
     'view_pdf': ('浏览 PDF', 'Read PDF'),
@@ -603,10 +608,41 @@ def research_navigation(research, active='all'):
     return f'<nav class="research-filter" aria-label="{L("research_categories")}">{links}</nav>'
 
 
-def research_landing(research):
+RESEARCH_PAGE_SIZE = 6
+
+
+def research_page_count(reports):
+    return max(1, (len(reports) + RESEARCH_PAGE_SIZE - 1) // RESEARCH_PAGE_SIZE)
+
+
+def research_page_route(base, page):
+    return f'{base}/index.html' if page == 1 else f'{base}/page/{page}/index.html'
+
+
+def research_library(reports, page=1, base='research', empty=''):
+    total_pages = research_page_count(reports)
+    assert 1 <= page <= total_pages, 'Invalid research page'
+    start = (page - 1) * RESEARCH_PAGE_SIZE
+    body = '<section class="research-library" aria-label="' + L('research_title') + '">' + (research_cards(reports[start:start + RESEARCH_PAGE_SIZE]) if reports else empty)
+    if total_pages > 1:
+        def page_link(number, label, cls=''):
+            return f'<a class="{cls}" href="{url(research_page_route(base, number))}" aria-label="{E(L("research_page_label").format(number))}"' + (' aria-current="page"' if number == page else '') + f'>{label}</a>'
+        previous = page_link(page - 1, L('research_previous'), 'research-page-direction') if page > 1 else f'<span class="research-page-direction" aria-disabled="true">{L("research_previous")}</span>'
+        following = page_link(page + 1, L('research_next'), 'research-page-direction') if page < total_pages else f'<span class="research-page-direction" aria-disabled="true">{L("research_next")}</span>'
+        numbers = sorted({1, total_pages} | set(range(max(1, page - 2), min(total_pages, page + 2) + 1)))
+        links = []
+        for i, number in enumerate(numbers):
+            if i and number > numbers[i - 1] + 1:
+                links.append('<span class="research-page-gap" aria-hidden="true">…</span>')
+            links.append(page_link(number, str(number)))
+        body += f'<div class="research-pagination"><p class="caption">{L("research_page_range").format(start + 1, min(start + RESEARCH_PAGE_SIZE, len(reports)), len(reports))}</p><nav aria-label="{L("research_pagination")}">{previous}<div class="research-page-numbers">' + ''.join(links) + f'</div>{following}</nav></div>'
+    return body + '</section>'
+
+
+def research_landing(research, page=1):
     body = head('RESEARCH ARCHIVE', L('research_head'), L('research_sub')) + research_navigation(research)
     body += f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>'
-    return body + '<section class="research-library" aria-label="' + L('research_title') + '">' + research_cards(research) + '</section>'
+    return body + research_library(research, page)
 
 
 def research_folders(research):
@@ -771,18 +807,24 @@ def build_language(snapshots, research, latest):
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None), 'overview')
-    write('research/index.html', L('research_title'), lambda: research_landing(research), 'research')
+    for page in range(1, research_page_count(research) + 1):
+        write(research_page_route('research', page), L('research_title'), lambda page=page: research_landing(research, page), 'research')
     for key, (tkey, lkey, dkey) in COLLECTIONS.items():
-        def folder(key=key, lkey=lkey, dkey=dkey):
+        def folder(page, key=key, lkey=lkey, dkey=dkey):
             reports = [r for r in research if collection(r) == key]
-            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + '<section class="research-library">' + (research_cards(reports) if reports else '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>') + '</section>'
-        write(f'research/{key}/index.html', L(tkey), folder, 'research')
+            empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>'
+            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + research_library(reports, page, f'research/{key}', empty)
+        reports = [r for r in research if collection(r) == key]
+        for page in range(1, research_page_count(reports) + 1):
+            write(research_page_route(f'research/{key}', page), L(tkey), lambda page=page: folder(page), 'research')
     for kind, label in [('weekly','WEEKLY LETTERS'),('monthly','MONTHLY LETTERS')]:
-        def period_folder(kind=kind, label=label):
+        def period_folder(page, kind=kind, label=label):
             reports = [r for r in research if report_variant(r) == kind]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + L('empty_text') + '</p></div>'
-            return anchor('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p><section class="research-library">' + (research_cards(reports) if reports else empty) + '</section>'
-        write(f'research/{kind}/index.html', L('col_'+kind), period_folder, 'research')
+            return anchor('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
+        reports = [r for r in research if report_variant(r) == kind]
+        for page in range(1, research_page_count(reports) + 1):
+            write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research')
     for r in research:
         write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'))
     write('about.html', L('about_title'), about, 'about')

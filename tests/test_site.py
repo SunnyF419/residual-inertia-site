@@ -4,6 +4,7 @@ import hashlib
 import json
 import math
 import unittest
+from unittest.mock import patch
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -28,6 +29,40 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_research_pagination_boundaries_and_category_links(self):
+        original_lang = build.LANG
+        try:
+            for lang, prefix in [('zh','/'),('en','/en/')]:
+                build.LANG = lang
+                for count in (0, 1, 6, 7, 12, 13, 60):
+                    reports = list(range(count))
+                    seen = []
+                    for page in range(1, build.research_page_count(reports) + 1):
+                        def cards(items):
+                            seen.extend(items)
+                            self.assertLessEqual(len(items), 6)
+                            return ''.join(f'<article data-test-report="{item}"></article>' for item in items)
+                        with patch.object(build, 'research_cards', side_effect=cards):
+                            body = build.research_library(reports, page, 'research/weekly', '<p>Empty</p>')
+                        dom = Elements(body)
+                        if count > 6:
+                            current = [a for tag,a in dom.elements if a.get('aria-current') == 'page']
+                            self.assertEqual(len(current), 1)
+                            expected = prefix + 'research/weekly/' + (f'page/{page}/' if page > 1 else '')
+                            self.assertEqual(current[0]['href'], expected)
+                            directions = [a for a in dom.with_class('research-page-direction') if 'href' in a]
+                            self.assertEqual(len(directions), int(page > 1) + int(page < build.research_page_count(reports)))
+                            for tag, attrs in dom.elements:
+                                if tag == 'a':
+                                    self.assertTrue(attrs['href'].startswith(prefix+'research/weekly/'))
+                        else:
+                            self.assertFalse(dom.with_class('research-pagination'))
+                    self.assertEqual(seen, reports)
+                with self.assertRaises(AssertionError):
+                    build.research_library([], 2)
+        finally:
+            build.LANG = original_lang
+
     def test_registered_report_versions_match_published_pdf_bytes(self):
         registry = json.loads((ROOT/'content/research-registry.json').read_text(encoding='utf-8'))
         for entry in registry['reports']:
@@ -95,14 +130,21 @@ class SiteTests(unittest.TestCase):
                 self.assertEqual(len(dom.with_class('button-icon')), 2)
                 self.assertEqual(len(dom.with_class('cover-emblem')), 1)
                 library = (ROOT / 'dist' / prefix / 'research/index.html').read_text(encoding='utf-8')
-                self.assertEqual(len(Elements(library).with_class('research-card')), len(research))
+                self.assertEqual(len(Elements(library).with_class('research-card')), min(6, len(research)))
                 self.assertFalse(Elements(library).with_class('folder-card'))
                 owner_link = Elements(library).with_class('report-import')[0]
                 self.assertIn('hidden', owner_link)
                 self.assertEqual(owner_link['href'], 'https://global.residualinertia.com/auth/login?next=/research/manage')
+                archive_pages = [library] + [(ROOT/'dist'/prefix/'research'/'page'/str(page)/'index.html').read_text(encoding='utf-8') for page in range(2, build.research_page_count(research)+1)]
+                for page in archive_pages:
+                    self.assertLessEqual(len(Elements(page).with_class('research-card')), 6)
+                self.assertEqual(sum(len(Elements(page).with_class('research-card')) for page in archive_pages),len(research))
+                sitemap = (ROOT/'dist'/'sitemap.xml').read_text(encoding='utf-8')
+                for page in range(2, build.research_page_count(research)+1):
+                    self.assertIn('https://residualinertia.com/'+prefix+f'research/page/{page}/', sitemap)
                 for r in research:
                     path = f'/{prefix}research/{r["slug"]}/'
-                    self.assertIn(f'href="{path}"', library)
+                    self.assertEqual(sum(f'href="{path}"' in page for page in archive_pages),1)
                     article = (ROOT / 'dist' / prefix / 'research' / r['slug'] / 'index.html').read_text(encoding='utf-8')
                     self.assertIn(r['published'], article)
                     pdf_links = [attrs for _,attrs in Elements(article).elements if urlsplit(attrs.get('href','')).path == '/'+r['pdf']]
