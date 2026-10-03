@@ -53,11 +53,13 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 
 任务以 THINKBOOK 登录会话运行，电脑需开机、该用户已登录并能联网；错过时间使用原任务的补跑设置。周日不创建快照。新研究正文仍需作者单独上传发布。
 
-另有独立任务 `Residual Inertia - Website Data Sync`，登录时及每 15 分钟检查一次最新市场数据。运行 `Install Website Sync Task.ps1` 安装，`Run Website Sync.ps1` 手动执行，`-CheckOnly` 只验证不推送。它只刷新门户摘要、读取既有 dashboard 输出，不启动研究计算，也不创建或改写每日正式归档。完整门户归档被其他来源的更新错误阻断时，已通过市场质量检查的数据仍可发布。
+另有独立任务 `Residual Inertia - Website Data Sync`，登录后监听 dashboard 更新完成的事件，不定时发布。运行 `Install Website Sync Task.ps1` 安装，`Run Website Sync.ps1` 手动执行，`-CheckOnly` 只验证不推送。统一门户更新记录必须为 `success`、事务 `committed` 且质量 `pass/warning`；更新运行锁释放后才发布。dashboard 自身更新按钮在成功退出且信号文件改变后写入完成标识，同样经过公开字段、质量与历史一致性校验。失败、回滚、未完成的更新不会触发推送；网络失败只重试已有成功事件，登录后也会补发尚未完成的事件。
+
+发布只刷新门户摘要、读取既有 dashboard 输出，不启动研究计算，也不创建或改写每日正式归档。完整门户归档被其他来源的更新错误阻断时，已通过市场质量检查的数据仍可发布。事件监听器不需要重启门户服务。
 
 `content/market/latest.json` 保存最新有效市场观察，供市场概览和 `/market/latest/` 使用。每项指标仍显示自己的截止日期，同步时间单独标明；它不是当天的正式归档。`content/snapshots` 继续保存不可变的每日历史记录。市场来源不可用、质量失败、数值非法或数据日期倒退时保留上一有效观察；最新分数与数据库历史终点不一致时阻止发布。其他来源的持仓、任务日志和报告不进入最新市场观察。
 
-独立同步日志和结果位于网站 `.runtime/website-sync/sync.log`、`latest.json`。没有内容变化时不会提交或触发重新部署。Python、Node 与 Git 的路径在安装时保存，供后台会话使用；Git 使用带证书校验的 OpenSSL 后端。后台任务仍要求电脑开机、THINKBOOK 登录、网络和 GitHub 凭据可用。
+独立同步日志和结果位于网站 `.runtime/website-sync/sync.log`、`latest.json`，完成事件见 `events.log` 和 `completed.json`。没有内容变化时不会提交或触发重新部署。公开 JSON 先推送到 GitHub 仓库，随后由 Pages 构建部署。Python、Node 与 Git 的路径在安装时保存，供后台会话使用；Git 使用带证书校验的 OpenSSL 后端。后台任务仍要求电脑开机、THINKBOOK 登录、网络和 GitHub 凭据可用。
 
 运行日志在门户的 `.runtime/daily-archive/logs/windows-task.log`；网站成功推送不等于 Pages 已完成上线，部署结果见 GitHub Actions。入口脚本的备份位于 `automation/Run Daily Portal Archive.ps1`，实际任务执行的是门户目录中的同名文件。网站有未提交代码或已有暂存修改时，自动发布停止，避免混入正在编辑的内容。
 

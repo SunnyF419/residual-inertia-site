@@ -6,9 +6,38 @@ $log = Join-Path $runtime 'sync.log'
 $statusPath = Join-Path $runtime 'latest.json'
 $lease = New-Object System.Threading.Mutex($false, 'Local\ResidualInertiaWebsiteSync')
 try { $acquired = $lease.WaitOne(0) } catch [System.Threading.AbandonedMutexException] { $acquired = $true }
-if (-not $acquired) { $lease.Dispose(); exit 0 }
+if (-not $acquired) { $lease.Dispose(); exit 75 }
 function Write-SyncLog([string]$Message) {
     Add-Content -LiteralPath $log -Value ('[{0}] {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Message) -Encoding UTF8
+}
+function Invoke-SyncProcess([string]$Executable, [string]$Arguments) {
+    # Capture native stderr as text: Git writes successful fetch/push progress there.
+    # PowerShell 5 otherwise mistakes that output for a terminating error.
+    $info = New-Object System.Diagnostics.ProcessStartInfo
+    $info.FileName = $Executable
+    $info.Arguments = $Arguments
+    $info.WorkingDirectory = $PSScriptRoot
+    $info.UseShellExecute = $false
+    $info.CreateNoWindow = $true
+    $info.RedirectStandardOutput = $true
+    $info.RedirectStandardError = $true
+    $info.StandardOutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $info.StandardErrorEncoding = New-Object System.Text.UTF8Encoding($false)
+    $child = New-Object System.Diagnostics.Process
+    $child.StartInfo = $info
+    try {
+        [void]$child.Start()
+        $stdout = $child.StandardOutput.ReadToEndAsync()
+        $stderr = $child.StandardError.ReadToEndAsync()
+        if (-not $child.WaitForExit(540000)) {
+            $child.Kill()
+            throw 'Website sync subprocess timed out.'
+        }
+        foreach ($line in @($stdout.Result, $stderr.Result) -split "`r?`n" | Where-Object { $_ }) { Write-SyncLog $line }
+        if ($child.ExitCode -ne 0) { throw ('Website sync subprocess failed (exit {0}); see sync.log.' -f $child.ExitCode) }
+    } finally {
+        $child.Dispose()
+    }
 }
 $started = (Get-Date).ToUniversalTime().ToString('o')
 try {
@@ -19,13 +48,10 @@ try {
     $portal = Join-Path (Split-Path -Parent $PSScriptRoot) 'quant_research_portal'
     Write-SyncLog 'Refreshing the local summary and publishing validated market data.'
     # Read committed dashboard outputs only. Do not run updates or create a daily archive.
-    $refreshOutput = & $paths.node (Join-Path $portal 'scripts\sync-portal-data.mjs') 2>&1
-    $refreshExit = $LASTEXITCODE
-    foreach ($line in $refreshOutput) { Write-SyncLog ([string]$line) }
-    if ($refreshExit -ne 0) { throw 'Local summary refresh failed; the previous website remains online.' }
-    $arguments = @{ PortalPath = $portal }
-    if (-not $CheckOnly) { $arguments.Publish = $true }
-    & (Join-Path $PSScriptRoot 'Update Website.ps1') @arguments 2>&1 | ForEach-Object { Write-SyncLog ([string]$_) }
+    Invoke-SyncProcess $paths.node ('"{0}"' -f (Join-Path $portal 'scripts\sync-portal-data.mjs'))
+    $shell = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
+    $publishArgument = if ($CheckOnly) { '' } else { '-Publish' }
+    Invoke-SyncProcess $shell ('-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "{0}" -PortalPath "{1}" {2}' -f (Join-Path $PSScriptRoot 'Update Website.ps1'), $portal, $publishArgument)
     $market = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'content\market\latest.json') -Raw | ConvertFrom-Json
     $result = [ordered]@{ status = $(if ($CheckOnly) { 'validated' } else { 'pushed' }); startedAt = $started; finishedAt = (Get-Date).ToUniversalTime().ToString('o'); dataAsOf = $market.market.regimeDate; score = $market.market.regimeScore; message = 'Public content validated; GitHub Pages deployment follows a changed push.' }
     $result | ConvertTo-Json | Set-Content -LiteralPath $statusPath -Encoding UTF8
