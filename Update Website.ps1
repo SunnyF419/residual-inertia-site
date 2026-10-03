@@ -5,6 +5,10 @@ param(
 $ErrorActionPreference = 'Stop'
 $env:GIT_TERMINAL_PROMPT = '0'
 $env:GCM_INTERACTIVE = 'Never'
+# Git's OpenSSL backend also works in noninteractive Windows task sessions.
+$env:GIT_CONFIG_COUNT = '1'
+$env:GIT_CONFIG_KEY_0 = 'http.sslBackend'
+$env:GIT_CONFIG_VALUE_0 = 'openssl'
 $publishLock = $null
 if ($Publish) {
     $publishLock = New-Object System.Threading.Mutex($false, 'Local\ResidualInertiaWebsitePublish')
@@ -18,7 +22,7 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'Review or commit already-staged changes before publishing website content.' }
         $branch = git -c "safe.directory=$PSScriptRoot" branch --show-current
         if ($LASTEXITCODE -ne 0 -or $branch -ne 'main') { throw 'Publish from the main branch.' }
-        git -c "safe.directory=$PSScriptRoot" diff --quiet -- . ':!content'
+        git -c "safe.directory=$PSScriptRoot" diff --quiet -- . ':!content/market' ':!content/snapshots'
         if ($LASTEXITCODE -ne 0) { throw 'Commit website code changes before automatic publication.' }
         git -c "safe.directory=$PSScriptRoot" fetch origin main
         if ($LASTEXITCODE -ne 0) { throw 'Could not sync reports uploaded through the website.' }
@@ -35,12 +39,12 @@ try {
     python scripts/check.py
     if ($LASTEXITCODE -ne 0) { throw 'Public output validation failed.' }
     if ($Publish) {
-        git -c "safe.directory=$PSScriptRoot" add -- content
+        git -c "safe.directory=$PSScriptRoot" add -- content/market content/snapshots
         if ($LASTEXITCODE -ne 0) { throw 'Could not stage public content.' }
         git -c "safe.directory=$PSScriptRoot" diff --cached --quiet
         $stagedExit = $LASTEXITCODE
         if ($stagedExit -eq 1) {
-            git -c "safe.directory=$PSScriptRoot" commit -m "content: update published research archives"
+            git -c "safe.directory=$PSScriptRoot" commit -m "content: sync validated market readings and daily archives"
             if ($LASTEXITCODE -ne 0) { throw 'Commit failed.' }
         } elseif ($stagedExit -ne 0) { throw 'Could not inspect staged changes.' }
         for ($publishAttempt = 0; $publishAttempt -lt 3; $publishAttempt++) {

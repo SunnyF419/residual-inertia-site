@@ -79,6 +79,19 @@ def main():
     assert history['windowStart'] in overview and history['windowEnd'] in overview and '滚动 5 年' in overview
     overview_en = (OUT/'en/overview/index.html').read_text(encoding='utf-8')
     assert history['windowStart'] in overview_en and history['windowEnd'] in overview_en and 'rolling 5-year' in overview_en.lower()
+    current_path = ROOT/'content/market/latest.json'
+    if current_path.exists():
+        current = json.loads(current_path.read_text(encoding='utf-8'))
+        assert set(current) == {'kind', 'observationDate', 'capturedAt', 'market', 'brief', 'sources'}
+        assert current['kind'] == 'current' and len(current['sources']) == 1
+        assert current['sources'][0]['id'] == 'marketResearch' and current['sources'][0]['qualityStatus'] in ('pass', 'warning')
+        archived = json.loads(max(snapshots).read_text(encoding='utf-8'))
+        assert all(current['market'][k][:10] >= archived['market'][k][:10] for k in ('regimeDate','signalDate','breadthDate'))
+        assert current['market']['regimeDate'][:10] == history['windowEnd']
+        assert math.isclose(current['market']['regimeScore'], history['points'][-1]['score'], abs_tol=0.01)
+        for prefix in ('', 'en/'):
+            reading = (OUT/prefix/'market/latest/index.html').read_text(encoding='utf-8')
+            assert current['market']['regimeDate'][:10] in reading and f'href="/{prefix}market/latest/"' in (OUT/prefix/'overview/index.html').read_text(encoding='utf-8')
     assert (OUT/'CNAME').read_text().strip()=='residualinertia.com'
     for route in ('global/index.html', 'en/global/index.html'):
         embedded=(OUT/route).read_text(encoding='utf-8')

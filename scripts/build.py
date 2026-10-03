@@ -93,7 +93,7 @@ I18N = {
     'chart_title': ('市场状态的变化', 'Change in Market State'),
     'chart_rolling': ('滚动 5 年', 'Rolling 5-Year'),
     'chart_svg_title': ('过去五年的市场状态分数', 'Market State Scores Over Five Years'),
-    'chart_caption_suffix': ('个模型数据点。窗口随每日归档的数据截止日向前滚动。来源：市场研究 Dashboard 历史序列。', 'model data points. Window rolls forward with daily archive data cutoff. Source: Market Research Dashboard historical series.'),
+    'chart_caption_suffix': ('个模型数据点。窗口随最新有效数据的截止日向前滚动。来源：市场研究 Dashboard 历史序列。', 'model data points. Window rolls forward with the latest valid data cutoff. Source: Market Research Dashboard historical series.'),
     # Snapshot page
     'snapshot_suffix': ('市场快照', 'Market Snapshot'),
     'snapshot_lede': ('历史观察记录。归档日期与数据截止日期分别展示。', 'Historical observation record. Archive date and data cutoff date are shown separately.'),
@@ -121,6 +121,10 @@ I18N = {
     'score_label': ('综合分数', 'Composite Score'),
     'read_full': ('阅读完整快照 ↗', 'Read full snapshot ↗'),
     'archived_label': ('归档', 'Archived'),
+    'updated_label': ('同步于', 'Synced'),
+    'current_title': ('最新市场观察', 'Latest Market Reading'),
+    'current_lede': ('已通过质量检查的最新模型数据。各项指标按自身截止日期展示，每日历史记录单独保留。', 'Latest model data that passed quality checks. Each metric shows its own cutoff date; daily historical records are kept separately.'),
+    'current_read': ('查看最新数据 ↗', 'View latest data ↗'),
     'ov_pillars_eyebrow': ('WHAT WE WATCH / 四个维度', 'WHAT WE WATCH'),
     'ov_pillars_title': ('风险与结构的持续跟踪', 'Continuous Tracking of Risk & Structure'),
     'ov_pillars_intro': ('从金融压力、市场脆弱度、风险与参与度四个角度理解状态。分数越高，越需要关注。', 'Understanding market state through financial stress, fragility, risk, and participation. Higher scores warrant more attention.'),
@@ -439,7 +443,7 @@ def homepage(latest, research):
     content = cover()
     if featured:
         content += f'<section class="home-featured" aria-labelledby="featured-title"><div class="editorial-heading"><div><p class="eyebrow">SELECTED PAPERS</p><h2 id="featured-title">{L("featured_research")}</h2></div>{anchor("research/index.html", L("browse_research"))}</div>{research_cards(featured)}</section>'
-    updates = [(latest['observationDate'], L('latest_snapshot'), L('nav_overview'), 'snapshots/' + latest['observationDate'] + '.html')]
+    updates = [(latest['observationDate'], L('current_title') if latest.get('kind') == 'current' else L('latest_snapshot'), L('nav_overview'), reading_route(latest))]
     updates += [(r['published'], rfield(r, 'title'), category_label(r['category']), 'research/' + r['slug'] + '.html') for r in research]
     updates.sort(key=lambda item: item[0], reverse=True)
     rows = ''.join(f'<li><time class="mono" datetime="{E(day)}">{E(day)}</time>{anchor(route, E(title))}<span>{E(kind)}</span></li>' for day, title, kind, route in updates[:3])
@@ -542,6 +546,21 @@ def overview_snapshot_list(snapshots):
     return result
 
 
+def reading_route(s):
+    return 'market/latest.html' if s.get('kind') == 'current' else 'snapshots/' + s['observationDate'] + '.html'
+
+
+def latest_reading(snapshots):
+    archived = snapshots[-1]
+    path = ROOT/'content/market/latest.json'
+    if not path.exists():
+        return archived
+    current = json.loads(path.read_text(encoding='utf-8'))
+    if all(current['market'][key][:10] >= archived['market'][key][:10] for key in ('regimeDate', 'signalDate', 'breadthDate')):
+        return current
+    return archived
+
+
 def overview_reading(s):
     m = s['market']
     brief = s.get('brief', {})
@@ -550,7 +569,8 @@ def overview_reading(s):
     else:
         posture = brief.get('posture', f"综合状态 {m['regimeState']}。")
     tone = 'tone-' + score_tone(m['regimeScore'])
-    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{E(s["observationDate"])} {L("archived_label")}</p></div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{anchor("snapshots/"+s["observationDate"]+".html", L("read_full"))}</div></section>'
+    stamp = L('updated_label') + ' ' + E(s['capturedAt'].replace('T', ' ').replace('Z', ' UTC')) if s.get('kind') == 'current' else E(s['observationDate']) + ' ' + L('archived_label')
+    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{stamp}</p></div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{anchor(reading_route(s), L("current_read") if s.get("kind") == "current" else L("read_full"))}</div></section>'
 
 
 def research_cards(research):
@@ -779,6 +799,14 @@ def snapshot_page(s, previous, following):
     return body
 
 
+def current_market_page(s):
+    body = anchor('overview.html', L('back_overview'), 'back') + head('LATEST MARKET READING', L('current_title'), L('current_lede'))
+    body += overview_reading(s) + metrics(s) + pillars(s)
+    body += '<p class="caption">' + L('summary_caption') + '</p>'
+    body += anchor('overview.html#daily-snapshots', L('ov_archive_title'))
+    return body
+
+
 def global_pulse():
     return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><div class="global-actions"><a class="global-login" href="https://global.residualinertia.com/?manage=1" target="_blank" rel="noopener">{L('global_login')}</a><a href="https://global.residualinertia.com/?focus=1&amp;lang={'en' if LANG == 'en' else 'zh'}" target="_blank" rel="noopener">{L('global_open')}</a></div></section>
 <iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" style="display:block;flex:1;min-height:0;width:100%;height:0;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
@@ -803,6 +831,8 @@ def build_language(snapshots, research, latest):
 
     write('index.html', L('home_title'), lambda: homepage(latest, research), 'home')
     write('overview.html', L('overview_title'), overview, 'overview')
+    if latest.get('kind') == 'current':
+        write('market/latest.html', L('current_title'), lambda: current_market_page(latest), 'overview')
     write('global/index.html', L('global_title'), global_pulse, 'global', L('global_intro'))
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
@@ -843,7 +873,7 @@ def main():
     OUT.mkdir()
     shutil.copytree(ROOT/'assets', OUT/'assets')
     shutil.copy2(ROOT/'assets/brand/favicon.ico', OUT/'favicon.ico')
-    latest = snapshots[-1]
+    latest = latest_reading(snapshots)
 
     for lang in ('zh', 'en'):
         LANG = lang

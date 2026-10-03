@@ -115,7 +115,7 @@ class SiteTests(unittest.TestCase):
     def test_actual_research_and_archive_paths_in_both_languages(self):
         research = [json.loads(p.read_text(encoding='utf-8')) for p in (ROOT / 'content/research').glob('*.json')]
         snapshots = [json.loads(p.read_text(encoding='utf-8')) for p in sorted((ROOT / 'content/snapshots').glob('*.json'))]
-        latest = snapshots[-1]
+        latest = build.latest_reading(snapshots)
         for prefix in ('', 'en/'):
             with self.subTest(language=prefix or 'zh'):
                 home = (ROOT / 'dist' / prefix / 'index.html').read_text(encoding='utf-8')
