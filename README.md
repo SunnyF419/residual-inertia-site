@@ -87,6 +87,26 @@ Organization、Person 使用稳定的 `https://residualinertia.com/#organization
 
 论文仍使用 `content/research/*.json`，归入 `personal`。`summary` 为简介；`published` 搭配 `dateLabel` 标明日期含义，`updated` 为可选修订日期；`author`、`subtitle` 展示作者与副标题。`pdf` 指向 `assets/papers/` 下的真实 PDF，`pdfSha256` 保存文件校验值；`ssrnUrl` 链接到原文。`note` 明确网站下载版本，`sourceNote` 记录来源与研究局限。替换 PDF 时同步更新版本说明与校验值。
 
+## P1 作者、研究与历史快照 SEO
+
+继续使用 `scripts/build.py` 的统一 JSON-LD graph，不添加客户端 SEO 包。每个文档只输出一次 Organization 与 Taiyang Feng Person 定义，文章通过 `@id` 引用。作者页复用 `/about/#founder`；Sunny、Sunny Feng 与 Taiyang Feng 是已确认的同一作者别名，公开署名统一为 Taiyang Feng。合著者保持原署名及顺序，未知作者不自动归到创始人；组织或缺省发布署名使用 Organization。Person 没有可靠的个人主页、ORCID 或 SSRN author profile，因此不添加 `sameAs`；论文 landing page 只属于论文实体。
+
+普通周报、月报、专题和政策研究输出 Article。有记录的 SSRN / DOI 学术论文输出 ScholarlyArticle：保留作者顺序、实际发布日期与可选修订日期，关联站内 self canonical 和外部 landing page。SSRN PDF 不能作为 landing page，DOI 必须存在于 `doi` / `doiUrl` 字段，不从 SSRN 编号推导。现有两篇论文的 `keywords` 和 `manuscriptStatus` 来自本地作者稿；状态只描述本站版本，不代表 SSRN 最新版本、同行评审或期刊录用。RI 作为论文站内 WebPage 的 publisher，不声称是外部学术论文的原出版机构。
+
+研究目录、分类目录、文章和快照均在同一 graph 内输出 BreadcrumbList，沿用既有页面返回导航。快照归档仍位于 `/overview/#daily-snapshots`，原 `/snapshots/` 重定向保持不变。研究页输出对应 OG / Twitter title、description、URL 和 article 类型，不生成新的社交图片。
+
+`snapshot_index_decision(snapshot, earlier)` / `should_index_snapshot` 是 HTML robots 与 sitemap 共用的索引决策入口：必须具备有效日期、核验标识、公开市场来源质量、风险级别、综合分数、仓位、宽度、四个风险维度和文字判断。新数据日期组合（signal / effective / regime / breadth）可索引；相同日期组合只有风险状态或评论／告警文字变化才可索引。比较文字时忽略重新填入模板的数字，不按任意分数涨跌阈值判定。索引失败不删除档案、不改导航、不合并 canonical；所有快照继续 self-reference。
+
+人工治理放在 `content/snapshot-indexing.json`，不污染不可变的快照内容或哈希。例如（示例不默认生效）：
+
+```json
+{"version": 1, "overrides": {"2026-09-08": {"index": false, "reason": "与前一日同一数据版本，无新增文字判断"}}}
+```
+
+每条覆盖必须使用布尔 `index` 并提供非空 `reason`；显式 `true` 可以保留有编辑价值的同版本档案，但不能绕过数据完整性检查。noindex 页面仍输出 Dataset、Breadcrumb 和正确 canonical，同时从 sitemap 排除。归档及索引快照公开 Dataset 与来源日期、快照标识、SHA-256 和八项市场测量字段，不披露后台数据库或账户资料。
+
+构建验收：`python scripts/build.py`、`python scripts/check.py`、`python -m unittest discover -s tests -p 'test_*.py'`，以及现有四个 Node 验证脚本。项目没有单独的 lint / TypeScript typecheck 命令；新增 P1 测试覆盖实际中英文 HTML、合著者与实体引用、论文关联、面包屑、社交元数据、索引政策及 sitemap。
+
 ## 七段首页
 
 首页依次展示 Hero、市场状态、最新研究、研究方向、Systems、Founder、品牌理念。市场摘要与完整概览共用最新归档，最新研究按报告日期排列。系统与创始人导航指向首页对应区块，Dashboard 指向市场概览；文章及快照保持简洁地址。

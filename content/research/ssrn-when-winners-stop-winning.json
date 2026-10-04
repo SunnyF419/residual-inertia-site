@@ -14,5 +14,15 @@
   "collection": "personal",
   "pdf": "assets/papers/when-winners-stop-winning.pdf",
   "pdfSha256": "d5ab653846d0b8c7ddbd6a04498b0bb55f092a948a25c25b1493f32948fd3f5b",
-  "summary_en": "Examines whether QS and WQS momentum fragility signals can identify U.S. equity left-tail risk, comparing monthly momentum states across the Dow, Nasdaq, and S&P 500."
+  "summary_en": "Examines whether QS and WQS momentum fragility signals can identify U.S. equity left-tail risk, comparing monthly momentum states across the Dow, Nasdaq, and S&P 500.",
+  "keywords": [
+    "momentum",
+    "left-tail risk",
+    "trend following",
+    "risk management",
+    "S&P 500",
+    "Nasdaq",
+    "Dow Jones"
+  ],
+  "manuscriptStatus": "working_paper_draft"
 }
