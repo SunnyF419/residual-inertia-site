@@ -322,6 +322,17 @@ def anchor(target, text, cls=''):
     return f'<a class="{cls}" href="{E(url(target))}">{text}</a>'
 
 
+def action_content(label):
+    backward = label.startswith('← ')
+    label = label.removeprefix('← ').removesuffix(' ↗').removesuffix(' →')
+    icon = '<svg class="action-icon' + (' action-icon-back' if backward else '') + '" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7 3l6 7-6 7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    return f'<span>{E(label)}</span>{icon}'
+
+
+def action_link(target, label, cls=''):
+    return anchor(target, action_content(label), ('action-link ' + cls).strip())
+
+
 def other_lang_url():
     """URL for the same page in the other language, for the nav toggle."""
     if ROUTE == '404.html':
@@ -430,7 +441,7 @@ def cover():
 <h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
 <p>{L('cover_system')}<span>{L('cover_system_sub')}</span></p></div>
 <p class="cover-founder">{L('home_founder')} · {anchor('about.html#founder', E(CONFIG['founder']))}</p>
-<div class="cover-actions">{anchor('research/index.html', '<span>'+L('cover_read')+'</span><span class="button-icon" aria-hidden="true">→</span>', 'cover-primary')}{anchor('overview.html', '<span>'+L('cover_overview').removesuffix(' ↗')+'</span><span class="button-icon" aria-hidden="true">↗</span>', 'cover-secondary')}</div></div>
+<div class="cover-actions">{anchor('research/index.html', action_content(L('cover_read')), 'cover-primary')}{action_link('overview.html', L('cover_overview'), 'cover-secondary')}</div></div>
 <div class="cover-emblem"><span class="emblem-wordmark">Residual Inertia | 余势</span>
 <img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="" width="232" height="164">
 <div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p><span>{E(CONFIG['motto'])}</span></div></div>{cover_kline()}
@@ -442,7 +453,7 @@ def homepage(latest, research):
     featured = [r for r in research if r.get('ssrnUrl')][:2] or research[:2]
     content = cover()
     if featured:
-        content += f'<section class="home-featured" aria-labelledby="featured-title"><div class="editorial-heading"><div><p class="eyebrow">SELECTED PAPERS</p><h2 id="featured-title">{L("featured_research")}</h2></div>{anchor("research/index.html", L("browse_research"))}</div>{research_cards(featured)}</section>'
+        content += f'<section class="home-featured" aria-labelledby="featured-title"><div class="editorial-heading"><div><p class="eyebrow">SELECTED PAPERS</p><h2 id="featured-title">{L("featured_research")}</h2></div>{action_link("research/index.html", L("browse_research"))}</div>{research_cards(featured)}</section>'
     updates = [(latest['observationDate'], L('current_title') if latest.get('kind') == 'current' else L('latest_snapshot'), L('nav_overview'), reading_route(latest))]
     updates += [(r['published'], rfield(r, 'title'), category_label(r['category']), 'research/' + r['slug'] + '.html') for r in research]
     updates.sort(key=lambda item: item[0], reverse=True)
@@ -570,7 +581,7 @@ def overview_reading(s):
         posture = brief.get('posture', f"综合状态 {m['regimeState']}。")
     tone = 'tone-' + score_tone(m['regimeScore'])
     stamp = L('updated_label') + ' ' + E(s['capturedAt'].replace('T', ' ').replace('Z', ' UTC')) if s.get('kind') == 'current' else E(s['observationDate']) + ' ' + L('archived_label')
-    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{stamp}</p></div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{anchor(reading_route(s), L("current_read") if s.get("kind") == "current" else L("read_full"))}</div></section>'
+    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{stamp}</p></div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{action_link(reading_route(s), L("current_read") if s.get("kind") == "current" else L("read_full"))}</div></section>'
 
 
 def research_cards(research):
@@ -598,7 +609,7 @@ def research_cards(research):
 <div class="report-cover-top"><span class="report-brand">Residual Inertia | 余势</span><span class="report-category">{E(category_label(r['category']))}</span></div>
 <div class="report-title-block"><p class="report-series">{series}</p>{('<p class="report-issue">'+E(issue)+'</p>') if issue else ''}<h3>{E(cover_title)}</h3></div>
 <div class="report-cover-bottom"><span class="mono">{E(identity)}</span><span>{E(date_note)}</span></div></div>'''
-        cards.append(f'<article class="research-card report-card"><a class="report-card-link" href="{url("research/"+r["slug"]+".html")}" aria-label="{E(title)}">{cover}<div class="report-card-body">{subtitle}<p class="research-summary">{E(summary)}</p><div class="card-foot"><div class="report-byline"><span>{E(r.get("author") or "Residual Inertia")}</span><time class="mono" datetime="{E(r["published"])}">{E(r["published"])}</time></div><span class="report-readmore">{L("read_full_article")}</span></div></div></a></article>')
+        cards.append(f'<article class="research-card report-card"><a class="report-card-link" href="{url("research/"+r["slug"]+".html")}" aria-label="{E(title)}">{cover}<div class="report-card-body">{subtitle}<p class="research-summary">{E(summary)}</p><div class="card-foot"><div class="report-byline"><span>{E(r.get("author") or "Residual Inertia")}</span><time class="mono" datetime="{E(r["published"])}">{E(r["published"])}</time></div><span class="report-readmore">{action_content(L("read_full_article"))}</span></div></div></a></article>')
     return '<div class="research-grid">' + ''.join(cards) + '</div>'
 
 
@@ -715,7 +726,7 @@ def inline(text):
 
 def research_article(r):
     back_key = report_variant(r) if r['category'] in ('周报', '月报') else collection(r)
-    body = anchor('research/' + back_key + '/index.html', '← ' + L('col_'+back_key), 'back')
+    body = action_link('research/' + back_key + '/index.html', '← ' + L('col_'+back_key), 'back')
     date_label = rfield(r, 'dateLabel') or L('report_date')
     dates = f'{date_label} {r["published"]}'
     if r.get('updated'):
@@ -739,7 +750,7 @@ def research_article(r):
         size = local.stat().st_size / 1024 / 1024
         digest = hashlib.sha256(local.read_bytes()).hexdigest()[:12]
         pdf_url = url(pdf) + '?v=' + digest
-        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(pdf_url)}">{L("view_pdf")}<span class="button-icon" aria-hidden="true">→</span></a><span class="caption">PDF · {size:.1f} MB</span></div>'
+        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(pdf_url)}">{action_content(L("view_pdf"))}</a><span class="caption">PDF · {size:.1f} MB</span></div>'
     if r.get('ssrnUrl'):
         assert r['ssrnUrl'].startswith('https://papers.ssrn.com/'), 'Expected SSRN paper URL'
         body += f'<p><a href="{E(r["ssrnUrl"])}" target="_blank" rel="noopener noreferrer">{L("view_ssrn")}</a></p>'
@@ -788,7 +799,7 @@ def markdown(text):
 
 def snapshot_page(s, previous, following):
     m = s['market']
-    body = anchor('overview.html#daily-snapshots', L('back_overview'), 'back') + head('DAILY SNAPSHOT', s['observationDate'] + ' · ' + L('snapshot_suffix'), L('snapshot_lede'))
+    body = action_link('overview.html#daily-snapshots', L('back_overview'), 'back') + head('DAILY SNAPSHOT', s['observationDate'] + ' · ' + L('snapshot_suffix'), L('snapshot_lede'))
     body += f'<div class="notice"><strong>{L("archived_at")} {E(s["capturedAt"])}</strong><span>{L("archive_note")}</span></div>' + metrics(s)
     alerts = ''.join(f'<p><strong>{E(a["title"])}</strong> · {E(a["detail"])}</p>' for a in s['alerts'])
     body += f'<div class="two-col">{pillars(s)}<section class="panel"><p class="eyebrow">{L("summary_eyebrow")}</p><h2>{E(state_label(m["regimeState"]))} · {L("score_label")} {number(m["regimeScore"])}</h2><p>{E(s["brief"]["posture"])}</p>{alerts}<p class="caption">{L("summary_caption")}</p></section></div>'
@@ -800,10 +811,10 @@ def snapshot_page(s, previous, following):
 
 
 def current_market_page(s):
-    body = anchor('overview.html', L('back_overview'), 'back') + head('LATEST MARKET READING', L('current_title'), L('current_lede'))
+    body = action_link('overview.html', L('back_overview'), 'back') + head('LATEST MARKET READING', L('current_title'), L('current_lede'))
     body += overview_reading(s) + metrics(s) + pillars(s)
     body += '<p class="caption">' + L('summary_caption') + '</p>'
-    body += anchor('overview.html#daily-snapshots', L('ov_archive_title'))
+    body += action_link('overview.html#daily-snapshots', L('ov_archive_title'))
     return body
 
 
@@ -843,7 +854,7 @@ def build_language(snapshots, research, latest):
         def folder(page, key=key, lkey=lkey, dkey=dkey):
             reports = [r for r in research if collection(r) == key]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>'
-            return anchor('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + research_library(reports, page, f'research/{key}', empty)
+            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + research_library(reports, page, f'research/{key}', empty)
         reports = [r for r in research if collection(r) == key]
         for page in range(1, research_page_count(reports) + 1):
             write(research_page_route(f'research/{key}', page), L(tkey), lambda page=page: folder(page), 'research')
@@ -851,7 +862,7 @@ def build_language(snapshots, research, latest):
         def period_folder(page, kind=kind, label=label):
             reports = [r for r in research if report_variant(r) == kind]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + L('empty_text') + '</p></div>'
-            return anchor('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
+            return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
         reports = [r for r in research if report_variant(r) == kind]
         for page in range(1, research_page_count(reports) + 1):
             write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research')
