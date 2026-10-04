@@ -16,9 +16,11 @@ class Links(HTMLParser):
         super().__init__()
         self.targets=[]
         self.ids=set()
+        self.body_classes=set()
 
     def handle_starttag(self,tag,attrs):
         attrs=dict(attrs)
+        if tag=='body': self.body_classes.update(attrs.get('class', '').split())
         if attrs.get('id'): self.ids.add(attrs['id'])
         for key in ['href','src'] + (['data'] if tag == 'object' else []):
             if attrs.get(key): self.targets.append(attrs[key])
@@ -101,7 +103,7 @@ def main():
         assert f'href="https://global.residualinertia.com/?focus=1&amp;lang={language}"' in embedded
         assert 'allowfullscreen' in embedded
         assert 'width="1280" height="800"' in embedded and 'flex:1;min-height:0;width:100%;height:0;' in embedded
-        assert '<body class="global-page">' in embedded
+        assert 'global-page' in parsed[(OUT/route).resolve()].body_classes
         assert re.search(r'href="/assets/site\.css\?v=[a-f0-9]{12}"',embedded)
         assert 'https://global.residualinertia.com/' in embedded
         assert 'class="global-actions"' in embedded
