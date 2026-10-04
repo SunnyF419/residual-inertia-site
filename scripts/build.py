@@ -169,8 +169,8 @@ I18N = {
     'col_monthly_desc': ('按月整理市场变化与中期研究判断。', 'Monthly reviews of market developments and medium-term research.'),
     'col_market_label': ('MARKET LETTERS', 'MARKET LETTERS'),
     'col_market_desc': ('沿着周度与月度的时间刻度，梳理市场变化、风险与观察。', 'Tracking market changes, risk, and observations along weekly and monthly intervals.'),
-    'col_personal': ('个人专题研究', 'Independent Research'),
-    'col_personal_label': ('INDEPENDENT RESEARCH', 'INDEPENDENT RESEARCH'),
+    'col_personal': ('专题研究', 'Thematic Research'),
+    'col_personal_label': ('THEMATIC RESEARCH', 'THEMATIC RESEARCH'),
     'col_personal_desc': ('围绕具体问题展开研究，包括 WQS 等策略与风险专题。', 'Research around specific questions, including WQS and other strategy and risk topics.'),
     'col_fomc': ('FOMC 政策研究', 'Policy Research'),
     'col_fomc_label': ('POLICY RESEARCH', 'POLICY RESEARCH'),
@@ -581,7 +581,7 @@ def research_cards(research):
         group = collection(r)
         assert group in COLLECTIONS, 'Unknown research collection'
         variant = report_variant(r)
-        series = {'weekly':'WEEKLY REVIEW','monthly':'MONTHLY LETTER','personal':'INDEPENDENT RESEARCH','fomc':'POLICY / FOMC'}[variant]
+        series = {'weekly':'WEEKLY REVIEW','monthly':'MONTHLY LETTER','personal':'THEMATIC RESEARCH','fomc':'POLICY / FOMC'}[variant]
         issue, separator, cover_title = title.partition(': ' if LANG == 'en' else '：')
         if not separator:
             issue, cover_title = '', title
