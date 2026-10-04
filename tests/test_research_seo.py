@@ -36,8 +36,9 @@ class ResearchSEOTests(unittest.TestCase):
             self.assertIn('Sunny', html)
             for record in self.records:
                 if record.get('ssrnUrl'):
-                    self.assertIn(record['ssrnUrl'].replace('&', '&amp;'), html)
                     self.assertIn('/' + prefix + 'research/' + record['slug'] + '/', html)
+                    paper = (ROOT / 'dist' / prefix / 'research' / record['slug'] / 'index.html').read_text(encoding='utf-8')
+                    self.assertIn(record['ssrnUrl'].replace('&', '&amp;'), paper)
 
     def test_all_research_types_authors_breadcrumb_and_social_metadata(self):
         expected_coauthors = {

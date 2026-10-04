@@ -1064,8 +1064,7 @@ def about(research=()):
     for report in research:
         publications = external_publications(report)
         if publications and any(a['@id'].endswith('#taiyang-feng') for a in research_authors(report)):
-            links = ''.join(action_link(p['url'], L('view_ssrn') if p['kind'] == 'SSRN' else L('view_doi'), external=True) for p in publications)
-            works.append('<li>' + action_link('research/' + report['slug'] + '.html', rfield(report, 'title')) + '<p class="caption">' + E(author_display(report)) + '</p><div class="action-group">' + links + '</div></li>')
+            works.append('<li>' + action_link('research/' + report['slug'] + '.html', rfield(report, 'title')) + '<p class="caption">' + E(author_display(report)) + '</p></li>')
     works_markup = ('<h3>' + L('founder_works') + '</h3><ul class="action-list publication-list">' + ''.join(works) + '</ul>') if works else ''
     founder_intro = f'''<section class="founder-section" id="founder" aria-labelledby="founder-title">
 <div class="founder-card">
