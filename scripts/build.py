@@ -53,8 +53,8 @@ I18N = {
     'cover_system_sub': ('Independent Investment Research & Systems', '独立投资研究与决策系统'),
     'cover_read': ('阅读研究', 'Read Research'),
     'cover_overview': ('进入市场概览 ↗', 'Market Overview ↗'),
-    'home_title': ('独立研究，从简出发', 'Independent Research, From Simplicity'),
-    'home_desc': ('独立投资研究与决策系统。每日市场快照、风险观察与研究档案。', 'Independent investment research and decision systems. Daily market snapshots, risk observations, and research archives.'),
+    'home_title': ('Residual Inertia 余势｜独立投资研究、量化市场观察与决策系统', 'Residual Inertia | Independent Investment Research & Decision Systems'),
+    'home_desc': ('Residual Inertia（余势）是由 Taiyang Feng（Sunny）创立的独立投资研究与决策系统平台，聚焦量化投资、资产定价、宏观市场、市场风险与研究基础设施。', 'Residual Inertia is an independent investment research and decision systems platform founded by Taiyang Feng (Sunny), focused on quantitative investing, asset pricing, macro markets, market risk, and research infrastructure.'),
     'featured_research': ('精选研究', 'Featured Research'),
     'browse_research': ('全部研究 ↗', 'All Research ↗'),
     'recent_updates': ('最近更新', 'Recent Updates'),
@@ -274,6 +274,7 @@ SMART_NAV_JS = '''<script>
 ROUTE = 'index.html'
 PATHS = []
 ALL_PAGES = []  # (lang, path) for sitemap across both languages
+PAGE_SEO = {}  # (lang, path) -> indexability and availability of translated content
 
 
 def url(path):
@@ -288,6 +289,59 @@ def url(path):
     if LANG == 'en' and not is_asset:
         result = '/en' + result
     return result
+
+
+def production_url(route, lang):
+    """Absolute clean page URL, independent of the current rendering language."""
+    path = route.removesuffix('index.html')
+    return 'https://' + CONFIG['domain'] + '/' + ('en/' if lang == 'en' else '') + path
+
+
+def structured_data(home=False):
+    origin = 'https://' + CONFIG['domain'] + '/'
+    organization_id = origin + '#organization'
+    person_id = origin + '#taiyang-feng'
+    graph = [
+        {'@type': 'Organization', '@id': organization_id,
+         'name': 'Residual Inertia', 'alternateName': '余势', 'url': origin,
+         'description': L('home_desc'),
+         'logo': origin + 'assets/brand/RI-horizontal-color.svg',
+         'founder': {'@id': person_id}},
+        {'@type': 'Person', '@id': person_id, 'name': 'Taiyang Feng',
+         'alternateName': 'Sunny', 'url': origin + 'about/#founder',
+         'founderOf': {'@id': organization_id}},
+    ]
+    if home:
+        graph.append({'@type': 'WebSite', '@id': origin + '#website',
+                      'url': origin, 'name': 'Residual Inertia', 'alternateName': '余势',
+                      'publisher': {'@id': organization_id}, 'inLanguage': ['zh-CN', 'en']})
+    # founderOf is the inverse of Schema.org founder, not a new vocabulary property.
+    payload = {'@context': {'@vocab': 'https://schema.org/',
+                           'founderOf': {'@reverse': 'https://schema.org/founder'}}, '@graph': graph}
+    data = json.dumps(payload, ensure_ascii=False, allow_nan=False).replace('<', '\\u003c')
+    return '<script type="application/ld+json">' + data + '</script>'
+
+
+def add_language_alternates():
+    """Only pair generated, indexable pages whose content has a translated variant."""
+    for lang, route in ALL_PAGES:
+        counterpart = ('en' if lang == 'zh' else 'zh', route)
+        if not all(PAGE_SEO.get(key, {}).get('indexable') and
+                   PAGE_SEO.get(key, {}).get('translated') for key in [(lang, route), counterpart]):
+            continue
+        zh = production_url(route, 'zh')
+        en = production_url(route, 'en')
+        links = ''.join(f'<link rel="alternate" hreflang="{code}" href="{E(target)}">'
+                        for code, target in [('zh-CN', zh), ('en', en), ('x-default', zh)])
+        page = OUT / ('en' if lang == 'en' else '') / route
+        assert page.is_file() and (OUT / ('en' if counterpart[0] == 'en' else '') / route).is_file()
+        page.write_text(page.read_text(encoding='utf-8').replace('</head>', links + '\n</head>', 1), encoding='utf-8')
+
+
+def write_sitemap():
+    pages = [key for key in dict.fromkeys(ALL_PAGES) if PAGE_SEO[key]['indexable']]
+    entries = ''.join('<url><loc>' + E(production_url(route, lang)) + '</loc></url>' for lang, route in pages)
+    (OUT/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + entries + '</urlset>', encoding='utf-8')
 
 
 def number(value, pct=False):
@@ -366,20 +420,24 @@ def footer():
 </div></footer>'''
 
 
-def shell(title, content, section='', description=None):
+def shell(title, content, section='', description=None, indexable=True):
     lang_attr = 'en' if LANG == 'en' else 'zh-CN'
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
         ('home', 'index.html', L('nav_home')), ('overview', 'overview.html', L('nav_overview')),
         ('global', 'global/index.html', L('nav_global')),
         ('research', 'research/index.html', L('nav_research')), ('about', 'about.html', L('nav_about'))])
     toggle_label = 'EN' if LANG == 'zh' else '中文'
-    canonical = 'https://' + CONFIG['domain'] + url(ROUTE)
-    desc = description or (L('home_desc') if LANG == 'en' else CONFIG['description'])
+    canonical = production_url(ROUTE, LANG)
+    desc = description or CONFIG.get('description_en' if LANG == 'en' else 'description', CONFIG['description'])
+    seo_title = title if section == 'home' else title + ' · Residual Inertia | 余势'
+    og_title = seo_title if section == 'home' else title + ' · Residual Inertia'
     return f'''<!doctype html>
 <html lang="{lang_attr}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{E(title)} · Residual Inertia | 余势</title><meta name="description" content="{E(desc)}">
-<link rel="canonical" href="{canonical}"><meta property="og:title" content="{E(title)} · Residual Inertia">
+<title>{E(seo_title)}</title><meta name="description" content="{E(desc)}">
+<meta name="robots" content="{'index, follow' if indexable else 'noindex, follow'}">
+<link rel="canonical" href="{E(canonical)}"><meta property="og:title" content="{E(og_title)}">
 <meta property="og:description" content="{E(desc)}"><meta property="og:type" content="website">
+{structured_data(home=section == 'home') if indexable else ''}
 <link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
@@ -390,15 +448,16 @@ def shell(title, content, section='', description=None):
 {footer()}{SMART_NAV_JS}</body></html>'''
 
 
-def write(route, title, render, section='', description=None):
+def write(route, title, render, section='', description=None, indexable=True, translated=True):
     global ROUTE
     destination = route if route.endswith('index.html') or route == '404.html' else route[:-5] + '/index.html'
     ROUTE = destination
     p = out_dir() / destination
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(shell(title, render(), section, description), encoding='utf-8')
+    p.write_text(shell(title, render(), section, description, indexable=indexable), encoding='utf-8')
     PATHS.append(destination)
     ALL_PAGES.append((LANG, destination))
+    PAGE_SEO[(LANG, destination)] = {'indexable': indexable, 'translated': translated}
     if destination != route:
         redirect(route, url(destination), title)
 
@@ -410,6 +469,7 @@ def redirect(route, target, title):
     canonical = 'https://' + CONFIG['domain'] + target.split('#')[0]
     p.write_text(f'''<!doctype html><html lang="{lang_attr}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)} · 余势</title>
+<meta name="robots" content="noindex, follow">
 <meta http-equiv="refresh" content="0;url={E(target)}"><link rel="canonical" href="{E(canonical)}">
 </head><body><h1>{E(title)}</h1><p>{L('redirect_text')}<a href="{E(target)}">{L('redirect_continue')}</a></p></body></html>''', encoding='utf-8')
 
@@ -451,7 +511,7 @@ def cover():
 
 def homepage(latest, research):
     featured = [r for r in research if r.get('ssrnUrl')][:2] or research[:2]
-    content = cover()
+    content = cover() + f'<p class="brand-definition">{E(L("home_desc"))}</p>'
     if featured:
         content += f'<section class="home-featured" aria-labelledby="featured-title"><div class="editorial-heading"><div><p class="eyebrow">SELECTED PAPERS</p><h2 id="featured-title">{L("featured_research")}</h2></div>{action_link("research/index.html", L("browse_research"))}</div>{research_cards(featured)}</section>'
     updates = [(latest['observationDate'], L('current_title') if latest.get('kind') == 'current' else L('latest_snapshot'), L('nav_overview'), reading_route(latest))]
@@ -840,14 +900,15 @@ def build_language(snapshots, research, latest):
             intro += f'<section class="overview-research"><p class="eyebrow">{L("ov_research_eyebrow")}</p><h2>{L("ov_research_title")}</h2>{research_cards(market_reports)}</section>'
         return intro
 
-    write('index.html', L('home_title'), lambda: homepage(latest, research), 'home')
+    write('index.html', L('home_title'), lambda: homepage(latest, research), 'home', L('home_desc'))
     write('overview.html', L('overview_title'), overview, 'overview')
     if latest.get('kind') == 'current':
         write('market/latest.html', L('current_title'), lambda: current_market_page(latest), 'overview')
     write('global/index.html', L('global_title'), global_pulse, 'global', L('global_intro'))
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
-        write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None), 'overview')
+        # Archive commentary has no English translation yet; do not claim a translated pair.
+        write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None), 'overview', translated=False)
     for page in range(1, research_page_count(research) + 1):
         write(research_page_route('research', page), L('research_title'), lambda page=page: research_landing(research, page), 'research')
     for key, (tkey, lkey, dkey) in COLLECTIONS.items():
@@ -865,15 +926,18 @@ def build_language(snapshots, research, latest):
             return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
         reports = [r for r in research if report_variant(r) == kind]
         for page in range(1, research_page_count(reports) + 1):
-            write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research')
+            write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research', indexable=kind != 'monthly' or bool(reports))
     for r in research:
-        write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'))
+        translated = bool(r.get('summary_en') and (r.get('articleBody_en') or r.get('markdown_en')))
+        write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'), translated=translated)
     write('about.html', L('about_title'), about, 'about')
-    write('404.html', L('404_title'), lambda: head('404', L('404_title'), L('404_lede')) + f'<p><a href="https://{CONFIG["domain"]}/">{L("back_home")}</a></p>')
+    write('404.html', L('404_title'), lambda: head('404', L('404_title'), L('404_lede')) + f'<p><a href="https://{CONFIG["domain"]}/">{L("back_home")}</a></p>', indexable=False)
 
 
 def main():
     global LANG
+    ALL_PAGES.clear()
+    PAGE_SEO.clear()
     snapshots = [json.loads(p.read_text(encoding='utf-8')) for p in sorted((ROOT/'content/snapshots').glob('*.json'))]
     research = [json.loads(p.read_text(encoding='utf-8')) for p in sorted((ROOT/'content/research').glob('*.json'), reverse=True)]
     research.sort(key=lambda r: r['published'], reverse=True)
@@ -889,12 +953,13 @@ def main():
     for lang in ('zh', 'en'):
         LANG = lang
         build_language(snapshots, research, latest)
+    add_language_alternates()
 
     (OUT/'.nojekyll').write_text('', encoding='utf-8')
     (OUT/'CNAME').write_text(CONFIG['domain'] + '\n', encoding='utf-8')
     origin = 'https://' + CONFIG['domain']
     (OUT/'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: ' + origin + '/sitemap.xml\n', encoding='utf-8')
-    (OUT/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join('<url><loc>' + origin + '/' + (('en/' if lang == 'en' else '') + p).replace('index.html', '') + '</loc></url>' for lang, p in ALL_PAGES if p != '404.html') + '</urlset>', encoding='utf-8')
+    write_sitemap()
     print(f'Built {len(ALL_PAGES)} HTML pages ({len(ALL_PAGES)//2} per language) from {len(snapshots)} snapshots and {len(research)} research reports.')
 
 

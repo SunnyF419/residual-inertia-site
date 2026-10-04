@@ -277,3 +277,5 @@ button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:default}
 
 .cover-primary{min-height:56px;border-radius:0;justify-content:space-between;gap:32px}
 @media(max-width:600px){.cover-actions{flex-direction:column}.cover-actions a{flex:0 0 auto;width:100%;min-height:56px}}
+.brand-definition{max-width:860px;margin:0 0 40px;color:var(--slate);font-size:15px;line-height:1.9;overflow-wrap:anywhere}
+@media(max-width:600px){.brand-definition{font-size:14px;margin-bottom:28px}}

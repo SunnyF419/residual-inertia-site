@@ -19,6 +19,16 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 
 浏览器打开 `http://127.0.0.1:8788`。首页与 Logo 链接使用站点根路径 `/`，请通过本地服务器预览。
 
+## SEO 与语言对应
+
+SEO 由现有 `scripts/build.py` 统一生成，不依赖额外 SEO 包。首页使用独立的中英文 title / description；品牌定义文本复用首页 description，Hero 标题仍由 `site.json` 控制。普通页面保留原有标题、说明和逐页 canonical。
+
+Organization、Person 使用稳定的 `https://residualinertia.com/#organization`、`#taiyang-feng`；首页另外输出 `#website`。每页最多一个 JSON-LD graph。Person 的 `founderOf` 在 JSON-LD context 中映射为标准 `founder` 的反向属性；不把论文链接当作个人资料 `sameAs`。
+
+完成双语构建后，只有两个实际生成、可索引且已提供对应翻译的页面才输出互相对应的 `zh-CN` / `en` / `x-default`。`x-default` 使用该页面的中文版本；首页为站点根路径。历史快照的评论及部分专题论文正文仍未完整翻译，因此暂不为这些详情页生成 hreflang。
+
+`/research/monthly/` 与 `/en/research/monthly/` 按公开 `content/research/` 中的月报数量自动切换：0 篇为 `noindex, follow`，至少 1 篇为 `index, follow`。sitemap 仅收录可索引的正式页面，排除空月报目录、404 和旧地址跳转页，使用生产 HTTPS URL 并去重。robots.txt 保持允许抓取，指向唯一 sitemap。`tests/test_seo.py` 验证这些规则及首篇月报上线后的自动切换。
+
 ## 首页与导航
 
 首页为 RI 品牌封面，展示正式 Logo、创始人 Sunny 和座右铭。原首页的指标、图表与近期记录移至 `/overview/`（市场概览）；所有页面使用目录式地址，例如 `/overview/`、`/about/`、`/research/`、`/snapshots/2026-09-29/`。旧 `.html` 地址保留即时跳转页，canonical 与 sitemap 指向新地址。
