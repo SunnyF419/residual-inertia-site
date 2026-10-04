@@ -194,6 +194,14 @@ I18N = {
     'author_manuscript': ('作者稿', 'Author manuscript'),
     'working_paper_draft': ('工作论文草稿', 'Working paper draft'),
     'view_doi': ('查看 DOI 论文记录', 'View DOI publication'),
+    'hub_directions': ('研究方向与作者', 'Research directions and authors'),
+    'research_desc': ('Residual Inertia（余势）的研究档案，收录 Taiyang Feng 与合著者的市场周报、专题论文和 FOMC 政策研究，保留作者、数据截止日、版本与原始资料链接。', 'Research from Residual Inertia by Taiyang Feng and collaborators: market letters, thematic papers and FOMC policy research, with authorship, data cutoffs, versions and original sources.'),
+    'scholarly_label': ('学术研究', 'Scholarly Research'),
+    'scholarly_desc': ('专题研究中的学术论文，保留合著署名、作者稿版本与 SSRN 外部记录。', 'Academic papers within thematic research, with coauthorship, manuscript versions and external SSRN records.'),
+    'related_research': ('相关研究与观察', 'Related research and observations'),
+    'research_process': ('研究流程与市场系统', 'Research process and market systems'),
+    'research_process_desc': ('市场概览保留模型状态及各项数据日期；每日快照记录当时的公开读数、来源质量与核验标识。周报和政策研究结合这些观察形成文字判断，学术论文保留各自的方法、作者及版本说明。模型读数不等同于实际持仓，也不替代研究中的假设与局限。', 'Market Overview preserves model states and source dates; daily snapshots record public readings, source quality and verification identifiers. Letters and policy research develop written views from these observations, while academic papers retain their own methods, authors and version notes. Model readings are not actual holdings and do not replace research assumptions or limitations.'),
+    'selected_work': ('研究与系统入口', 'Research and systems'),
     'founder_card_label': ('创始人卡片，点击查看照片', 'Founder card, click to view photo'),
     'founder_portrait': ('肖像', 'portrait'),
     'disclosure_title': ('披露', 'Disclosure'),
@@ -475,6 +483,10 @@ def research_nodes(record):
                'inLanguage': 'en' if LANG == 'en' else 'zh-CN'}
     if record.get('updated'):
         article['dateModified'] = record['updated']
+    if record.get('version'):
+        article['version'] = record['version']
+    if record.get('dataThrough'):
+        article['temporalCoverage'] = record['dataThrough']
     if scholarly:
         article.update(name=rfield(record, 'title'), abstract=rfield(record, 'summary'))
         external = external_publications(record)
@@ -488,6 +500,8 @@ def research_nodes(record):
         nodes = [page, article]
     else:
         article['publisher'] = {'@id': origin + '#organization'}
+        if record.get('researchId'):
+            article['identifier'] = record['researchId']
         nodes = [article]
     nodes += [a for a in authors if a['@id'] not in (origin + '#taiyang-feng', origin + '#organization')]
     return nodes
@@ -511,16 +525,20 @@ def snapshot_nodes(snapshot):
              'variableMeasured': [{'@type': 'PropertyValue', 'name': name, 'value': value} for name, value in fields]}]
 
 
+def organization_node():
+    origin = 'https://' + CONFIG['domain'] + '/'
+    return {'@type': 'Organization', '@id': origin + '#organization',
+            'name': 'Residual Inertia', 'alternateName': '余势', 'url': origin,
+            'description': L('home_desc'), 'logo': origin + 'assets/brand/RI-horizontal-color.svg',
+            'founder': {'@id': origin + '#taiyang-feng'}}
+
+
 def structured_data(home=False, extra_nodes=()):
     origin = 'https://' + CONFIG['domain'] + '/'
     organization_id = origin + '#organization'
     person_id = origin + '#taiyang-feng'
     graph = [
-        {'@type': 'Organization', '@id': organization_id,
-         'name': 'Residual Inertia', 'alternateName': '余势', 'url': origin,
-         'description': L('home_desc'),
-         'logo': origin + 'assets/brand/RI-horizontal-color.svg',
-         'founder': {'@id': person_id}},
+        organization_node(),
         {'@type': 'Person', '@id': person_id, 'name': 'Taiyang Feng',
          'alternateName': 'Sunny', 'url': origin + 'about/#founder',
          'founderOf': {'@id': organization_id}, 'jobTitle': 'Founder and Researcher',
@@ -531,7 +549,9 @@ def structured_data(home=False, extra_nodes=()):
     if home:
         graph.append({'@type': 'WebSite', '@id': origin + '#website',
                       'url': origin, 'name': 'Residual Inertia', 'alternateName': '余势',
-                      'publisher': {'@id': organization_id}, 'inLanguage': ['zh-CN', 'en']})
+                      'publisher': {'@id': organization_id}, 'inLanguage': ['zh-CN', 'en'],
+                      'hasPart': [{'@id': production_url(route, LANG)} for route in
+                                  ('research/index.html', 'overview/index.html', 'global/index.html', 'about/index.html')]})
     graph += list(extra_nodes)
     assert len({node['@id'] for node in graph}) == len(graph), 'Duplicate graph entity'
     # founderOf is the inverse of Schema.org founder, not a new vocabulary property.
@@ -648,8 +668,8 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
     toggle_label = 'EN' if LANG == 'zh' else '中文'
     canonical = production_url(ROUTE, LANG)
     desc = description or CONFIG.get('description_en' if LANG == 'en' else 'description', CONFIG['description'])
-    seo_title = title if section == 'home' else title + ' · Residual Inertia | 余势'
-    og_title = seo_title if section == 'home' else title + ' · Residual Inertia'
+    seo_title = title if section == 'home' else (title + (' | 余势' if '余势' not in title else '') if 'Residual Inertia' in title else title + ' · Residual Inertia | 余势')
+    og_title = seo_title if section == 'home' else (title if 'Residual Inertia' in title else title + ' · Residual Inertia')
     article_meta = ''
     if record:
         article_meta = f'<meta name="author" content="{E(author_display(record))}"><meta property="article:published_time" content="{E(record["published"])}">'
@@ -673,7 +693,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 {footer()}{SMART_NAV_JS}</body></html>'''
 
 
-def write(route, title, render, section='', description=None, indexable=True, translated=True, record=None, snapshot=None, archive_snapshots=None):
+def write(route, title, render, section='', description=None, indexable=True, translated=True, record=None, snapshot=None, archive_snapshots=None, archive_research=None):
     global ROUTE
     destination = route if route.endswith('index.html') or route == '404.html' else route[:-5] + '/index.html'
     ROUTE = destination
@@ -700,7 +720,37 @@ def write(route, title, render, section='', description=None, indexable=True, tr
     if section == 'about':
         nodes.append({'@type': 'AboutPage', '@id': production_url(destination, LANG),
                       'url': production_url(destination, LANG),
+                      'about': [{'@id': 'https://' + CONFIG['domain'] + '/#organization'},
+                                {'@id': 'https://' + CONFIG['domain'] + '/#taiyang-feng'}],
                       'mainEntity': {'@id': 'https://' + CONFIG['domain'] + '/#taiyang-feng'}})
+    origin = 'https://' + CONFIG['domain'] + '/'
+    if archive_research is not None:
+        canonical = production_url(destination, LANG)
+        nodes.extend([{'@type': 'CollectionPage', '@id': canonical, 'url': canonical, 'name': title,
+                       'publisher': {'@id': origin + '#organization'}, 'isPartOf': {'@id': origin + '#website'},
+                       'mainEntity': {'@id': canonical + '#reports'}},
+                      {'@type': 'ItemList', '@id': canonical + '#reports',
+                       'itemListElement': [{'@type': 'ListItem', 'position': i,
+                                            'item': {'@id': production_url('research/' + r['slug'] + '/index.html', LANG) + '#article',
+                                                     'url': production_url('research/' + r['slug'] + '/index.html', LANG),
+                                                     'name': rfield(r, 'title')}} for i, r in enumerate(archive_research, 1)]}])
+    if section == 'global':
+        nodes.extend([{'@type': 'WebPage', '@id': production_url(destination, LANG),
+                       'url': production_url(destination, LANG), 'name': title,
+                       'isPartOf': {'@id': origin + '#website'},
+                       'publisher': {'@id': origin + '#organization'},
+                       'mainEntity': {'@id': 'https://global.residualinertia.com/#application'}},
+                      {'@type': 'WebApplication', '@id': 'https://global.residualinertia.com/#application',
+                       'name': 'Global Pulse', 'alternateName': '全球态势',
+                       'url': 'https://global.residualinertia.com/',
+                       'creator': {'@id': origin + '#organization'}, 'description': L('global_intro')}])
+    if destination == 'overview/index.html':
+        nodes.append({'@type': 'WebPage', '@id': production_url(destination, LANG),
+                      'name': title, 'url': production_url(destination, LANG),
+                      'isPartOf': {'@id': origin + '#website'},
+                      'publisher': {'@id': origin + '#organization'},
+                      'mainEntity': {'@id': origin + 'overview/#daily-snapshots-dataset'},
+                      'relatedLink': production_url('global/index.html', LANG)})
     p.write_text(shell(title, render(), section, description, indexable=indexable, schema_nodes=nodes, record=record), encoding='utf-8')
     PATHS.append(destination)
     ALL_PAGES.append((LANG, destination))
@@ -980,7 +1030,21 @@ def research_library(reports, page=1, base='research', empty=''):
 def research_landing(research, page=1):
     body = head('RESEARCH ARCHIVE', L('research_head'), L('research_sub')) + research_navigation(research)
     body += f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>'
-    return body + research_library(research, page)
+    body += '<p class="eyebrow">' + ('最新研究' if LANG == 'zh' else 'Latest Research') + '</p>' if page == 1 else ''
+    body += research_library(research, page)
+    if page == 1:
+        items = []
+        for key in ('weekly', 'monthly', 'personal', 'fomc', 'scholarly'):
+            scholarly = key == 'scholarly'
+            reports = [r for r in research if (bool(external_publications(r)) if scholarly else report_variant(r) == key)]
+            latest = max(reports, key=lambda r: r.get('dataThrough') or r['published']) if reports else None
+            route = 'research/personal/index.html#scholarly-research' if scholarly else 'research/' + key + '/index.html'
+            label, desc = (L('scholarly_label'), L('scholarly_desc')) if scholarly else (L('col_' + key), L('col_' + key + '_desc'))
+            latest_link = anchor('research/' + latest['slug'] + '.html', E(rfield(latest, 'title'))) if latest else L('empty_text')
+            byline = ('<br><span class="caption">' + L('author_label') + author_links(latest) + '</span>') if latest else ''
+            items.append('<li><h3>' + anchor(route, E(label)) + '</h3><p>' + E(desc) + '<br>' + latest_link + byline + '</p></li>')
+        body += '<details class="archive-more" id="research-directions"><summary>' + L('hub_directions') + '</summary><ul>' + ''.join(items) + '</ul></details>'
+    return body
 
 
 def research_folders(research):
@@ -1031,7 +1095,12 @@ def about(research=()):
 <p>Residual Inertia｜余势是由 {E(CONFIG['founder'])} 创建的独立投资研究与决策系统平台。平台聚焦量化投资、资产定价、宏观市场、金融数据与 AI 驱动的研究基础设施，并将市场观察、实证研究、模型与工具整合进一个可重复、可验证的研究流程。</p>
 <p>Residual Inertia 相信，好的研究并不一定来自更复杂的模型，而来自更清晰的问题、更可靠的证据，以及能够被持续检验和改进的方法。平台坚持 Evidence before narrative. Process before prediction. 从市场状态监测、专题研究，到 Dashboard、数据系统与研究工作流，Residual Inertia 希望逐步建立一套能够长期积累、持续迭代，并真正服务于投资决策的研究基础设施。</p>
 </article>'''
-    return head('ABOUT / RESIDUAL INERTIA', L('about_title'), L('about_lede')) + intro_text + principles() + founder_intro + f'''<article class="prose">
+    selected = [('research/weekly/index.html', L('col_weekly')), ('research/fomc/index.html', L('col_fomc')),
+                ('research/personal/index.html', L('col_personal')), ('research/personal/index.html#scholarly-research', L('scholarly_label')),
+                ('overview.html', L('nav_overview')), ('global/index.html', L('nav_global'))]
+    process = '<article class="prose"><h2 id="research-process">' + L('research_process') + '</h2><p>' + L('research_process_desc') + '</p>'
+    process += '<h3>' + L('selected_work') + '</h3><ul>' + ''.join('<li>' + anchor(route, E(label)) + '</li>' for route, label in selected) + '</ul></article>'
+    return head('ABOUT / RESIDUAL INERTIA', L('about_title'), L('about_lede')) + intro_text + principles() + founder_intro + process + f'''<article class="prose">
 <h2 id="disclosure">{L('disclosure_title')}</h2><p>{L('disclosure_text')}</p></article>'''
 
 
@@ -1039,7 +1108,28 @@ def inline(text):
     return re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', E(text))
 
 
-def research_article(r):
+def related_reports(record, research):
+    """Use actual period, manuscript references and academic keywords; never add generic link blocks."""
+    related = []
+    if report_variant(record) in ('weekly', 'monthly'):
+        cutoff = record.get('dataThrough')
+        previous = [r for r in research if r['slug'] != record['slug'] and report_variant(r) == report_variant(record)
+                    and cutoff and r.get('dataThrough') and r['dataThrough'] < cutoff]
+        if previous:
+            related.append(max(previous, key=lambda r: r['dataThrough']))
+        manuscript = record.get('articleBody') or record.get('markdown') or ''
+        if 'FOMC' in manuscript:
+            policies = [r for r in research if report_variant(r) == 'fomc' and cutoff and r.get('dataThrough', '') <= cutoff]
+            if policies:
+                related.append(max(policies, key=lambda r: r.get('dataThrough', '')))
+    if external_publications(record):
+        keywords = {k.casefold() for k in record.get('keywords', [])}
+        related += [r for r in research if r['slug'] != record['slug'] and external_publications(r)
+                    and keywords.intersection(k.casefold() for k in r.get('keywords', []))][:2]
+    return list({r['slug']: r for r in related}.values())
+
+
+def research_article(r, research=()):
     back_key = report_variant(r) if r['category'] in ('周报', '月报') else collection(r)
     body = action_link('research/' + back_key + '/index.html', '← ' + L('col_'+back_key), 'back')
     date_label = rfield(r, 'dateLabel') or L('report_date')
@@ -1088,7 +1178,15 @@ def research_article(r):
     if notes:
         body += '<details class="report-notes"><summary>数据说明与参考来源</summary>' + markdown(notes) + '</details>'
     source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
-    return body + '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p><p>' + L('not_advice') + '</p></article>'
+    body += '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p><p>' + L('not_advice') + '</p></article>'
+    related = related_reports(r, research)
+    if related or report_variant(r) in ('weekly', 'monthly'):
+        links = []
+        if report_variant(r) in ('weekly', 'monthly'):
+            links.append('<li>' + anchor('overview.html', E(L('nav_overview'))) + '</li>')
+        links += ['<li>' + anchor('research/' + report['slug'] + '.html', E(rfield(report, 'title'))) + '</li>' for report in related]
+        body += '<section class="prose"><h2>' + L('related_research') + '</h2><ul>' + ''.join(links) + '</ul></section>'
+    return body
 
 
 def markdown(text):
@@ -1116,7 +1214,7 @@ def markdown(text):
     return ''.join(out)
 
 
-def snapshot_page(s, previous, following):
+def snapshot_page(s, previous, following, research=()):
     m = s['market']
     body = action_link('overview.html#daily-snapshots', L('back_overview'), 'back') + head('DAILY SNAPSHOT', s['observationDate'] + ' · ' + L('snapshot_suffix'), L('snapshot_lede'))
     body += f'<div class="notice"><strong>{L("archived_at")} {E(s["capturedAt"])}</strong><span>{L("archive_note")}</span></div>' + metrics(s)
@@ -1125,6 +1223,9 @@ def snapshot_page(s, previous, following):
     rows = ''.join(f'<tr><td>{E(source_label(src["name"]))}</td><td>{shortdate(src["asOf"])}</td><td>{E(status_label(src["status"]))}</td><td>{E(quality_label(src["qualityStatus"]))}</td></tr>' for src in s['sources'])
     body += '<section class="section"><h2>' + L('sources_title') + '</h2><p class="caption">' + L('sources_caption') + '</p><div class="table-scroll" tabindex="0" role="region" aria-label="data sources"><table><thead><tr><th>' + L('th_source') + '</th><th>' + L('th_asof') + '</th><th>' + L('th_freshness') + '</th><th>' + L('th_quality') + '</th></tr></thead><tbody>' + rows + '</tbody></table></div></section>'
     body += f'<details class="provenance"><summary>{L("provenance_summary")}</summary><p>{L("src_label")}<code>{E(s["snapshotId"])}</code></p><p>{L("hash_label")}<code>{E(s["contentHash"])}</code></p></details>'
+    matching = [r for r in research if r.get('dataThrough') == m['regimeDate'][:10] and report_variant(r) in ('weekly', 'monthly')]
+    if matching:
+        body += '<p class="caption">' + L('related_research') + '：' + ' · '.join(anchor('research/' + r['slug'] + '.html', E(rfield(r, 'title'))) for r in matching) + '</p>'
     body += '<div class="pager">' + (anchor('snapshots/' + previous['observationDate'] + '.html', '← ' + previous['observationDate']) if previous else '<span></span>') + (anchor('snapshots/' + following['observationDate'] + '.html', following['observationDate'] + ' →') if following else '<span>' + L('pager_latest') + '</span>') + '</div>'
     return body
 
@@ -1152,6 +1253,7 @@ def build_language(snapshots, research, latest):
         intro += '<div class="overview-current">' + overview_reading(latest)
         intro += f'<section class="overview-pillars"><p class="eyebrow">{L("ov_pillars_eyebrow")}</p><h2>{L("pillars_title")}</h2>{overview_pillars(latest)}<p class="caption">{L("pillars_caption")}</p></section></div>'
         intro += score_legend()
+        intro += '<p class="caption">' + anchor('about.html#research-process', E(L('research_process'))) + ' · ' + anchor('global/index.html', E(L('nav_global'))) + '</p>'
         intro += f'<section class="overview-trend"><div class="editorial-heading"><div><p class="eyebrow">{L("ov_trend_eyebrow")}</p><h2>{L("ov_trend_title")}</h2></div><span class="mono">{L("chart_rolling")}</span></div>{history_chart(snapshots, embedded=True)}</section>'
         intro += f'<section class="overview-archive" id="daily-snapshots"><p class="eyebrow">{L("ov_archive_eyebrow")}</p><h2>{L("ov_archive_title")}</h2><p class="section-intro">{L("ov_archive_intro").format(len(snapshots))}</p>{overview_snapshot_list(snapshots)}</section>'
         market_reports = [r for r in research if collection(r) == 'market'][:2]
@@ -1167,17 +1269,18 @@ def build_language(snapshots, research, latest):
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         # Archive commentary has no English translation yet; do not claim a translated pair.
-        write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None), 'overview', description=s['brief']['posture'], translated=False, indexable=should_index_snapshot(s, snapshots[:i]), snapshot=s)
+        write('snapshots/' + s['observationDate'] + '.html', s['observationDate'] + ' ' + L('snapshot_suffix'), lambda s=s, i=i: snapshot_page(s, snapshots[i-1] if i else None, snapshots[i+1] if i+1 < len(snapshots) else None, research), 'overview', description=s['brief']['posture'], translated=False, indexable=should_index_snapshot(s, snapshots[:i]), snapshot=s)
     for page in range(1, research_page_count(research) + 1):
-        write(research_page_route('research', page), L('research_title'), lambda page=page: research_landing(research, page), 'research')
+        write(research_page_route('research', page), L('research_title'), lambda page=page: research_landing(research, page), 'research', L('research_desc'), archive_research=research[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])
     for key, (tkey, lkey, dkey) in COLLECTIONS.items():
         def folder(page, key=key, lkey=lkey, dkey=dkey):
             reports = [r for r in research if collection(r) == key]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>'
-            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + research_library(reports, page, f'research/{key}', empty)
+            scholarly = ('<div id="scholarly-research"><h2>' + L('scholarly_label') + '</h2><p class="caption">' + L('scholarly_desc') + '</p></div>') if key == 'personal' else ''
+            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + scholarly + research_library(reports, page, f'research/{key}', empty)
         reports = [r for r in research if collection(r) == key]
         for page in range(1, research_page_count(reports) + 1):
-            write(research_page_route(f'research/{key}', page), L(tkey), lambda page=page: folder(page), 'research')
+            write(research_page_route(f'research/{key}', page), L(tkey), lambda page=page: folder(page), 'research', L(dkey), archive_research=reports[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])
     for kind, label in [('weekly','WEEKLY LETTERS'),('monthly','MONTHLY LETTERS')]:
         def period_folder(page, kind=kind, label=label):
             reports = [r for r in research if report_variant(r) == kind]
@@ -1185,11 +1288,11 @@ def build_language(snapshots, research, latest):
             return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
         reports = [r for r in research if report_variant(r) == kind]
         for page in range(1, research_page_count(reports) + 1):
-            write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research', indexable=kind != 'monthly' or bool(reports))
+            write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research', L('col_'+kind+'_desc'), indexable=kind != 'monthly' or bool(reports), archive_research=reports[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])
     for r in research:
         translated = bool(r.get('summary_en') and (r.get('articleBody_en') or r.get('markdown_en')))
-        write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r), 'research', rfield(r, 'summary'), translated=translated, record=r)
-    write('about.html', L('about_title'), lambda: about(research), 'about')
+        write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r, research), 'research', rfield(r, 'summary'), translated=translated, record=r)
+    write('about.html', L('about_title'), lambda: about(research), 'about', L('home_desc'))
     write('404.html', L('404_title'), lambda: head('404', L('404_title'), L('404_lede')) + f'<p><a href="https://{CONFIG["domain"]}/">{L("back_home")}</a></p>', indexable=False)
 
 
@@ -1217,6 +1320,7 @@ def main():
     (OUT/'.nojekyll').write_text('', encoding='utf-8')
     (OUT/'CNAME').write_text(CONFIG['domain'] + '\n', encoding='utf-8')
     origin = 'https://' + CONFIG['domain']
+    (OUT/'assets/brand/entity.json').write_text(json.dumps({'version': 1, 'organization': organization_node()}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     (OUT/'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: ' + origin + '/sitemap.xml\n', encoding='utf-8')
     write_sitemap()
     print(f'Built {len(ALL_PAGES)} HTML pages ({len(ALL_PAGES)//2} per language) from {len(snapshots)} snapshots and {len(research)} research reports.')

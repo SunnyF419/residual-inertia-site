@@ -1,11 +1,10 @@
 # Residual Inertia | 余势
 
-面向 `residualinertia.com` 的纯静态研究网站。GitHub 账号：`SunnyF419`；仓库：`residual-inertia-site`。
+Residual Inertia（余势）是由 Taiyang Feng (Sunny) 创立的独立投资研究与决策系统平台，聚焦量化投资、资产定价、宏观市场、市场风险与研究基础设施。本仓库是品牌官网的静态发布代码，不代表所有研究的数据或复现代码。
 
-网站已发布：https://sunnyf419.github.io/residual-inertia-site/
-源码仓库：https://github.com/SunnyF419/residual-inertia-site
+正式网站：[Residual Inertia](https://residualinertia.com/)；[About / Founder](https://residualinertia.com/about/#founder)；[Research](https://residualinertia.com/research/)。
 
-GitHub Actions 已通过构建、公开内容检查与 Pages 部署，线上桌面/手机页面及导航检查通过。自定义域名暂未绑定，等待 Cloudflare DNS 接入。
+源码仓库：https://github.com/SunnyF419/residual-inertia-site 。GitHub 账号 `SunnyF419` 是账号标识，正式研究作者名为 Taiyang Feng。GitHub Actions 负责构建、公开内容检查与 Pages 部署；canonical 使用正式 HTTPS 域名。
 
 ## 本地查看
 
@@ -31,9 +30,9 @@ Organization、Person 使用稳定的 `https://residualinertia.com/#organization
 
 ## 首页与导航
 
-首页为 RI 品牌封面，展示正式 Logo、创始人 Sunny 和座右铭。原首页的指标、图表与近期记录移至 `/overview/`（市场概览）；所有页面使用目录式地址，例如 `/overview/`、`/about/`、`/research/`、`/snapshots/2026-09-29/`。旧 `.html` 地址保留即时跳转页，canonical 与 sitemap 指向新地址。
+首页为 RI 品牌封面，展示正式 Logo、创始人 Taiyang Feng (Sunny) 和座右铭。原首页的指标、图表与近期记录移至 `/overview/`（市场概览）；所有页面使用目录式地址，例如 `/overview/`、`/about/`、`/research/`、`/snapshots/2026-09-29/`。旧 `.html` 地址保留即时跳转页，canonical 与 sitemap 指向新地址。
 
-每日快照归入市场概览 `/overview/` 的 `#daily-snapshots` 区域，最近 5 份直接展示，其余记录可展开；旧快照目录自动跳转至该区域。研究按 `market`（周报与月报）、`personal`（个人专题，如 WQS）、`fomc`（FOMC 政策研究）分目录。文章可用 `collection` 字段指定目录；未指定的周报/月报自动归入市场类，其他文章归入个人专题。尚未收录的目录明确显示待整理。
+每日快照归入市场概览 `/overview/` 的 `#daily-snapshots` 区域，最近 5 份直接展示，其余记录可展开；旧快照目录自动跳转至该区域。研究按 `market`（周报与月报）、`personal`（专题研究，包含合著学术论文）、`fomc`（FOMC 政策研究）分目录。`personal` 是保留的路由标识，不表示所有内容由创始人独著。文章可用 `collection` 字段指定目录；未指定的周报/月报自动归入市场类，其他文章归入专题。尚未收录的目录明确显示待整理。
 
 风险柱颜色按原模型状态映射：建设性为绿，谨慎/中性/防御为黄，压力为红；不修改分数或评级。
 
@@ -41,13 +40,13 @@ Organization、Person 使用稳定的 `https://residualinertia.com/#organization
 
 ## 内容与编辑
 
-- `content/snapshots/*.json`：每日市场归档的公开字段；已接入 2026-08-24 至 2026-09-28 的 31 份档案。
+- `content/snapshots/*.json`：每日市场归档的公开字段；日期与数量以实际文件及构建输出为准。
 - `content/research/*.json`：研究文章，`markdown` 字段支持标题、粗体、段落、无序列表、引用和表格；不解释原始 HTML。
 - `assets/site.css`：RI 品牌页面样式。Logo、字体来自现有门户，字体授权保留在 `assets/brand/fonts/`。
 - `scripts/build.py`：生成完整 HTML；无客户端 API、数据库、账户登录或实时行情依赖。
 - `dist/`：生成结果，Git 忽略；GitHub Actions 每次从已提交内容重建。
 
-初始研究文章来自 2026-08-12 周报和 2026-08-15 月报。保留源报告数据与方法说明，移除本机运行日志；不是新完成的研究或当前市场建议。网站上的原报告生成日不代表网站已经于当时上线。
+公开报告以 `content/research/` 的正式记录为准，保留源报告数据、署名、日期、版本与方法说明，排除本机运行日志。报告发布日期和数据截止日不等同于网站上线日期。
 
 ## 每日更新
 
@@ -89,6 +88,8 @@ Organization、Person 使用稳定的 `https://residualinertia.com/#organization
 
 ## P1 作者、研究与历史快照 SEO
 
+P2 品牌审计与长期执行文档位于 `docs/seo/`：[品牌实体审计](docs/seo/BRAND_ENTITY_AUDIT.md)、[站外权威计划](docs/seo/EXTERNAL_AUTHORITY_PLAN.md)、[作者身份清单](docs/seo/AUTHOR_IDENTITY_CHECKLIST.md)、[监控计划](docs/seo/SEO_MEASUREMENT_PLAN.md)。这些文档不是站外账号修改或排名增长的完成证明。Global Pulse 与主站共用 Organization ID；主站生成 `/assets/brand/entity.json`，子站同步此公开导出，不复制私有数据。
+
 继续使用 `scripts/build.py` 的统一 JSON-LD graph，不添加客户端 SEO 包。每个文档只输出一次 Organization 与 Taiyang Feng Person 定义，文章通过 `@id` 引用。作者页复用 `/about/#founder`；Sunny、Sunny Feng 与 Taiyang Feng 是已确认的同一作者别名，公开署名统一为 Taiyang Feng。合著者保持原署名及顺序，未知作者不自动归到创始人；组织或缺省发布署名使用 Organization。Person 没有可靠的个人主页、ORCID 或 SSRN author profile，因此不添加 `sameAs`；论文 landing page 只属于论文实体。
 
 普通周报、月报、专题和政策研究输出 Article。有记录的 SSRN / DOI 学术论文输出 ScholarlyArticle：保留作者顺序、实际发布日期与可选修订日期，关联站内 self canonical 和外部 landing page。SSRN PDF 不能作为 landing page，DOI 必须存在于 `doi` / `doiUrl` 字段，不从 SSRN 编号推导。现有两篇论文的 `keywords` 和 `manuscriptStatus` 来自本地作者稿；状态只描述本站版本，不代表 SSRN 最新版本、同行评审或期刊录用。RI 作为论文站内 WebPage 的 publisher，不声称是外部学术论文的原出版机构。
@@ -117,6 +118,6 @@ Organization、Person 使用稳定的 `https://residualinertia.com/#organization
 
 本地导入需要现有 Python 环境中的 `duckdb`；GitHub 构建只读取已导出的 JSON，仍无数据库依赖。历史源不可读取、覆盖不足或数值非法时，同步失败并阻止推送，保留线上版本。
 
-正式市场周报和月报由作者登录后上传 PDF 发布，不再由 dashboard 导入。网站读者可注册账户，但没有上传或修改权限。作者登录使用 Microsoft Authenticator 二次认证，首次登录先绑定验证器；密码正确而二次认证未通过不会获得管理权限。报告先上传成私有草稿，预览无误后单独发布。文章展示简介、日期与 PDF 下载。
+正式市场周报和月报由作者登录后上传 PDF 发布，不再由 dashboard 导入。网站读者可注册账户，但没有上传或修改权限。作者登录使用 Microsoft Authenticator 二次认证，首次登录先绑定验证器；密码正确而二次认证未通过不会获得管理权限。报告先上传成私有草稿，预览无误后单独发布。文章展示简介、日期与浏览 PDF 入口。
 
 每日 Update Website.ps1 -Publish 会先拉取并合并作者从网站上传的报告；并发发布时重新同步、构建并验证后重试，防止日常快照更新覆盖正式报告。自动发布连接需要服务器专用的仓库写入密钥，当前等待用户明确授权，上传与草稿预览不受影响。

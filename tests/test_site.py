@@ -146,7 +146,8 @@ class SiteTests(unittest.TestCase):
                     self.assertIn('https://residualinertia.com/'+prefix+f'research/page/{page}/', sitemap)
                 for r in research:
                     path = f'/{prefix}research/{r["slug"]}/'
-                    self.assertEqual(sum(f'href="{path}"' in page for page in archive_pages),1)
+                    # Contextual category links may repeat a destination; each report card belongs to one page.
+                    self.assertEqual(sum(a.get('href') == path for page in archive_pages for a in Elements(page).with_class('report-card-link')),1)
                     article = (ROOT / 'dist' / prefix / 'research' / r['slug'] / 'index.html').read_text(encoding='utf-8')
                     self.assertIn(r['published'], article)
                     pdf_links = [attrs for _,attrs in Elements(article).elements if urlsplit(attrs.get('href','')).path == '/'+r['pdf']]
