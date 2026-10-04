@@ -279,3 +279,27 @@ button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:default}
 @media(max-width:600px){.cover-actions{flex-direction:column}.cover-actions a{flex:0 0 auto;width:100%;min-height:56px}}
 .brand-definition{max-width:860px;margin:0 0 40px;color:var(--slate);font-size:15px;line-height:1.9;overflow-wrap:anywhere}
 @media(max-width:600px){.brand-definition{font-size:14px;margin-bottom:28px}}
+
+/* Content links share the outlined action treatment; inline credits stay quiet. */
+a{color:var(--ink);text-decoration:none}
+.action-link>span{min-width:0;overflow-wrap:anywhere}
+.action-group{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.action-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;list-style:none;padding:0;margin:24px 0}
+.action-list>li,.prose .action-list>li{min-width:0;margin:0}
+.action-list .action-link{display:flex;width:100%;min-width:0;height:100%}
+.publication-list{grid-template-columns:1fr;gap:28px}
+.publication-list>li>.action-link{height:auto}
+.publication-list .caption{margin:8px 0;color:var(--slate)}
+.publication-list .action-group{margin:12px 0 0}
+.publication-list .action-group .action-link{width:auto;height:auto}
+.founder-bio{min-width:0}
+.founder-bio>.caption{margin:16px 0 24px}
+.founder-bio>.action-list{margin-top:20px}
+.research-directions>li{display:flex;flex-direction:column;gap:12px}
+.research-directions h3{margin:0}
+.research-directions h3 .action-link{font-weight:500}
+.research-directions p{font-size:14px;color:var(--slate)}
+.research-directions>li>.action-link{height:auto;margin-top:auto}
+.research-directions .caption{display:block}
+.prose a[rel="author"]{color:var(--slate)}
+@media(max-width:600px){.action-list{grid-template-columns:1fr;gap:12px}.publication-list{gap:24px}.publication-list .action-group .action-link{width:100%}.action-group{flex-direction:column}.pager{flex-wrap:wrap}.pager>.action-link{flex:1 1 100%}}

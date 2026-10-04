@@ -622,8 +622,11 @@ def action_content(label):
     return f'<span>{E(label)}</span>{icon}'
 
 
-def action_link(target, label, cls=''):
-    return anchor(target, action_content(label), ('action-link ' + cls).strip())
+def action_link(target, label, cls='', *, external=False):
+    classes = ('action-link ' + cls).strip()
+    if external:
+        return f'<a class="{classes}" href="{E(target)}" target="_blank" rel="noopener noreferrer">{action_content(label)}</a>'
+    return anchor(target, action_content(label), classes)
 
 
 def other_lang_url():
@@ -1040,10 +1043,10 @@ def research_landing(research, page=1):
             latest = max(reports, key=lambda r: r.get('dataThrough') or r['published']) if reports else None
             route = 'research/personal/index.html#scholarly-research' if scholarly else 'research/' + key + '/index.html'
             label, desc = (L('scholarly_label'), L('scholarly_desc')) if scholarly else (L('col_' + key), L('col_' + key + '_desc'))
-            latest_link = anchor('research/' + latest['slug'] + '.html', E(rfield(latest, 'title'))) if latest else L('empty_text')
+            latest_link = action_link('research/' + latest['slug'] + '.html', rfield(latest, 'title')) if latest else L('empty_text')
             byline = ('<br><span class="caption">' + L('author_label') + author_links(latest) + '</span>') if latest else ''
-            items.append('<li><h3>' + anchor(route, E(label)) + '</h3><p>' + E(desc) + '<br>' + latest_link + byline + '</p></li>')
-        body += '<details class="archive-more" id="research-directions"><summary>' + L('hub_directions') + '</summary><ul>' + ''.join(items) + '</ul></details>'
+            items.append('<li><h3>' + action_link(route, label) + '</h3><p>' + E(desc) + '</p>' + latest_link + byline + '</li>')
+        body += '<details class="archive-more" id="research-directions"><summary>' + L('hub_directions') + '</summary><ul class="action-list research-directions">' + ''.join(items) + '</ul></details>'
     return body
 
 
@@ -1061,9 +1064,9 @@ def about(research=()):
     for report in research:
         publications = external_publications(report)
         if publications and any(a['@id'].endswith('#taiyang-feng') for a in research_authors(report)):
-            links = ' · '.join(f'<a href="{E(p["url"])}" target="_blank" rel="noopener noreferrer">{L("view_ssrn") if p["kind"] == "SSRN" else L("view_doi")}</a>' for p in publications)
-            works.append('<li>' + anchor('research/' + report['slug'] + '.html', E(rfield(report, 'title'))) + '<br><span class="caption">' + E(author_display(report)) + ' · ' + links + '</span></li>')
-    works_markup = ('<h3>' + L('founder_works') + '</h3><ul>' + ''.join(works) + '</ul>') if works else ''
+            links = ''.join(action_link(p['url'], L('view_ssrn') if p['kind'] == 'SSRN' else L('view_doi'), external=True) for p in publications)
+            works.append('<li>' + action_link('research/' + report['slug'] + '.html', rfield(report, 'title')) + '<p class="caption">' + E(author_display(report)) + '</p><div class="action-group">' + links + '</div></li>')
+    works_markup = ('<h3>' + L('founder_works') + '</h3><ul class="action-list publication-list">' + ''.join(works) + '</ul>') if works else ''
     founder_intro = f'''<section class="founder-section" id="founder" aria-labelledby="founder-title">
 <div class="founder-card">
 <div class="founder-flip-card" role="button" tabindex="0" aria-label="{L('founder_card_label')}">
@@ -1099,7 +1102,7 @@ def about(research=()):
                 ('research/personal/index.html', L('col_personal')), ('research/personal/index.html#scholarly-research', L('scholarly_label')),
                 ('overview.html', L('nav_overview')), ('global/index.html', L('nav_global'))]
     process = '<article class="prose"><h2 id="research-process">' + L('research_process') + '</h2><p>' + L('research_process_desc') + '</p>'
-    process += '<h3>' + L('selected_work') + '</h3><ul>' + ''.join('<li>' + anchor(route, E(label)) + '</li>' for route, label in selected) + '</ul></article>'
+    process += '<h3>' + L('selected_work') + '</h3><ul class="action-list">' + ''.join('<li>' + action_link(route, label) + '</li>' for route, label in selected) + '</ul></article>'
     return head('ABOUT / RESIDUAL INERTIA', L('about_title'), L('about_lede')) + intro_text + principles() + founder_intro + process + f'''<article class="prose">
 <h2 id="disclosure">{L('disclosure_title')}</h2><p>{L('disclosure_text')}</p></article>'''
 
@@ -1162,7 +1165,7 @@ def research_article(r, research=()):
             body += '<p class="caption">' + L('paper_local_version') + '：' + L(r['manuscriptStatus']) + '</p>'
         for publication in publications:
             label = L('view_ssrn') if publication['kind'] == 'SSRN' else L('view_doi')
-            body += f'<p><a href="{E(publication["url"])}" target="_blank" rel="noopener noreferrer">{label}</a></p>'
+            body += '<div class="paper-actions">' + action_link(publication['url'], label, external=True) + '</div>'
     body += '</section>'
     if rfield(r, 'note'):
         body += '<div class="notice">' + E(rfield(r, 'note')) + '</div>'
@@ -1183,9 +1186,9 @@ def research_article(r, research=()):
     if related or report_variant(r) in ('weekly', 'monthly'):
         links = []
         if report_variant(r) in ('weekly', 'monthly'):
-            links.append('<li>' + anchor('overview.html', E(L('nav_overview'))) + '</li>')
-        links += ['<li>' + anchor('research/' + report['slug'] + '.html', E(rfield(report, 'title'))) + '</li>' for report in related]
-        body += '<section class="prose"><h2>' + L('related_research') + '</h2><ul>' + ''.join(links) + '</ul></section>'
+            links.append('<li>' + action_link('overview.html', L('nav_overview')) + '</li>')
+        links += ['<li>' + action_link('research/' + report['slug'] + '.html', rfield(report, 'title')) + '</li>' for report in related]
+        body += '<section class="prose"><h2>' + L('related_research') + '</h2><ul class="action-list">' + ''.join(links) + '</ul></section>'
     return body
 
 
@@ -1225,8 +1228,8 @@ def snapshot_page(s, previous, following, research=()):
     body += f'<details class="provenance"><summary>{L("provenance_summary")}</summary><p>{L("src_label")}<code>{E(s["snapshotId"])}</code></p><p>{L("hash_label")}<code>{E(s["contentHash"])}</code></p></details>'
     matching = [r for r in research if r.get('dataThrough') == m['regimeDate'][:10] and report_variant(r) in ('weekly', 'monthly')]
     if matching:
-        body += '<p class="caption">' + L('related_research') + '：' + ' · '.join(anchor('research/' + r['slug'] + '.html', E(rfield(r, 'title'))) for r in matching) + '</p>'
-    body += '<div class="pager">' + (anchor('snapshots/' + previous['observationDate'] + '.html', '← ' + previous['observationDate']) if previous else '<span></span>') + (anchor('snapshots/' + following['observationDate'] + '.html', following['observationDate'] + ' →') if following else '<span>' + L('pager_latest') + '</span>') + '</div>'
+        body += '<section class="section"><h2>' + L('related_research') + '</h2><ul class="action-list">' + ''.join('<li>' + action_link('research/' + r['slug'] + '.html', rfield(r, 'title')) + '</li>' for r in matching) + '</ul></section>'
+    body += '<div class="pager">' + (action_link('snapshots/' + previous['observationDate'] + '.html', '← ' + previous['observationDate']) if previous else '<span></span>') + (action_link('snapshots/' + following['observationDate'] + '.html', following['observationDate'] + ' →') if following else '<span>' + L('pager_latest') + '</span>') + '</div>'
     return body
 
 
@@ -1253,7 +1256,7 @@ def build_language(snapshots, research, latest):
         intro += '<div class="overview-current">' + overview_reading(latest)
         intro += f'<section class="overview-pillars"><p class="eyebrow">{L("ov_pillars_eyebrow")}</p><h2>{L("pillars_title")}</h2>{overview_pillars(latest)}<p class="caption">{L("pillars_caption")}</p></section></div>'
         intro += score_legend()
-        intro += '<p class="caption">' + anchor('about.html#research-process', E(L('research_process'))) + ' · ' + anchor('global/index.html', E(L('nav_global'))) + '</p>'
+        intro += '<div class="action-group">' + action_link('about.html#research-process', L('research_process')) + action_link('global/index.html', L('nav_global')) + '</div>'
         intro += f'<section class="overview-trend"><div class="editorial-heading"><div><p class="eyebrow">{L("ov_trend_eyebrow")}</p><h2>{L("ov_trend_title")}</h2></div><span class="mono">{L("chart_rolling")}</span></div>{history_chart(snapshots, embedded=True)}</section>'
         intro += f'<section class="overview-archive" id="daily-snapshots"><p class="eyebrow">{L("ov_archive_eyebrow")}</p><h2>{L("ov_archive_title")}</h2><p class="section-intro">{L("ov_archive_intro").format(len(snapshots))}</p>{overview_snapshot_list(snapshots)}</section>'
         market_reports = [r for r in research if collection(r) == 'market'][:2]
@@ -1293,7 +1296,7 @@ def build_language(snapshots, research, latest):
         translated = bool(r.get('summary_en') and (r.get('articleBody_en') or r.get('markdown_en')))
         write('research/' + r['slug'] + '.html', rfield(r, 'title'), lambda r=r: research_article(r, research), 'research', rfield(r, 'summary'), translated=translated, record=r)
     write('about.html', L('about_title'), lambda: about(research), 'about', L('home_desc'))
-    write('404.html', L('404_title'), lambda: head('404', L('404_title'), L('404_lede')) + f'<p><a href="https://{CONFIG["domain"]}/">{L("back_home")}</a></p>', indexable=False)
+    write('404.html', L('404_title'), lambda: head('404', L('404_title'), L('404_lede')) + action_link('index.html', L('back_home')), indexable=False)
 
 
 def main():
