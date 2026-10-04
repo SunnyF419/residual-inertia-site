@@ -280,6 +280,10 @@ button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:default}
 .brand-definition{max-width:860px;margin:0 0 40px;color:var(--slate);font-size:15px;line-height:1.9;overflow-wrap:anywhere}
 @media(max-width:600px){.brand-definition{font-size:14px;margin-bottom:28px}}
 
+/* Keep anchor navigation smooth while honoring reduced-motion preferences. */
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
 /* Content links share the outlined action treatment; inline credits stay quiet. */
 a{color:var(--ink);text-decoration:none}
 .action-link>span{min-width:0;overflow-wrap:anywhere}
