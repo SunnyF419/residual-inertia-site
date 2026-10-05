@@ -8,6 +8,8 @@
   const access = dialog.querySelector('[data-intro-access]');
   const status = dialog.querySelector('[data-intro-status]');
   const sessionKey = 'ri-home-intro-seen';
+  // Each phrase finishes typing before a distinct, readable hold.
+  const timeline = {research: 3500, decide: 6500, end: 9500};
   let frame = 0, deadline = 0, revealTimer = 0, exitAnimation;
   let started = 0, closing = false, saved;
 
@@ -37,9 +39,13 @@
       if (saved.focus && saved.focus !== document.body && saved.focus.isConnected) saved.focus.focus({preventScroll: true});
       else {
         const main = document.getElementById('main');
+        main.classList.add('intro-landing-focus');
         main.setAttribute('tabindex', '-1');
         main.focus({preventScroll: true});
-        main.addEventListener('blur', () => main.removeAttribute('tabindex'), {once: true});
+        main.addEventListener('blur', () => {
+          main.removeAttribute('tabindex');
+          main.classList.remove('intro-landing-focus');
+        }, {once: true});
       }
       saved = undefined;
     }
@@ -76,11 +82,11 @@
   }
   function tick(now) {
     const elapsed = now - started;
-    const phase = elapsed < 1550 ? 'observe' : elapsed < 3050 ? 'research' : 'decide';
+    const phase = elapsed < timeline.research ? 'observe' : elapsed < timeline.decide ? 'research' : 'decide';
     if (dialog.dataset.phase !== phase) dialog.dataset.phase = phase;
-    write(access, Math.floor(Math.max(0, elapsed - 120) / 23));
-    write(status, Math.floor(Math.max(0, elapsed - 1550) / 30));
-    if (elapsed >= 4400) {finish(); return;}
+    write(access, Math.floor(Math.max(0, elapsed - 120) / 42));
+    write(status, Math.floor(Math.max(0, elapsed - timeline.research) / 48));
+    if (elapsed >= timeline.end) {finish(); return;}
     frame = window.requestAnimationFrame(tick);
   }
   function play(manual = false) {
@@ -110,7 +116,7 @@
     skip.focus({preventScroll: true});
     started = window.performance.now();
     frame = window.requestAnimationFrame(tick);
-    deadline = window.setTimeout(() => finish(true), 5500);
+    deadline = window.setTimeout(() => finish(true), timeline.end + 1100);
   }
   skip.addEventListener('click', () => finish());
   dialog.addEventListener('cancel', event => {event.preventDefault(); finish();});
