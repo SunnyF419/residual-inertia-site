@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
-const {filterRecords, pageRecords} = require('../assets/archive-browser.js');
+const {filterRecords, pageRecords, rankRecords} = require('../assets/archive-browser.js');
 
 const records = [
   {text: 'Winners Glide, Losers Stumble Taiyang Feng Momentum 2026-07-10'},
@@ -25,4 +25,7 @@ assert.equal(pageRecords(collection, 3).items.length, 1);
 assert.equal(pageRecords(collection, 99).page, 3);
 assert.equal(pageRecords([], 2).page, 1);
 assert.deepEqual(pageRecords([], 1).items, []);
+const ranked = [{title:'About', text:'About Winners Glide'}, {title:'Winners Glide', text:'Winners Glide'}, {title:'Research', text:'Research Winners Glide'}];
+assert.equal(rankRecords(filterRecords(ranked, 'Winners Glide'), 'Winners Glide')[0].title, 'Winners Glide');
+assert.equal(ranked[0].title, 'About');
 console.log('PASS: multilingual search, date formats, literal hostile input, complete collection search and six-result pagination.');
