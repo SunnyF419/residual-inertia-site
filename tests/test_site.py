@@ -31,6 +31,24 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_home_intro_is_optional_and_scoped_to_both_homepages(self):
+        for lang in ('zh', 'en'):
+            with patch.object(build, 'LANG', lang), patch.object(build, 'ROUTE', 'index.html'):
+                home = build.shell('Homepage', '<h1>Homepage</h1>', section='home')
+                research = build.shell('Research', '<h1>Research</h1>', section='research')
+                elements = Elements(home)
+                intros = elements.with_class('home-intro')
+                self.assertEqual(len(intros), 1)
+                self.assertNotIn('open', intros[0])
+                self.assertEqual(home.count('<h1>'), 1)
+                self.assertIn('assets/home-intro.js?v=', home)
+                self.assertIn('assets/home-intro.css?v=', home)
+                self.assertIn('data-intro-replay', home)
+                self.assertNotIn('home-intro', research)
+                self.assertNotIn('data-intro-replay', research)
+                ids = [attrs['id'] for _, attrs in elements.elements if 'id' in attrs]
+                self.assertEqual(len(ids), len(set(ids)))
+
     def test_favicons_contain_real_high_resolution_frames_and_shared_head_links(self):
         brand = ROOT / 'assets/brand'
         ico = (brand / 'favicon.ico').read_bytes()

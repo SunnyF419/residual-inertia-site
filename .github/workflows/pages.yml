@@ -22,6 +22,7 @@ jobs:
       - name: Check motion accessibility and account navigation
         run: |
           node tests/site-motion.cjs
+          node tests/home-intro.cjs
           node tests/account-nav.cjs
           node tests/market-chart.cjs
           node tests/dashboard-completion.mjs

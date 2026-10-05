@@ -21,6 +21,7 @@ ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexd
 MOTION_VERSION = hashlib.sha256((ROOT / 'assets/site-motion.js').read_bytes()).hexdigest()[:12]
 CHART_VERSION = hashlib.sha256((ROOT / 'assets/market-chart.js').read_bytes()).hexdigest()[:12]
 ARCHIVE_VERSION = hashlib.sha256((ROOT / 'assets/archive-browser.js').read_bytes()).hexdigest()[:12]
+INTRO_VERSION = hashlib.sha256(b''.join((ROOT / 'assets' / name).read_bytes() for name in ('home-intro.css', 'home-intro.js'))).hexdigest()[:12]
 ICON_VERSION = hashlib.sha256(b''.join((ROOT / 'assets/brand' / name).read_bytes() for name in (
     'favicon.ico', 'favicon.svg', 'favicon-48x48.png', 'android-chrome-192x192.png',
     'android-chrome-512x512.png', 'apple-touch-icon.png'))).hexdigest()[:12]
@@ -668,7 +669,7 @@ def out_dir():
     return OUT / 'en' if LANG == 'en' else OUT
 
 
-def footer():
+def footer(home=False):
     text = lambda cn, en: cn if LANG == 'zh' else en
     research = ''.join(anchor(f'research/{kind}/index.html', L('col_'+kind)) for kind in ('weekly', 'monthly', 'personal', 'fomc'))
     market = anchor('overview.html', L('nav_overview')) + anchor('overview.html#daily-snapshots', text('每日快照档案', 'Daily Snapshot Archive')) + anchor('global/index.html', L('nav_global'))
@@ -678,10 +679,13 @@ def footer():
     about = anchor('about.html', L('nav_about')) + anchor('about.html#founder', L('home_founder')) + anchor('about.html#principles', text('品牌理念', 'Our Principles')) + anchor('about.html#disclosure', L('footer_disclosure'))
     columns = [(L('nav_research'), research), (text('市场与系统', 'Markets & Systems'), market), ('MyRI', account), ('Residual Inertia', about)]
     navigation = ''.join(f'<section class="footer-column"><h2>{E(title)}</h2><div>{links}</div></section>' for title, links in columns)
+    replay = f'<button type="button" class="intro-replay" data-intro-replay hidden aria-haspopup="dialog" aria-controls="home-intro">{text("重播开场", "Replay introduction")}<span aria-hidden="true">↻</span></button>' if home else ''
+    top = f'<a class="footer-top" href="#top"><span>{text("返回顶部", "Back to top")}</span><span aria-hidden="true">↑</span></a>'
+    controls = f'<div class="footer-controls">{replay}{top}</div>' if home else top
     return f'''<footer class="site-footer"><div class="wrap footer-inner">
 <nav class="footer-navigation" aria-label="{text('页脚导航', 'Footer navigation')}">{navigation}</nav>
 <div class="footer-signature">{anchor('index.html', '<img src="'+url('assets/brand/RI-symbol-reverse.svg')+'" alt="Residual Inertia | 余势" width="116" height="82">', 'footer-logo')}<p class="footer-brandline">{E(CONFIG['brandLine'])}</p><p class="footer-motto">{E(CONFIG['motto'])}</p></div>
-<div class="footer-bottom"><div><p class="footer-descriptor">{L('footer_system')}</p><p class="footer-disclaimer">{L('footer_disclaimer')}</p><small>© Residual Inertia | 余势</small></div><a class="footer-top" href="#top"><span>{text('返回顶部', 'Back to top')}</span><span aria-hidden="true">↑</span></a></div>
+<div class="footer-bottom"><div><p class="footer-descriptor">{L('footer_system')}</p><p class="footer-disclaimer">{L('footer_disclaimer')}</p><small>© Residual Inertia | 余势</small></div>{controls}</div>
 </div></footer>'''
 
 
@@ -715,14 +719,37 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <link rel="icon" href="{url('assets/brand/android-chrome-512x512.png')}?v={ICON_VERSION}" sizes="512x512" type="image/png">
 <link rel="icon" href="{url('assets/brand/favicon.svg')}?v={ICON_VERSION}" sizes="any" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}?v={ICON_VERSION}" sizes="180x180"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
+{f'<link rel="stylesheet" href="{url("assets/home-intro.css")}?v={INTRO_VERSION}"><script defer src="{url("assets/home-intro.js")}?v={INTRO_VERSION}"></script>' if section == 'home' else ''}
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
 <script defer src="{url('assets/archive-browser.js')}?v={ARCHIVE_VERSION}"></script>
-</head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
+</head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}>{home_intro() if section == 'home' else ''}<a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<button type="button" class="site-search-toggle" data-site-search-open aria-label="{L('site_search')}" aria-haspopup="dialog" aria-controls="site-search-dialog" aria-expanded="false" hidden>{search_icon()}</button><a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
-{site_search_dialog()}{footer()}{SMART_NAV_JS}</body></html>'''
+{site_search_dialog()}{footer(home=section == 'home')}{SMART_NAV_JS}</body></html>'''
+
+
+def home_intro():
+    """A decorative, optional opening; the real homepage stays server-rendered."""
+    text = lambda cn, en: cn if LANG == 'zh' else en
+    # Animate the actual brand geometry, preserving its cut-out and proportions.
+    symbol = (ROOT / 'assets/brand/RI-symbol-reverse.svg').read_text(encoding='utf-8')
+    symbol = symbol.replace('role="img" aria-label="Residual Inertia | 余势"', 'class="intro-logo" aria-hidden="true" focusable="false"')
+    symbol = symbol.replace('bar-cut', 'intro-bar-cut').replace('fill="#F2F2EB"', 'fill="currentColor"')
+    symbol = symbol.replace('<rect ', '<rect class="intro-logo-bar" ')
+    symbol = symbol.replace('<path fill="currentColor"', '<path class="intro-logo-arc" fill="currentColor"')
+    return f'''<dialog class="home-intro" id="home-intro" data-home-intro aria-labelledby="intro-title" aria-describedby="intro-description">
+<h2 class="intro-sr-only" id="intro-title">{text('Residual Inertia 余势 · 品牌开场', 'Residual Inertia · Introduction')}</h2>
+<p class="intro-sr-only" id="intro-description">{text('短暂的品牌动画。可立即进入网站，或按 Escape 跳过。', 'A brief brand animation. Enter the website at any time, or press Escape to skip.')}</p>
+<div class="intro-layout" aria-hidden="true"><div class="intro-wordmark"><strong>RESIDUAL<br>INERTIA<span> / 余势</span></strong><p>INVESTMENT RESEARCH<br>&amp; DECISION SYSTEMS</p></div>
+<div class="intro-center"><p class="intro-access mono"><span data-intro-access data-text="OBSERVE. RESEARCH. DECIDE."></span><span class="intro-caret"></span></p>
+<div class="intro-brand-stage"><div class="intro-mark"><svg class="intro-orbits" viewBox="0 0 360 360" fill="none"><circle class="intro-orbit-outer" cx="180" cy="180" r="156" pathLength="1"/><circle class="intro-orbit-inner" cx="180" cy="180" r="132" pathLength="1"/><path class="intro-axis" d="M180 12v20m0 296v20M12 180h20m296 0h20"/><g class="intro-orbit-dot"><circle cx="180" cy="24" r="3" fill="currentColor" stroke="none"/></g></svg>{symbol}<p class="intro-mark-caption">RESIDUAL INERTIA</p></div>
+<div class="intro-research"><p class="intro-status mono"><span class="intro-status-dot"></span><span data-intro-status data-text="{text('独立研究 · 从简出发', 'INDEPENDENT RESEARCH')}"></span></p><p>{text('从观察中提取证据。', 'Evidence from observation.')}<br>{text('为下一笔决策建立依据。', 'Research for the next decision.')}</p><span class="intro-research-rule"></span></div></div>
+<div class="intro-welcome"><p class="intro-welcome-label">RESIDUAL INERTIA{ ' / 余势' if LANG == 'zh' else ''}</p><p class="intro-headline"><span>{text('从市场状态，', 'From market state')}</span><span>{text('到下一笔决策。', 'to the next decision.')}</span></p><p class="intro-welcome-caption">{text('独立投资研究与决策系统', 'Independent Investment Research &amp; Decision Systems')}</p></div></div>
+<div class="intro-foot"><div class="intro-steps"><span data-intro-step="observe"><i>01</i>{text('观察', 'OBSERVE')}</span><span data-intro-step="research"><i>02</i>{text('研究', 'RESEARCH')}</span><span data-intro-step="decide"><i>03</i>{text('决策', 'DECIDE')}</span></div><p>What remains persists.</p></div></div>
+<button type="button" class="intro-enter action-link" data-intro-skip autofocus>{action_content(text('进入网站', 'Enter website'))}</button>
+</dialog>'''
 
 
 def search_icon():
