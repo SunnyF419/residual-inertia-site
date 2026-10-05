@@ -19,6 +19,7 @@ CSS_VERSION = hashlib.sha256((ROOT / 'assets/site.css').read_bytes()).hexdigest(
 ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexdigest()[:12]
 MOTION_VERSION = hashlib.sha256((ROOT / 'assets/site-motion.js').read_bytes()).hexdigest()[:12]
 CHART_VERSION = hashlib.sha256((ROOT / 'assets/market-chart.js').read_bytes()).hexdigest()[:12]
+ARCHIVE_VERSION = hashlib.sha256((ROOT / 'assets/archive-browser.js').read_bytes()).hexdigest()[:12]
 E = lambda value: html.escape(str(value if value is not None else '—'), quote=True)
 
 # ── Bilingual support ─────────────────────────────────────────────────────
@@ -67,6 +68,15 @@ I18N = {
     'composite_cutoff': ('状态数据截至', 'State data as of'),
     'score_ranges': ('分数区间', 'Score Ranges'),
     'archive_older': ('更早的观察记录', 'Earlier Observations'),
+    'archive_search': ('搜索历史记录', 'Search observations'),
+    'archive_search_hint': ('输入日期或市场状态，例如 2026-09、防御', 'Date or market state, e.g. 2026-09, Defensive'),
+    'research_search': ('搜索研究', 'Search research'),
+    'research_search_hint': ('输入标题、关键词、作者或日期', 'Title, keyword, author or date'),
+    'search_clear': ('清除', 'Clear'),
+    'search_empty': ('没有找到匹配的内容，请试试其他关键词。', 'No matches. Try another keyword.'),
+    'search_results': ('找到 {count} 条结果', '{count} results'),
+    'search_page_status': ('第 {page} / {pages} 页', 'Page {page} of {pages}'),
+    'dialog_close': ('关闭', 'Close'),
     'home_founder': ('创始人', 'Founder'),
     # Principles
     'principles_eyebrow': ('OUR PRINCIPLES', 'OUR PRINCIPLES'),
@@ -690,6 +700,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
+{f'<script defer src="{url("assets/archive-browser.js")}?v={ARCHIVE_VERSION}"></script>' if 'data-research-search' in content or 'data-archive-dialog' in content else ''}
 </head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}><a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
@@ -913,8 +924,19 @@ def overview_snapshot_list(snapshots):
         items.append(f'<li class="snapshot-item"><a href="{url("snapshots/"+s["observationDate"]+".html")}"><time datetime="{E(s["observationDate"])}" class="snapshot-date mono">{E(s["observationDate"])}</time><span class="snapshot-state">{E(state_label(m["regimeState"]))}</span><span class="snapshot-score mono score-value tone-{score_tone(m["regimeScore"])}">{number(m["regimeScore"])}</span><span class="snapshot-link">{L("snapshot_view")}</span></a></li>')
     result = '<ul class="snapshot-list">' + ''.join(items[:6]) + '</ul>'
     if len(items) > 6:
-        result += '<details class="archive-more"><summary>' + L('archive_older') + f' · {len(items)-6}</summary><ul class="snapshot-list">' + ''.join(items[6:]) + '</ul></details>'
+        label = L('archive_older') + f' · {len(items)-6}'
+        result += '<div data-snapshot-archive>'
+        result += '<button type="button" class="action-link archive-open" data-archive-open aria-haspopup="dialog" aria-controls="snapshot-archive-dialog" hidden>' + action_content(label) + '</button>'
+        # Keep every archive link accessible when JavaScript or native dialogs are unavailable.
+        result += '<details class="archive-more" data-archive-fallback><summary>' + label + '</summary><ul class="snapshot-list">' + ''.join(items[6:]) + '</ul></details>'
+        result += '<dialog class="archive-dialog" id="snapshot-archive-dialog" data-archive-dialog aria-labelledby="archive-dialog-title"><div class="archive-dialog-header"><h2 id="archive-dialog-title">' + L('archive_older') + '</h2><button type="button" class="dialog-close" data-archive-close aria-label="' + L('dialog_close') + '">×</button></div>'
+        result += search_control('archive', L('archive_search'), L('archive_search_hint'))
+        result += '<p class="search-status" data-search-status role="status" aria-live="polite" data-count-label="' + E(L('search_results')) + '"></p><div class="archive-dialog-scroll" data-archive-scroll><p class="search-empty" data-search-empty hidden>' + L('search_empty') + '</p></div></dialog></div>'
     return result
+
+
+def search_control(key, label, placeholder):
+    return '<div class="archive-search-control"><label for="' + key + '-search">' + E(label) + '</label><div class="archive-search-field"><input type="search" id="' + key + '-search" data-search-input placeholder="' + E(placeholder) + '" autocomplete="off"><button type="button" class="search-clear" data-search-clear hidden>' + L('search_clear') + '</button></div></div>'
 
 
 def reading_route(s):
@@ -1030,11 +1052,27 @@ def research_library(reports, page=1, base='research', empty=''):
     return body + '</section>'
 
 
+def searchable_research_library(reports, page=1, base='research', empty='', latest_label=False):
+    # Search the entire collection, not only the six cards on this archive page.
+    records = []
+    for report in reports:
+        fields = [report.get(key, '') for key in ('title', 'title_en', 'subtitle', 'subtitle_en', 'summary', 'summary_en', 'published', 'dataThrough', 'researchId', 'category', 'ssrnUrl')]
+        fields += [author_display(report), L('col_' + report_variant(report))]
+        fields += report.get('keywords', [])
+        records.append({'text': ' '.join(str(field) for field in fields), 'html': research_cards([report])})
+    payload = json.dumps(records, ensure_ascii=False, allow_nan=False).replace('<', '\\u003c')
+    heading = '<p class="eyebrow">' + ('最新研究' if LANG == 'zh' else 'Latest Research') + '</p>' if latest_label else ''
+    return ('<div data-research-search><div class="research-search" data-search-controls hidden>' + search_control('research', L('research_search'), L('research_search_hint')) + '</div>'
+            + '<div data-search-default>' + heading + research_library(reports, page, base, empty) + '</div>'
+            + '<section class="research-library search-results" data-search-results hidden aria-label="' + L('research_search') + '"><p class="search-status" data-search-status role="status" aria-live="polite" data-count-label="' + E(L('search_results')) + '"></p><div class="research-grid" data-search-grid></div><p class="search-empty" data-search-empty hidden>' + L('search_empty') + '</p>'
+            + '<nav class="search-pagination" data-search-pagination hidden aria-label="' + L('research_pagination') + '"><button type="button" class="action-link" data-search-previous>' + action_content(L('research_previous')) + '</button><span class="mono" data-search-page data-page-label="' + E(L('search_page_status')) + '"></span><button type="button" class="action-link" data-search-next>' + action_content(L('research_next')) + '</button></nav></section>'
+            + '<script type="application/json" data-search-data>' + payload + '</script></div>')
+
+
 def research_landing(research, page=1):
     body = head('RESEARCH ARCHIVE', L('research_head'), L('research_sub')) + research_navigation(research)
     body += f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>'
-    body += '<p class="eyebrow">' + ('最新研究' if LANG == 'zh' else 'Latest Research') + '</p>' if page == 1 else ''
-    body += research_library(research, page)
+    body += searchable_research_library(research, page, latest_label=page == 1)
     if page == 1:
         items = []
         for key in ('weekly', 'monthly', 'personal', 'fomc', 'scholarly'):
@@ -1279,7 +1317,7 @@ def build_language(snapshots, research, latest):
             reports = [r for r in research if collection(r) == key]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>'
             scholarly = ('<div id="scholarly-research"><h2>' + L('scholarly_label') + '</h2><p class="caption">' + L('scholarly_desc') + '</p></div>') if key == 'personal' else ''
-            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + scholarly + research_library(reports, page, f'research/{key}', empty)
+            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + scholarly + searchable_research_library(reports, page, f'research/{key}', empty)
         reports = [r for r in research if collection(r) == key]
         for page in range(1, research_page_count(reports) + 1):
             write(research_page_route(f'research/{key}', page), L(tkey), lambda page=page: folder(page), 'research', L(dkey), archive_research=reports[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])
@@ -1287,7 +1325,7 @@ def build_language(snapshots, research, latest):
         def period_folder(page, kind=kind, label=label):
             reports = [r for r in research if report_variant(r) == kind]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + L('empty_text') + '</p></div>'
-            return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
+            return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + searchable_research_library(reports, page, f'research/{kind}', empty)
         reports = [r for r in research if report_variant(r) == kind]
         for page in range(1, research_page_count(reports) + 1):
             write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research', L('col_'+kind+'_desc'), indexable=kind != 'monthly' or bool(reports), archive_research=reports[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])

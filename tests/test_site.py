@@ -3,6 +3,7 @@ import importlib.util
 import hashlib
 import json
 import math
+import re
 import unittest
 from unittest.mock import patch
 from html.parser import HTMLParser
@@ -29,6 +30,30 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_search_indexes_complete_collections_without_extra_visible_cards(self):
+        reports = [json.loads(p.read_text(encoding='utf-8')) for p in (ROOT / 'content/research').glob('*.json')]
+        scopes = {'research/index.html': reports,
+                  'research/page/2/index.html': reports,
+                  'research/personal/index.html': [r for r in reports if build.collection(r) == 'personal'],
+                  'research/weekly/index.html': [r for r in reports if build.report_variant(r) == 'weekly'],
+                  'research/monthly/index.html': [r for r in reports if build.report_variant(r) == 'monthly']}
+        for prefix in ('', 'en/'):
+            for route, expected in scopes.items():
+                page = (ROOT / 'dist' / prefix / route).read_text(encoding='utf-8')
+                payload = re.search(r'<script type="application/json" data-search-data>(.*?)</script>', page, re.S).group(1)
+                self.assertNotIn('<', payload)
+                entries = json.loads(payload)
+                self.assertEqual(len(entries), len(expected))
+                self.assertLessEqual(len(Elements(page).with_class('research-card')), 6)
+                for report in expected:
+                    entry = next(item for item in entries if report['title'] in item['text'])
+                    with patch.object(build, 'LANG', 'en' if prefix else 'zh'):
+                        self.assertIn(build.author_display(report), entry['text'])
+                    self.assertIn(report['published'], entry['text'])
+                    if report.get('ssrnUrl'):
+                        self.assertIn(report['ssrnUrl'], entry['text'])
+                    self.assertIn('/' + prefix + 'research/' + report['slug'] + '/', entry['html'])
+
     def test_research_pagination_boundaries_and_category_links(self):
         original_lang = build.LANG
         try:
