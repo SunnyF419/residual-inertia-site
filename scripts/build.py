@@ -21,6 +21,9 @@ ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexd
 MOTION_VERSION = hashlib.sha256((ROOT / 'assets/site-motion.js').read_bytes()).hexdigest()[:12]
 CHART_VERSION = hashlib.sha256((ROOT / 'assets/market-chart.js').read_bytes()).hexdigest()[:12]
 ARCHIVE_VERSION = hashlib.sha256((ROOT / 'assets/archive-browser.js').read_bytes()).hexdigest()[:12]
+ICON_VERSION = hashlib.sha256(b''.join((ROOT / 'assets/brand' / name).read_bytes() for name in (
+    'favicon.ico', 'favicon.svg', 'favicon-48x48.png', 'android-chrome-192x192.png',
+    'android-chrome-512x512.png', 'apple-touch-icon.png'))).hexdigest()[:12]
 E = lambda value: html.escape(str(value if value is not None else '—'), quote=True)
 
 # ── Bilingual support ─────────────────────────────────────────────────────
@@ -706,7 +709,12 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <meta property="og:description" content="{E(desc)}"><meta property="og:type" content="{'article' if record else 'website'}"><meta property="og:url" content="{E(canonical)}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{E(og_title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:url" content="{E(canonical)}">{article_meta}
 {structured_data(home=section == 'home', extra_nodes=schema_nodes) if indexable or schema_nodes else ''}
-<link rel="icon" href="{url('favicon.ico')}" sizes="16x16 32x32 48x48" type="image/x-icon"><link rel="icon" href="{url('assets/brand/favicon.svg')}" type="image/svg+xml"><link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
+<link rel="icon" href="{url('favicon.ico')}?v={ICON_VERSION}" sizes="16x16 32x32 48x48 64x64 128x128 256x256" type="image/x-icon">
+<link rel="icon" href="{url('assets/brand/favicon-48x48.png')}?v={ICON_VERSION}" sizes="48x48" type="image/png">
+<link rel="icon" href="{url('assets/brand/android-chrome-192x192.png')}?v={ICON_VERSION}" sizes="192x192" type="image/png">
+<link rel="icon" href="{url('assets/brand/android-chrome-512x512.png')}?v={ICON_VERSION}" sizes="512x512" type="image/png">
+<link rel="icon" href="{url('assets/brand/favicon.svg')}?v={ICON_VERSION}" sizes="any" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}?v={ICON_VERSION}" sizes="180x180"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}

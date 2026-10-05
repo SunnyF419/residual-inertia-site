@@ -3,7 +3,9 @@ import importlib.util
 import hashlib
 import json
 import math
+import struct
 import unittest
+import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from html.parser import HTMLParser
 from pathlib import Path
@@ -29,6 +31,45 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_favicons_contain_real_high_resolution_frames_and_shared_head_links(self):
+        brand = ROOT / 'assets/brand'
+        ico = (brand / 'favicon.ico').read_bytes()
+        reserved, kind, count = struct.unpack_from('<HHH', ico)
+        self.assertEqual((reserved, kind), (0, 1))
+        sizes = set()
+        for frame in range(count):
+            width, height, _, _, _, _, length, offset = struct.unpack_from('<BBBBHHII', ico, 6 + 16 * frame)
+            dimensions = (width or 256, height or 256)
+            sizes.add(dimensions)
+            # Verify actual embedded PNG dimensions, not just the ICO directory label.
+            data = ico[offset:offset + length]
+            self.assertTrue(data.startswith(b'\x89PNG\r\n\x1a\n'))
+            self.assertEqual(struct.unpack_from('>II', data, 16), dimensions)
+        self.assertEqual(sizes, {(s, s) for s in (16, 32, 48, 64, 128, 256)})
+        self.assertEqual((ROOT / 'dist/favicon.ico').read_bytes(), ico)
+        pngs = {'favicon-16x16.png': 16, 'favicon-32x32.png': 32, 'favicon-48x48.png': 48,
+                'apple-touch-icon.png': 180, 'android-chrome-192x192.png': 192,
+                'android-chrome-512x512.png': 512}
+        for name, size in pngs.items():
+            self.assertEqual(struct.unpack_from('>II', (brand / name).read_bytes(), 16), (size, size))
+            self.assertEqual((ROOT / 'dist/assets/brand' / name).read_bytes(), (brand / name).read_bytes())
+        ns = '{http://www.w3.org/2000/svg}'
+        source = ET.parse(brand / 'RI-symbol-reverse.svg').getroot()
+        svg = ET.parse(brand / 'favicon.svg').getroot()
+        self.assertEqual([p.get('d') for p in svg.iter(ns + 'path')],
+                         [p.get('d') for p in source.iter(ns + 'path')])
+        for page in (ROOT / 'dist').rglob('index.html'):
+            dom = Elements(page.read_text(encoding='utf-8'))
+            icons = [attrs for tag, attrs in dom.elements if tag == 'link' and attrs.get('rel') == 'icon']
+            if not icons:  # Legacy redirect stubs have no page chrome.
+                continue
+            self.assertEqual({icon['sizes'] for icon in icons},
+                             {'16x16 32x32 48x48 64x64 128x128 256x256', '48x48', '192x192', '512x512', 'any'})
+            for icon in icons:
+                self.assertTrue(icon['href'].startswith('/'))
+                self.assertTrue(icon['href'].endswith('?v=' + build.ICON_VERSION))
+                self.assertTrue((ROOT / 'dist' / urlsplit(icon['href']).path.lstrip('/')).is_file())
+
     def test_shared_search_indexes_public_content_and_preserves_archive_pagination(self):
         reports = [json.loads(p.read_text(encoding='utf-8')) for p in (ROOT / 'content/research').glob('*.json')]
         snapshots = list((ROOT / 'content/snapshots').glob('*.json'))
