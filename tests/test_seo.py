@@ -103,12 +103,30 @@ class SEOTests(unittest.TestCase):
                 self.assertEqual(person['name'], 'Taiyang Feng')
                 self.assertEqual(person['alternateName'], 'Sunny')
                 self.assertEqual(person['url'], ORIGIN + 'about/#founder')
-                self.assertEqual(person['founderOf'], {'@id': org['@id']})
-                self.assertEqual(payload['@context']['founderOf'], {'@reverse': 'https://schema.org/founder'})
+                self.assertNotIn('founderOf', person)
+                self.assertEqual(payload['@context'], 'https://schema.org')
                 self.assertNotIn('sameAs', person)
                 self.assertEqual(website['@id'], ORIGIN + '#website')
                 self.assertEqual(website['publisher'], {'@id': org['@id']})
                 self.assertEqual(website['inLanguage'], ['zh-CN', 'en'])
+
+    def test_every_graph_uses_standard_context_and_preserves_founder_identity(self):
+        for page in (ROOT / 'dist').rglob('*.html'):
+            with self.subTest(page=page.relative_to(ROOT / 'dist')):
+                head = Head(page.read_text(encoding='utf-8'))
+                self.assertLessEqual(len(head.graphs), 1)
+                for payload in head.graphs:
+                    self.assertEqual(payload['@context'], 'https://schema.org')
+                    encoded = json.dumps(payload)
+                    self.assertNotIn('founderOf', encoded)
+                    self.assertNotIn('@reverse', encoded)
+                    nodes = {node['@id']: node for node in payload['@graph']}
+                    self.assertEqual(len(nodes), len(payload['@graph']))
+                    org = nodes[ORIGIN + '#organization']
+                    person = nodes[ORIGIN + '#taiyang-feng']
+                    self.assertEqual(org['founder'], {'@id': person['@id']})
+                    self.assertEqual(person['@type'], 'Person')
+                    self.assertEqual(person['name'], 'Taiyang Feng')
 
     def test_all_indexable_pages_canonicals_alternate_reciprocity_and_sitemap(self):
         output = ROOT / 'dist'

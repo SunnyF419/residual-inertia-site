@@ -565,7 +565,7 @@ def structured_data(home=False, extra_nodes=()):
         organization_node(),
         {'@type': 'Person', '@id': person_id, 'name': 'Taiyang Feng',
          'alternateName': 'Sunny', 'url': origin + 'about/#founder',
-         'founderOf': {'@id': organization_id}, 'jobTitle': 'Founder and Researcher',
+         'jobTitle': 'Founder and Researcher',
          'description': L('founder_role') + ' ' + L('founder_focus'),
          'knowsAbout': ['Quantitative investing', 'Asset pricing', 'Macro markets', 'Market risk',
                         'Financial data', 'Research infrastructure', 'AI-assisted research infrastructure']},
@@ -578,9 +578,9 @@ def structured_data(home=False, extra_nodes=()):
                                   ('research/index.html', 'overview/index.html', 'global/index.html', 'about/index.html')]})
     graph += list(extra_nodes)
     assert len({node['@id'] for node in graph}) == len(graph), 'Duplicate graph entity'
-    # founderOf is the inverse of Schema.org founder, not a new vocabulary property.
-    payload = {'@context': {'@vocab': 'https://schema.org/',
-                           'founderOf': {'@reverse': 'https://schema.org/founder'}}, '@graph': graph}
+    # Google rejects the custom founderOf reverse term. Organization.founder
+    # already links the same stable Person ID using the standard vocabulary.
+    payload = {'@context': 'https://schema.org', '@graph': graph}
     data = json.dumps(payload, ensure_ascii=False, allow_nan=False).replace('<', '\\u003c')
     return '<script type="application/ld+json">' + data + '</script>'
 

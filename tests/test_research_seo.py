@@ -26,7 +26,8 @@ class ResearchSEOTests(unittest.TestCase):
             person = nodes[ORIGIN + '#taiyang-feng']
             self.assertEqual(person['jobTitle'], 'Founder and Researcher')
             self.assertEqual(person['alternateName'], 'Sunny')
-            self.assertEqual(person['founderOf'], {'@id': ORIGIN + '#organization'})
+            self.assertNotIn('founderOf', person)
+            self.assertEqual(nodes[ORIGIN + '#organization']['founder'], {'@id': person['@id']})
             self.assertIn('Asset pricing', person['knowsAbout'])
             self.assertNotIn('sameAs', person)  # Paper landing pages are not identity pages.
             self.assertNotIn('worksFor', person)  # A dated manuscript affiliation is not a current employer.

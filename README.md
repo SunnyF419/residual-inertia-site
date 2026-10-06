@@ -22,7 +22,7 @@ python -m http.server 8788 --bind 127.0.0.1 --directory dist
 
 SEO 由现有 `scripts/build.py` 统一生成，不依赖额外 SEO 包。首页使用独立的中英文 title / description；品牌定义文本复用首页 description，Hero 标题仍由 `site.json` 控制。普通页面保留原有标题、说明和逐页 canonical。
 
-Organization、Person 使用稳定的 `https://residualinertia.com/#organization`、`#taiyang-feng`；首页另外输出 `#website`。每页最多一个 JSON-LD graph。Person 的 `founderOf` 在 JSON-LD context 中映射为标准 `founder` 的反向属性；不把论文链接当作个人资料 `sameAs`。
+Organization、Person 使用稳定的 `https://residualinertia.com/#organization`、`#taiyang-feng`；首页另外输出 `#website`。每页最多一个 JSON-LD graph，使用标准 `https://schema.org` context，以 Organization 的 `founder` 指向 Person。不要添加 Google 不接受的自定义 `founderOf` 反向属性；不把论文链接当作个人资料 `sameAs`。
 
 完成双语构建后，只有两个实际生成、可索引且已提供对应翻译的页面才输出互相对应的 `zh-CN` / `en` / `x-default`。`x-default` 使用该页面的中文版本；首页为站点根路径。历史快照的评论及部分专题论文正文仍未完整翻译，因此暂不为这些详情页生成 hreflang。
 
