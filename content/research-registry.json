@@ -105,6 +105,18 @@
         }
       ],
       "updatedDate": "2026-10-02"
+    },
+    {
+      "researchId": "RI-WR-2026-W41",
+      "slug": "market-letter-2026-10-10",
+      "title": "美股周评 · 2026-10-10：防御未退，强势降温",
+      "collection": "market",
+      "periodDate": "2026-10-10",
+      "preparedDate": "2026-10-10",
+      "registeredDate": "2026-10-10",
+      "version": "1.0",
+      "status": "published",
+      "pdfSha256": "d7038653bf53fd9fbb0637367280c512c0a124478fd7a6e9a370bc2813bbf1d0"
     }
   ]
 }

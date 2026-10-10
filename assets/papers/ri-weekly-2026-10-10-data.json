@@ -1,0 +1,1083 @@
+{
+  "meta": {
+    "report_date": "2026-10-10",
+    "primary_data_through": "2026-10-09",
+    "author": "Taiyang Feng (Sunny)",
+    "version": "1.0"
+  },
+  "researchId": "RI-WR-2026-W41",
+  "market_regime": {
+    "date": "2026-10-09T00:00:00.000",
+    "regime_score": 65.8410138249,
+    "regime_state": "Defensive",
+    "regime_state_zh": "防御"
+  },
+  "market_pillars": [
+    {
+      "pillar": "Financial Stress",
+      "pillar_score": 40.0153609831,
+      "pillar_state": "Neutral",
+      "pillar_state_zh": "中性"
+    },
+    {
+      "pillar": "Fragility",
+      "pillar_score": 94.0860215054,
+      "pillar_state": "Stress",
+      "pillar_state_zh": "压力"
+    },
+    {
+      "pillar": "Market Risk",
+      "pillar_score": 54.4546850998,
+      "pillar_state": "Caution",
+      "pillar_state_zh": "谨慎"
+    },
+    {
+      "pillar": "Participation",
+      "pillar_score": 74.8079877112,
+      "pillar_state": "Defensive",
+      "pillar_state_zh": "防御"
+    }
+  ],
+  "regime_history": [
+    {
+      "date": "2026-07-01",
+      "regime_score": 52.36175115207374,
+      "market_risk_pillar": 57.21966205837173,
+      "participation_pillar": 23.655913978494624,
+      "financial_stress_pillar": 30.414746543778804,
+      "fragility_pillar": 98.15668202764977
+    },
+    {
+      "date": "2026-07-02",
+      "regime_score": 51.42089093701997,
+      "market_risk_pillar": 57.296466973886325,
+      "participation_pillar": 20.19969278033794,
+      "financial_stress_pillar": 30.414746543778804,
+      "fragility_pillar": 97.7726574500768
+    },
+    {
+      "date": "2026-07-03",
+      "regime_score": 48.55990783410138,
+      "market_risk_pillar": 45.16129032258064,
+      "participation_pillar": 20.19969278033794,
+      "financial_stress_pillar": 31.105990783410135,
+      "fragility_pillar": 97.7726574500768
+    },
+    {
+      "date": "2026-07-06",
+      "regime_score": 48.17728319263239,
+      "market_risk_pillar": 45.12663085188028,
+      "participation_pillar": 18.34228702993093,
+      "financial_stress_pillar": 31.158864159631623,
+      "fragility_pillar": 98.08135072908672
+    },
+    {
+      "date": "2026-07-07",
+      "regime_score": 48.98311588641596,
+      "market_risk_pillar": 43.745203376822715,
+      "participation_pillar": 23.637759017651575,
+      "financial_stress_pillar": 31.158864159631623,
+      "fragility_pillar": 97.39063699155794
+    },
+    {
+      "date": "2026-07-08",
+      "regime_score": 49.462778204144286,
+      "market_risk_pillar": 41.44282425172678,
+      "participation_pillar": 27.168073676132003,
+      "financial_stress_pillar": 31.158864159631623,
+      "fragility_pillar": 98.08135072908672
+    },
+    {
+      "date": "2026-07-09",
+      "regime_score": 49.23254029163469,
+      "market_risk_pillar": 42.36377590176515,
+      "participation_pillar": 25.40291634689179,
+      "financial_stress_pillar": 31.158864159631623,
+      "fragility_pillar": 98.0046047582502
+    },
+    {
+      "date": "2026-07-10",
+      "regime_score": 51.995395241749804,
+      "market_risk_pillar": 42.36377590176515,
+      "participation_pillar": 25.326170376055256,
+      "financial_stress_pillar": 42.36377590176515,
+      "fragility_pillar": 97.92785878741365
+    },
+    {
+      "date": "2026-07-13",
+      "regime_score": 51.82271680736761,
+      "market_risk_pillar": 42.90099769762087,
+      "participation_pillar": 25.40291634689179,
+      "financial_stress_pillar": 42.36377590176515,
+      "fragility_pillar": 96.62317728319263
+    },
+    {
+      "date": "2026-07-14",
+      "regime_score": 52.09132770529547,
+      "market_risk_pillar": 43.13123561013047,
+      "participation_pillar": 25.326170376055256,
+      "financial_stress_pillar": 42.36377590176515,
+      "fragility_pillar": 97.544128933231
+    },
+    {
+      "date": "2026-07-15",
+      "regime_score": 52.168073676131996,
+      "market_risk_pillar": 43.591711435149655,
+      "participation_pillar": 25.172678434382195,
+      "financial_stress_pillar": 42.36377590176515,
+      "fragility_pillar": 97.544128933231
+    },
+    {
+      "date": "2026-07-16",
+      "regime_score": 51.9378357636224,
+      "market_risk_pillar": 44.28242517267844,
+      "participation_pillar": 25.09593246354566,
+      "financial_stress_pillar": 42.36377590176515,
+      "fragility_pillar": 96.00920951650038
+    },
+    {
+      "date": "2026-07-17",
+      "regime_score": 59.63161933998465,
+      "market_risk_pillar": 57.63622409823485,
+      "participation_pillar": 28.85648503453569,
+      "financial_stress_pillar": 56.40828856485035,
+      "fragility_pillar": 95.62547966231773
+    },
+    {
+      "date": "2026-07-20",
+      "regime_score": 60.61013046815042,
+      "market_risk_pillar": 57.866462010744435,
+      "participation_pillar": 32.540291634689176,
+      "financial_stress_pillar": 56.40828856485035,
+      "fragility_pillar": 95.62547966231773
+    },
+    {
+      "date": "2026-07-21",
+      "regime_score": 59.76592478894858,
+      "market_risk_pillar": 57.559478127398314,
+      "participation_pillar": 28.779739063699157,
+      "financial_stress_pillar": 56.40828856485035,
+      "fragility_pillar": 96.31619339984651
+    },
+    {
+      "date": "2026-07-22",
+      "regime_score": 60.53338449731389,
+      "market_risk_pillar": 56.17805065234075,
+      "participation_pillar": 32.386799693016115,
+      "financial_stress_pillar": 56.40828856485035,
+      "fragility_pillar": 97.16039907904836
+    },
+    {
+      "date": "2026-07-23",
+      "regime_score": 61.03223330775135,
+      "market_risk_pillar": 56.02455871066769,
+      "participation_pillar": 34.61243284727552,
+      "financial_stress_pillar": 56.40828856485035,
+      "fragility_pillar": 97.08365310821182
+    },
+    {
+      "date": "2026-07-24",
+      "regime_score": 59.458940905602454,
+      "market_risk_pillar": 55.18035303146584,
+      "participation_pillar": 34.53568687643899,
+      "financial_stress_pillar": 53.338449731389105,
+      "fragility_pillar": 94.78127398311588
+    },
+    {
+      "date": "2026-07-27",
+      "regime_score": 59.1327705295472,
+      "market_risk_pillar": 56.254796623177285,
+      "participation_pillar": 32.46354566385265,
+      "financial_stress_pillar": 53.338449731389105,
+      "fragility_pillar": 94.47429009976976
+    },
+    {
+      "date": "2026-07-28",
+      "regime_score": 58.92171910974674,
+      "market_risk_pillar": 56.02455871066769,
+      "participation_pillar": 32.233307751343055,
+      "financial_stress_pillar": 53.338449731389105,
+      "fragility_pillar": 94.09056024558711
+    },
+    {
+      "date": "2026-07-29",
+      "regime_score": 60.76362240982348,
+      "market_risk_pillar": 56.86876438986953,
+      "participation_pillar": 38.98695318495779,
+      "financial_stress_pillar": 53.338449731389105,
+      "fragility_pillar": 93.86032233307752
+    },
+    {
+      "date": "2026-07-30",
+      "regime_score": 58.76822716807368,
+      "market_risk_pillar": 55.18035303146584,
+      "participation_pillar": 32.386799693016115,
+      "financial_stress_pillar": 53.338449731389105,
+      "fragility_pillar": 94.16730621642364
+    },
+    {
+      "date": "2026-07-31",
+      "regime_score": 55.41059094397545,
+      "market_risk_pillar": 55.64082885648504,
+      "participation_pillar": 34.0752110514198,
+      "financial_stress_pillar": 38.06600153491942,
+      "fragility_pillar": 93.86032233307752
+    },
+    {
+      "date": "2026-08-01",
+      "regime_score": 55.66001534919417,
+      "market_risk_pillar": 52.3407521105142,
+      "participation_pillar": 34.0752110514198,
+      "financial_stress_pillar": 38.06600153491942,
+      "fragility_pillar": 98.15809669992326
+    },
+    {
+      "date": "2026-08-03",
+      "regime_score": 53.225806451612904,
+      "market_risk_pillar": 51.22887864823349,
+      "participation_pillar": 26.190476190476193,
+      "financial_stress_pillar": 38.0184331797235,
+      "fragility_pillar": 97.46543778801843
+    },
+    {
+      "date": "2026-08-04",
+      "regime_score": 51.17127496159755,
+      "market_risk_pillar": 49.76958525345622,
+      "participation_pillar": 18.586789554531492,
+      "financial_stress_pillar": 38.0184331797235,
+      "fragility_pillar": 98.31029185867895
+    },
+    {
+      "date": "2026-08-05",
+      "regime_score": 51.74731182795699,
+      "market_risk_pillar": 50.46082949308756,
+      "participation_pillar": 20.19969278033794,
+      "financial_stress_pillar": 38.0184331797235,
+      "fragility_pillar": 98.31029185867895
+    },
+    {
+      "date": "2026-08-06",
+      "regime_score": 52.41935483870968,
+      "market_risk_pillar": 49.30875576036866,
+      "participation_pillar": 24.11674347158218,
+      "financial_stress_pillar": 38.0184331797235,
+      "fragility_pillar": 98.23348694316437
+    },
+    {
+      "date": "2026-08-07",
+      "regime_score": 48.71351766513057,
+      "market_risk_pillar": 31.643625192012287,
+      "participation_pillar": 16.359447004608295,
+      "financial_stress_pillar": 48.54070660522273,
+      "fragility_pillar": 98.31029185867895
+    },
+    {
+      "date": "2026-08-10",
+      "regime_score": 49.27035330261136,
+      "market_risk_pillar": 32.18125960061444,
+      "participation_pillar": 18.202764976958523,
+      "financial_stress_pillar": 48.54070660522273,
+      "fragility_pillar": 98.15668202764977
+    },
+    {
+      "date": "2026-08-11",
+      "regime_score": 48.963133640552996,
+      "market_risk_pillar": 33.026113671274956,
+      "participation_pillar": 16.359447004608295,
+      "financial_stress_pillar": 48.54070660522273,
+      "fragility_pillar": 97.92626728110599
+    },
+    {
+      "date": "2026-08-12",
+      "regime_score": 50.153609831029186,
+      "market_risk_pillar": 37.78801843317972,
+      "participation_pillar": 16.282642089093702,
+      "financial_stress_pillar": 48.54070660522273,
+      "fragility_pillar": 98.0030721966206
+    },
+    {
+      "date": "2026-08-13",
+      "regime_score": 49.577572964669734,
+      "market_risk_pillar": 37.634408602150536,
+      "participation_pillar": 14.285714285714285,
+      "financial_stress_pillar": 48.54070660522273,
+      "fragility_pillar": 97.84946236559139
+    },
+    {
+      "date": "2026-08-14",
+      "regime_score": 48.06067588325652,
+      "market_risk_pillar": 38.863287250384026,
+      "participation_pillar": 16.052227342549923,
+      "financial_stress_pillar": 39.63133640552996,
+      "fragility_pillar": 97.6958525345622
+    },
+    {
+      "date": "2026-08-17",
+      "regime_score": 47.65745007680492,
+      "market_risk_pillar": 34.63901689708141,
+      "participation_pillar": 18.125960061443934,
+      "financial_stress_pillar": 39.63133640552996,
+      "fragility_pillar": 98.23348694316437
+    },
+    {
+      "date": "2026-08-18",
+      "regime_score": 48.924731182795696,
+      "market_risk_pillar": 36.48233486943164,
+      "participation_pillar": 21.96620583717358,
+      "financial_stress_pillar": 39.63133640552996,
+      "fragility_pillar": 97.61904761904762
+    },
+    {
+      "date": "2026-08-19",
+      "regime_score": 46.6973886328725,
+      "market_risk_pillar": 33.6405529953917,
+      "participation_pillar": 15.97542242703533,
+      "financial_stress_pillar": 39.63133640552996,
+      "fragility_pillar": 97.54224270353302
+    },
+    {
+      "date": "2026-08-20",
+      "regime_score": 48.444700460829495,
+      "market_risk_pillar": 38.47926267281106,
+      "participation_pillar": 18.35637480798771,
+      "financial_stress_pillar": 39.63133640552996,
+      "fragility_pillar": 97.31182795698925
+    },
+    {
+      "date": "2026-08-21",
+      "regime_score": 50.76804915514593,
+      "market_risk_pillar": 53.993855606758835,
+      "participation_pillar": 18.049155145929337,
+      "financial_stress_pillar": 33.7173579109063,
+      "fragility_pillar": 97.31182795698925
+    },
+    {
+      "date": "2026-08-24",
+      "regime_score": 50.71044546850999,
+      "market_risk_pillar": 54.68509984639017,
+      "participation_pillar": 18.27956989247312,
+      "financial_stress_pillar": 33.7173579109063,
+      "fragility_pillar": 96.15975422427036
+    },
+    {
+      "date": "2026-08-25",
+      "regime_score": 50.21121351766513,
+      "market_risk_pillar": 54.915514592933945,
+      "participation_pillar": 15.898617511520738,
+      "financial_stress_pillar": 33.7173579109063,
+      "fragility_pillar": 96.31336405529954
+    },
+    {
+      "date": "2026-08-26",
+      "regime_score": 50.63364055299539,
+      "market_risk_pillar": 54.83870967741935,
+      "participation_pillar": 17.895545314900154,
+      "financial_stress_pillar": 33.7173579109063,
+      "fragility_pillar": 96.08294930875576
+    },
+    {
+      "date": "2026-08-27",
+      "regime_score": 50.864055299539174,
+      "market_risk_pillar": 54.68509984639017,
+      "participation_pillar": 17.81874039938556,
+      "financial_stress_pillar": 33.7173579109063,
+      "fragility_pillar": 97.23502304147466
+    },
+    {
+      "date": "2026-08-28",
+      "regime_score": 47.96466973886329,
+      "market_risk_pillar": 42.703533026113675,
+      "participation_pillar": 24.11674347158218,
+      "financial_stress_pillar": 29.10906298003072,
+      "fragility_pillar": 95.92933947772657
+    },
+    {
+      "date": "2026-08-31",
+      "regime_score": 51.977726574500764,
+      "market_risk_pillar": 42.78033794162827,
+      "participation_pillar": 39.1705069124424,
+      "financial_stress_pillar": 29.10906298003072,
+      "fragility_pillar": 96.85099846390169
+    },
+    {
+      "date": "2026-09-01",
+      "regime_score": 54.915514592933945,
+      "market_risk_pillar": 50.307219662058365,
+      "participation_pillar": 48.38709677419355,
+      "financial_stress_pillar": 29.10906298003072,
+      "fragility_pillar": 91.85867895545314
+    },
+    {
+      "date": "2026-09-02",
+      "regime_score": 53.206605222734254,
+      "market_risk_pillar": 49.155145929339476,
+      "participation_pillar": 43.08755760368664,
+      "financial_stress_pillar": 29.10906298003072,
+      "fragility_pillar": 91.47465437788019
+    },
+    {
+      "date": "2026-09-03",
+      "regime_score": 51.95852534562212,
+      "market_risk_pillar": 48.694316436251924,
+      "participation_pillar": 38.63287250384025,
+      "financial_stress_pillar": 29.10906298003072,
+      "fragility_pillar": 91.39784946236558
+    },
+    {
+      "date": "2026-09-04",
+      "regime_score": 56.0099846390169,
+      "market_risk_pillar": 58.83256528417819,
+      "participation_pillar": 38.24884792626728,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.321044546851
+    },
+    {
+      "date": "2026-09-08",
+      "regime_score": 57.085253456221196,
+      "market_risk_pillar": 59.67741935483871,
+      "participation_pillar": 41.09062980030722,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.93548387096774
+    },
+    {
+      "date": "2026-09-09",
+      "regime_score": 58.986175115207374,
+      "market_risk_pillar": 59.754224270353305,
+      "participation_pillar": 48.61751152073733,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.93548387096774
+    },
+    {
+      "date": "2026-09-10",
+      "regime_score": 59.10138248847926,
+      "market_risk_pillar": 58.525345622119815,
+      "participation_pillar": 50.38402457757296,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.85867895545314
+    },
+    {
+      "date": "2026-09-11",
+      "regime_score": 58.89016897081413,
+      "market_risk_pillar": 59.37019969278033,
+      "participation_pillar": 48.61751152073733,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.93548387096774
+    },
+    {
+      "date": "2026-09-14",
+      "regime_score": 59.48540706605223,
+      "market_risk_pillar": 60.445468509984636,
+      "participation_pillar": 50.38402457757296,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.47465437788019
+    },
+    {
+      "date": "2026-09-15",
+      "regime_score": 61.36712749615975,
+      "market_risk_pillar": 61.44393241167435,
+      "participation_pillar": 57.066052227342546,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 91.321044546851
+    },
+    {
+      "date": "2026-09-16",
+      "regime_score": 62.74961597542243,
+      "market_risk_pillar": 61.36712749615975,
+      "participation_pillar": 61.82795698924731,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 92.16589861751152
+    },
+    {
+      "date": "2026-09-17",
+      "regime_score": 61.155913978494624,
+      "market_risk_pillar": 59.60061443932412,
+      "participation_pillar": 56.98924731182796,
+      "financial_stress_pillar": 35.63748079877112,
+      "fragility_pillar": 92.3963133640553
+    },
+    {
+      "date": "2026-09-18",
+      "regime_score": 62.00076804915514,
+      "market_risk_pillar": 60.98310291858679,
+      "participation_pillar": 56.98924731182796,
+      "financial_stress_pillar": 37.25038402457757,
+      "fragility_pillar": 92.78033794162826
+    },
+    {
+      "date": "2026-09-21",
+      "regime_score": 61.09831029185868,
+      "market_risk_pillar": 58.67895545314901,
+      "participation_pillar": 55.06912442396313,
+      "financial_stress_pillar": 37.25038402457757,
+      "fragility_pillar": 93.394777265745
+    },
+    {
+      "date": "2026-09-22",
+      "regime_score": 60.86789554531491,
+      "market_risk_pillar": 57.14285714285714,
+      "participation_pillar": 53.3026113671275,
+      "financial_stress_pillar": 37.25038402457757,
+      "fragility_pillar": 95.7757296466974
+    },
+    {
+      "date": "2026-09-23",
+      "regime_score": 63.536866359447004,
+      "market_risk_pillar": 57.68049155145929,
+      "participation_pillar": 63.51766513056836,
+      "financial_stress_pillar": 37.25038402457757,
+      "fragility_pillar": 95.6989247311828
+    },
+    {
+      "date": "2026-09-24",
+      "regime_score": 64.42012288786484,
+      "market_risk_pillar": 57.68049155145929,
+      "participation_pillar": 66.97388632872504,
+      "financial_stress_pillar": 37.25038402457757,
+      "fragility_pillar": 95.7757296466974
+    },
+    {
+      "date": "2026-09-25",
+      "regime_score": 64.91935483870967,
+      "market_risk_pillar": 57.14285714285714,
+      "participation_pillar": 66.89708141321044,
+      "financial_stress_pillar": 39.247311827956985,
+      "fragility_pillar": 96.39016897081413
+    },
+    {
+      "date": "2026-09-28",
+      "regime_score": 66.3978494623656,
+      "market_risk_pillar": 59.29339477726574,
+      "participation_pillar": 70.27649769585254,
+      "financial_stress_pillar": 39.247311827956985,
+      "fragility_pillar": 96.7741935483871
+    },
+    {
+      "date": "2026-09-29",
+      "regime_score": 66.82027649769586,
+      "market_risk_pillar": 60.52227342549923,
+      "participation_pillar": 70.27649769585254,
+      "financial_stress_pillar": 39.247311827956985,
+      "fragility_pillar": 97.23502304147466
+    },
+    {
+      "date": "2026-09-30",
+      "regime_score": 68.41397849462366,
+      "market_risk_pillar": 60.445468509984636,
+      "participation_pillar": 76.72811059907833,
+      "financial_stress_pillar": 39.247311827956985,
+      "fragility_pillar": 97.23502304147466
+    },
+    {
+      "date": "2026-10-01",
+      "regime_score": 66.37864823348694,
+      "market_risk_pillar": 55.91397849462365,
+      "participation_pillar": 76.72811059907833,
+      "financial_stress_pillar": 39.247311827956985,
+      "fragility_pillar": 93.62519201228878
+    },
+    {
+      "date": "2026-10-02",
+      "regime_score": 66.58986175115209,
+      "market_risk_pillar": 55.83717357910907,
+      "participation_pillar": 74.96159754224271,
+      "financial_stress_pillar": 40.01536098310292,
+      "fragility_pillar": 95.54531490015361
+    },
+    {
+      "date": "2026-10-05",
+      "regime_score": 65.49539170506912,
+      "market_risk_pillar": 54.99231950844854,
+      "participation_pillar": 71.6589861751152,
+      "financial_stress_pillar": 40.01536098310292,
+      "fragility_pillar": 95.31490015360983
+    },
+    {
+      "date": "2026-10-06",
+      "regime_score": 65.47619047619047,
+      "market_risk_pillar": 53.76344086021505,
+      "participation_pillar": 71.58218125960062,
+      "financial_stress_pillar": 40.01536098310292,
+      "fragility_pillar": 96.54377880184332
+    },
+    {
+      "date": "2026-10-07",
+      "regime_score": 67.14669738863287,
+      "market_risk_pillar": 54.99231950844854,
+      "participation_pillar": 76.65130568356375,
+      "financial_stress_pillar": 40.01536098310292,
+      "fragility_pillar": 96.92780337941628
+    },
+    {
+      "date": "2026-10-08",
+      "regime_score": 66.14823348694317,
+      "market_risk_pillar": 55.76036866359447,
+      "participation_pillar": 74.88479262672811,
+      "financial_stress_pillar": 40.01536098310292,
+      "fragility_pillar": 93.93241167434716
+    },
+    {
+      "date": "2026-10-09",
+      "regime_score": 65.84101382488478,
+      "market_risk_pillar": 54.45468509984639,
+      "participation_pillar": 74.80798771121351,
+      "financial_stress_pillar": 40.01536098310292,
+      "fragility_pillar": 94.08602150537635
+    }
+  ],
+  "weekly_risk": {
+    "status": "PENDING_DATA",
+    "signalStatus": "PREVIOUS_COMPLETE_SIGNAL",
+    "signalDate": "2026-10-02",
+    "effectiveDate": "2026-10-05",
+    "expectedSignalWeek": "2026-10-09",
+    "riskLevel": "Level 4",
+    "targetExposure": 0.9,
+    "pendingReason": "BAMLH0A0HYM2 data ends at 2026-10-08; required through 2026-10-09.",
+    "sourceCutoffs": {
+      "GSPC": {
+        "latestObservation": "2026-10-09",
+        "requiredThrough": "2026-10-09",
+        "frequency": "daily"
+      },
+      "VIX": {
+        "latestObservation": "2026-10-09",
+        "requiredThrough": "2026-10-09",
+        "frequency": "daily"
+      },
+      "BAMLH0A0HYM2": {
+        "latestObservation": "2026-10-08",
+        "requiredThrough": "2026-10-09",
+        "frequency": "daily"
+      },
+      "T10Y2Y": {
+        "latestObservation": "2026-10-09",
+        "requiredThrough": "2026-10-09",
+        "frequency": "daily"
+      },
+      "SAHMREALTIME": {
+        "latestObservation": "2026-09-01",
+        "requiredThrough": null,
+        "frequency": "monthly"
+      }
+    }
+  },
+  "monthly_breadth": {
+    "above_200dma_ratio": {
+      "date": "2026-09-30T00:00:00.000",
+      "breadth_value": 0.4147168532,
+      "numerator": 2446,
+      "denominator": 5898,
+      "coverage_ratio": 0.9227158949,
+      "vendor": "MASSIVE",
+      "source": "MASSIVE_EXTENSION"
+    },
+    "outperform_sp500_12m_ratio": {
+      "date": "2026-09-30T00:00:00.000",
+      "breadth_value": 0.325984252,
+      "numerator": 1863,
+      "denominator": 5715,
+      "coverage_ratio": 0.9171882523,
+      "vendor": "MASSIVE",
+      "source": "MASSIVE_EXTENSION"
+    }
+  },
+  "daily_breadth": {
+    "period_end": "2026-10-09T00:00:00.000",
+    "breadth_value": 0.418325326,
+    "numerator": 2438,
+    "denominator": 5828,
+    "coverage_ratio": 0.9117647059,
+    "vendor": "MASSIVE",
+    "is_official_month_end": false
+  },
+  "nfci_anfci": {
+    "date": "2026-10-02T00:00:00.000",
+    "nfci": -0.494,
+    "anfci": -0.504,
+    "nfci_minus_anfci": 0.01,
+    "nfci_4w_change": 0.066,
+    "anfci_4w_change": 0.086
+  },
+  "factor_crowding": {
+    "long_only_beta_adjusted": {
+      "date": "2026-08-31T00:00:00.000",
+      "variant": "long_only_beta_adjusted",
+      "crowding_score": 0.8724082935,
+      "level": "L4"
+    },
+    "long_only_raw": {
+      "date": "2026-08-31T00:00:00.000",
+      "variant": "long_only_raw",
+      "crowding_score": 0.2009063444,
+      "level": "L2"
+    },
+    "long_short_no_market": {
+      "date": "2026-09-30T00:00:00.000",
+      "variant": "long_short_no_market",
+      "crowding_score": 0.7315233786,
+      "level": "L3"
+    },
+    "long_short_with_market": {
+      "date": "2026-09-30T00:00:00.000",
+      "variant": "long_short_with_market",
+      "crowding_score": 0.4826546003,
+      "level": "L2"
+    }
+  },
+  "ai_pillars": [
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "composite",
+      "pillar": "AI Hardware Regime / AI 硬件状态",
+      "score": 62.5745172569,
+      "state": "Constructive",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "demand_momentum",
+      "pillar": "AI Demand Momentum / AI 需求动量",
+      "score": 76.9124553869,
+      "state": "Strong",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "leadership_breadth",
+      "pillar": "Leadership Breadth / 领导力宽度",
+      "score": 72.029213598,
+      "state": "Constructive",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "relative_risk_appetite",
+      "pillar": "Relative Risk Appetite / 相对风险偏好",
+      "score": 57.5560286641,
+      "state": "Constructive",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "supply_chain_confirmation",
+      "pillar": "Supply Chain Confirmation / 供应链确认",
+      "score": 58.8144061768,
+      "state": "Constructive",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "crowding_heat",
+      "pillar": "Crowding / Heat / 拥挤与热度",
+      "score": 68.9628744273,
+      "state": "Elevated",
+      "direction": "risk",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "pillar_id": "divergence_fragility",
+      "pillar": "Divergence Fragility / 分化脆弱性",
+      "score": 52.4857467128,
+      "state": "Contained",
+      "direction": "risk",
+      "above_20dma_ratio": 0.7142857143,
+      "above_50dma_ratio": 0.7857142857
+    }
+  ],
+  "etfs": [
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "symbol": "QQQ",
+      "ret_5d": 0.0022545959,
+      "ret_20d": 0.0509036482,
+      "ret_20d_vs_spy": 0.0322196408,
+      "ret_20d_vs_qqq": 0.0
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "symbol": "SMH",
+      "ret_5d": -0.043244529,
+      "ret_20d": 0.0612104902,
+      "ret_20d_vs_spy": 0.0425264828,
+      "ret_20d_vs_qqq": 0.010306842
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "symbol": "SOXQ",
+      "ret_5d": -0.0433226961,
+      "ret_20d": 0.0626208378,
+      "ret_20d_vs_spy": 0.0439368304,
+      "ret_20d_vs_qqq": 0.0117171896
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "symbol": "SOXX",
+      "ret_5d": -0.0500933945,
+      "ret_20d": 0.0613391011,
+      "ret_20d_vs_spy": 0.0426550937,
+      "ret_20d_vs_qqq": 0.0104354529
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "symbol": "SPY",
+      "ret_5d": 0.0116028273,
+      "ret_20d": 0.0186840074,
+      "ret_20d_vs_spy": 0.0,
+      "ret_20d_vs_qqq": -0.0322196408
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "symbol": "XSD",
+      "ret_5d": -0.0491345617,
+      "ret_20d": 0.0442273078,
+      "ret_20d_vs_spy": 0.0255433004,
+      "ret_20d_vs_qqq": -0.0066763404
+    }
+  ],
+  "ai_groups": [
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "group": "AI Accelerators / AI 加速器",
+      "members": 5,
+      "avg_ret_5d": -0.0331391412,
+      "avg_ret_20d": 0.0797736033
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "group": "Servers & Networking / 服务器与网络硬件",
+      "members": 5,
+      "avg_ret_5d": 0.0064497111,
+      "avg_ret_20d": 0.0739283668
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "group": "Foundry & Equipment / 晶圆代工与设备",
+      "members": 7,
+      "avg_ret_5d": -0.0611081751,
+      "avg_ret_20d": 0.0635832375
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "group": "Analog, MCU & Power / 模拟、MCU 与功率",
+      "members": 8,
+      "avg_ret_5d": -0.0618515702,
+      "avg_ret_20d": 0.0288579766
+    },
+    {
+      "date": "2026-10-09T00:00:00.000",
+      "group": "Memory & Storage / 存储",
+      "members": 3,
+      "avg_ret_5d": -0.054595893,
+      "avg_ret_20d": -0.0377682026
+    }
+  ],
+  "acm_latest": {
+    "date": "2026-10-08",
+    "ACMY10": 5.216738053785395,
+    "ACMRNY10": 4.296955229370392,
+    "ACMTP10": 0.9197828244150036
+  },
+  "acm_windows": [
+    {
+      "label": "21个观测日间隔",
+      "start": "2026-09-09",
+      "end": "2026-10-08",
+      "yield_bp": 39.48429796130828,
+      "expected_bp": 17.843970937064135,
+      "premium_bp": 21.640327024244243
+    },
+    {
+      "label": "过去1个月",
+      "start": "2026-09-08",
+      "end": "2026-10-08",
+      "yield_bp": 39.63156660600706,
+      "expected_bp": 23.232042152887278,
+      "premium_bp": 16.399524453119795
+    },
+    {
+      "label": "过去3个月",
+      "start": "2026-07-08",
+      "end": "2026-10-08",
+      "yield_bp": 59.31237049201074,
+      "expected_bp": 31.54724032841658,
+      "premium_bp": 27.765130163594176
+    },
+    {
+      "label": "过去6个月",
+      "start": "2026-04-08",
+      "end": "2026-10-08",
+      "yield_bp": 87.76321461362161,
+      "expected_bp": 59.8943331717098,
+      "premium_bp": 27.86888144191183
+    },
+    {
+      "label": "过去1年",
+      "start": "2025-10-08",
+      "end": "2026-10-08",
+      "yield_bp": 102.9622120664742,
+      "expected_bp": 71.50708885190195,
+      "premium_bp": 31.455123214572257
+    }
+  ],
+  "acm_21_intervals_history": [
+    {
+      "DATE": "2026-09-09",
+      "ACMY10": 4.821895074172312,
+      "ACMRNY10": 4.11851551999975,
+      "ACMTP10": 0.7033795541725611
+    },
+    {
+      "DATE": "2026-09-10",
+      "ACMY10": 4.9419892353179575,
+      "ACMRNY10": 4.185638414024547,
+      "ACMTP10": 0.7563508212934105
+    },
+    {
+      "DATE": "2026-09-11",
+      "ACMY10": 4.948039104917314,
+      "ACMRNY10": 4.234324890954133,
+      "ACMTP10": 0.7137142139631809
+    },
+    {
+      "DATE": "2026-09-14",
+      "ACMY10": 4.951845381833585,
+      "ACMRNY10": 4.258779957705883,
+      "ACMTP10": 0.6930654241277017
+    },
+    {
+      "DATE": "2026-09-15",
+      "ACMY10": 4.974531201673151,
+      "ACMRNY10": 4.269280920787188,
+      "ACMTP10": 0.7052502808859629
+    },
+    {
+      "DATE": "2026-09-16",
+      "ACMY10": 4.985026058987906,
+      "ACMRNY10": 4.3192018609580245,
+      "ACMTP10": 0.6658241980298811
+    },
+    {
+      "DATE": "2026-09-17",
+      "ACMY10": 4.903953030577487,
+      "ACMRNY10": 4.297169085126027,
+      "ACMTP10": 0.6067839454514594
+    },
+    {
+      "DATE": "2026-09-18",
+      "ACMY10": 4.971007073315175,
+      "ACMRNY10": 4.339016961353123,
+      "ACMTP10": 0.6319901119620521
+    },
+    {
+      "DATE": "2026-09-21",
+      "ACMY10": 4.918858535367899,
+      "ACMRNY10": 4.343018922978029,
+      "ACMTP10": 0.5758396123898697
+    },
+    {
+      "DATE": "2026-09-22",
+      "ACMY10": 4.919405376866674,
+      "ACMRNY10": 4.347687636945546,
+      "ACMTP10": 0.5717177399211284
+    },
+    {
+      "DATE": "2026-09-23",
+      "ACMY10": 5.071232921632891,
+      "ACMRNY10": 4.429432546726225,
+      "ACMTP10": 0.6418003749066656
+    },
+    {
+      "DATE": "2026-09-24",
+      "ACMY10": 5.144097368024718,
+      "ACMRNY10": 4.417584644965992,
+      "ACMTP10": 0.7265127230587254
+    },
+    {
+      "DATE": "2026-09-25",
+      "ACMY10": 5.137560121583591,
+      "ACMRNY10": 4.366037814161207,
+      "ACMTP10": 0.7715223074223836
+    },
+    {
+      "DATE": "2026-09-28",
+      "ACMY10": 5.201843335136622,
+      "ACMRNY10": 4.4120996621078525,
+      "ACMTP10": 0.7897436730287692
+    },
+    {
+      "DATE": "2026-09-29",
+      "ACMY10": 5.22466090005692,
+      "ACMRNY10": 4.380837580745601,
+      "ACMTP10": 0.8438233193113192
+    },
+    {
+      "DATE": "2026-09-30",
+      "ACMY10": 5.258961373831857,
+      "ACMRNY10": 4.3739531176679485,
+      "ACMTP10": 0.8850082561639088
+    },
+    {
+      "DATE": "2026-10-01",
+      "ACMY10": 5.2172040854897,
+      "ACMRNY10": 4.312471940558536,
+      "ACMTP10": 0.9047321449311632
+    },
+    {
+      "DATE": "2026-10-02",
+      "ACMY10": 5.253851579556382,
+      "ACMRNY10": 4.340181227578841,
+      "ACMTP10": 0.9136703519775402
+    },
+    {
+      "DATE": "2026-10-05",
+      "ACMY10": 5.286965771624974,
+      "ACMRNY10": 4.324866248324903,
+      "ACMTP10": 0.9620995233000712
+    },
+    {
+      "DATE": "2026-10-06",
+      "ACMY10": 5.250132480269594,
+      "ACMRNY10": 4.303920440212938,
+      "ACMTP10": 0.9462120400566558
+    },
+    {
+      "DATE": "2026-10-07",
+      "ACMY10": 5.272789647361466,
+      "ACMRNY10": 4.288003815899519,
+      "ACMTP10": 0.9847858314619468
+    },
+    {
+      "DATE": "2026-10-08",
+      "ACMY10": 5.216738053785395,
+      "ACMRNY10": 4.296955229370392,
+      "ACMTP10": 0.9197828244150036
+    }
+  ],
+  "prior_published": {
+    "date": "2026-10-03",
+    "regime_score": 66.8202764977,
+    "ai_score": 91.5,
+    "smh_20d_pct": 14.12,
+    "note": "Historical published values; current history has revisions. Do not treat revision differences as market changes."
+  },
+  "notes": [
+    "Observation dates differ by series.",
+    "Retained weekly signal; current week is pending credit data.",
+    "37.04% is a monthly composite; 41.83% is daily 200DMA breadth; AI 71.4% is 20DMA breadth.",
+    "Historical revisions are not market changes.",
+    "Adjusted-price changes are not strategy returns.",
+    "Cover mountains are brand imagery, not a market chart."
+  ]
+}

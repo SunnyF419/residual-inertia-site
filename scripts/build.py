@@ -1223,7 +1223,7 @@ def research_article(r, research=()):
         dates += f' · {L("data_through")} {r["dataThrough"]}'
     body += head(category_label(r['category']) + ' / RESEARCH', rfield(r, 'title'), dates)
     if r.get('subtitle'):
-        body += '<p class="paper-subtitle">' + E(r['subtitle']) + '</p>'
+        body += '<p class="paper-subtitle">' + E(rfield(r, 'subtitle')) + '</p>'
     intro_label = ('本期判断' if LANG == 'zh' else 'Our view') if r.get('articleBody') else L('intro_heading')
     body += '<article class="prose"><section class="article-intro"><h2>' + intro_label + '</h2><p>' + E(rfield(r, 'summary')) + '</p>'
     body += '<p class="caption">' + L('author_label') + author_links(r) + '</p>'
@@ -1238,6 +1238,12 @@ def research_article(r, research=()):
         digest = hashlib.sha256(local.read_bytes()).hexdigest()[:12]
         pdf_url = url(pdf) + '?v=' + digest
         body += f'<div class="paper-actions"><a class="cover-primary" href="{E(pdf_url)}">{action_content(L("view_pdf"))}</a><span class="caption">PDF · {size:.1f} MB</span></div>'
+    if r.get('coverImage'):
+        cover_path = (ROOT / r['coverImage']).resolve()
+        assert cover_path.is_relative_to((ROOT/'assets/papers').resolve()) and cover_path.is_file(), 'Cover must be a published asset'
+        assert cover_path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'), 'Cover must be PNG'
+        cover_label = '下载本期封面 · 高清 PNG' if LANG == 'zh' else 'Download cover · High-resolution PNG'
+        body += '<figure class="paper-cover"><img src="' + E(url(r['coverImage'])) + '" alt="' + E(rfield(r, 'title')) + '" width="2160" height="2880" loading="lazy"><figcaption>' + action_link(r['coverImage'], cover_label) + '</figcaption></figure>'
     publications = external_publications(r)
     if publications:
         body += '<p class="caption">' + L('paper_external') + '</p>'
@@ -1261,7 +1267,10 @@ def research_article(r, research=()):
     if notes:
         body += '<details class="report-notes"><summary>数据说明与参考来源</summary>' + markdown(notes) + '</details>'
     source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
-    body += '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p><p>' + L('not_advice') + '</p></article>'
+    body += '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p>'
+    if r.get('references'):
+        body += '<ul class="action-list">' + ''.join('<li>' + action_link(ref['url'], '[' + str(i) + '] ' + rfield(ref, 'name'), external=True) + '</li>' for i, ref in enumerate(r['references'], 1)) + '</ul>'
+    body += '<p>' + L('not_advice') + '</p></article>'
     related = related_reports(r, research)
     if related or report_variant(r) in ('weekly', 'monthly'):
         links = []

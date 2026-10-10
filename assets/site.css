@@ -212,6 +212,7 @@ a:hover>.button-icon{transform:translateX(3px)}
 @keyframes ri-card-scenery{from{background-position:center 63%}to{background-position:center 65%}}
 @media(max-width:900px){.report-cover{padding:22px 24px;min-height:320px}.report-card-body{padding:14px 24px 26px}.report-cover-top{gap:8px}.report-brand{font-size:10px}}
 @media(max-width:600px){.report-cover{padding:24px 20px;min-height:300px}.report-title-block{max-width:88%}.report-card .report-cover h3{font-size:28px}.report-cover-top{margin-bottom:28px}.report-card-body{padding:12px 20px 24px}.report-cover-bottom{font-size:10px}.report-category{font-size:10px}.report-card .card-foot{gap:12px}}
+.paper-cover{margin:28px 0}.paper-cover img{display:block;width:min(100%,320px);height:auto;border:1px solid var(--grid)}.paper-cover figcaption{margin-top:16px}
 .motion-paused .report-cover::before,.motion-paused .reading-card::before{animation-play-state:paused!important}
 @media(prefers-reduced-motion:reduce){.report-cover::before,.reading-card::before{animation:none!important;transform:none!important;transition:none}.report-cover::after,.research-card.report-card,.report-card .report-cover h3{transition:none}.report-card:hover,.report-card:hover .report-cover h3{transform:none}}
 /* Category dots distinguish content without a stripe on the card. */
