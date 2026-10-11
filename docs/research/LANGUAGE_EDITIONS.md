@@ -26,3 +26,11 @@ English manuscripts, report-generation sources, six PDF/PNG outputs and rendered
 QA pages are stored in the research artifact directory
 `E:/QuantResearchHub/05_reports_and_figures/RI_weekly_english_20261011`.
 Only approved public assets and article records enter the website bundle.
+
+Both language editions use the original report's layout: September's four-page
+retrospective, W40's five-page supplied-cover edition, and W41's nine-page
+editorial edition. Keep the same cover composition, metric fields, chapter
+sequence, in-chapter figures, grid, chart semantics, headers and footers. Adjust
+English line breaks and typography for readability; do not substitute a new
+English-only design or move the figures to a detached appendix. The matching
+English renderer is `build_aligned.py` in the artifact directory above.

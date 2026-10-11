@@ -1249,8 +1249,10 @@ def research_article(r, research=()):
         cover_path = (ROOT / cover_image).resolve()
         assert cover_path.is_relative_to((ROOT/'assets/papers').resolve()) and cover_path.is_file(), 'Cover must be a published asset'
         assert cover_path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'), 'Cover must be PNG'
+        cover_version = hashlib.sha256(cover_path.read_bytes()).hexdigest()[:12]
+        cover_asset = cover_image + '?v=' + cover_version
         cover_label = '下载本期封面 · 高清 PNG' if LANG == 'zh' else 'Download cover · High-resolution PNG'
-        body += '<figure class="paper-cover"><img src="' + E(url(cover_image)) + '" alt="' + E(rfield(r, 'title')) + '" width="2160" height="2880" loading="lazy"><figcaption>' + action_link(cover_image, cover_label) + '</figcaption></figure>'
+        body += '<figure class="paper-cover"><img src="' + E(url(cover_asset)) + '" alt="' + E(rfield(r, 'title')) + '" width="2160" height="2880" loading="lazy"><figcaption>' + action_link(cover_asset, cover_label) + '</figcaption></figure>'
     publications = external_publications(r)
     if publications:
         body += '<p class="caption">' + L('paper_external') + '</p>'

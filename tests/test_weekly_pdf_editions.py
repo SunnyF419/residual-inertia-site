@@ -34,7 +34,8 @@ class WeeklyPDFEditionTests(unittest.TestCase):
                     self.assertEqual(parse_qs(url.query)['v'],[digest[:12]])
                     self.assertEqual(r['pdfLanguage'+suffix],language)
                     if prefix:
-                        self.assertIn('/'+r['coverImage_en'],PDFLinks(html).images)
+                        cover_digest=hashlib.sha256((ROOT/r['coverImage_en']).read_bytes()).hexdigest()[:12]
+                        self.assertIn('/'+r['coverImage_en']+'?v='+cover_digest,PDFLinks(html).images)
                         self.assertIn('PDF · English',html)
                         self.assertNotIn('PDF is in Chinese',html)
                         self.assertIn('English edition prepared',html)
