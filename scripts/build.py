@@ -1230,20 +1230,27 @@ def research_article(r, research=()):
     if r.get('researchId'):
         body += '<p class="caption">' + L('report_id_label') + '<span class="mono">' + E(r['researchId']) + ((' · v' + E(r['version'])) if r.get('version') else '') + '</span></p>'
     if r.get('pdf'):
-        pdf = r['pdf']
+        pdf = rfield(r, 'pdf')
         local = (ROOT / pdf).resolve()
         assert local.is_relative_to((ROOT/'assets/papers').resolve()) and local.is_file(), 'PDF must be a published asset'
         assert local.read_bytes().startswith(b'%PDF-'), 'Invalid PDF file'
         size = local.stat().st_size / 1024 / 1024
-        digest = hashlib.sha256(local.read_bytes()).hexdigest()[:12]
+        full_digest = hashlib.sha256(local.read_bytes()).hexdigest()
+        expected_digest = rfield(r, 'pdfSha256') if r.get('pdfSha256') else None
+        assert not expected_digest or full_digest == expected_digest, 'PDF checksum does not match its language edition'
+        digest = full_digest[:12]
         pdf_url = url(pdf) + '?v=' + digest
-        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(pdf_url)}">{action_content(L("view_pdf"))}</a><span class="caption">PDF · {size:.1f} MB</span></div>'
-    if r.get('coverImage'):
-        cover_path = (ROOT / r['coverImage']).resolve()
+        pdf_language = rfield(r, 'pdfLanguage') if r.get('pdfLanguage') else None
+        edition_label = {'en': 'English', 'zh-CN': '中文'}.get(pdf_language, '')
+        edition_label = (' · ' + edition_label) if edition_label else ''
+        body += f'<div class="paper-actions"><a class="cover-primary" href="{E(pdf_url)}">{action_content(L("view_pdf"))}</a><span class="caption">PDF{edition_label} · {size:.1f} MB</span></div>'
+    cover_image = r.get('coverImage_en', r.get('coverImage')) if LANG == 'en' else r.get('coverImage')
+    if cover_image:
+        cover_path = (ROOT / cover_image).resolve()
         assert cover_path.is_relative_to((ROOT/'assets/papers').resolve()) and cover_path.is_file(), 'Cover must be a published asset'
         assert cover_path.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'), 'Cover must be PNG'
         cover_label = '下载本期封面 · 高清 PNG' if LANG == 'zh' else 'Download cover · High-resolution PNG'
-        body += '<figure class="paper-cover"><img src="' + E(url(r['coverImage'])) + '" alt="' + E(rfield(r, 'title')) + '" width="2160" height="2880" loading="lazy"><figcaption>' + action_link(r['coverImage'], cover_label) + '</figcaption></figure>'
+        body += '<figure class="paper-cover"><img src="' + E(url(cover_image)) + '" alt="' + E(rfield(r, 'title')) + '" width="2160" height="2880" loading="lazy"><figcaption>' + action_link(cover_image, cover_label) + '</figcaption></figure>'
     publications = external_publications(r)
     if publications:
         body += '<p class="caption">' + L('paper_external') + '</p>'

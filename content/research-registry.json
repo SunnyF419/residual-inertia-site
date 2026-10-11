@@ -118,5 +118,79 @@
       "status": "published",
       "pdfSha256": "d7038653bf53fd9fbb0637367280c512c0a124478fd7a6e9a370bc2813bbf1d0"
     }
+  ],
+  "englishEditions": [
+    {
+      "researchId": "RI-WR-2026-W36",
+      "slug": "market-letter-2026-09-05",
+      "language": "en",
+      "version": "1.1",
+      "editionPreparedDate": "2026-10-11",
+      "originalPreparedOrPublishedDate": "2026-10-02",
+      "dataThrough": "2026-09-04",
+      "pdf": "assets/papers/ri-weekly-2026-09-05-en.pdf",
+      "pdfSha256": "fd3c73bd95de31e16d6d61cf045f089f6b6ecaef75846a9ec1e15dcafe668c3e",
+      "sourcePdfSha256": "284a79116c004b7efabce502c86dc28af143925eaf126539eb1f0d8faefc1663"
+    },
+    {
+      "researchId": "RI-WR-2026-W37",
+      "slug": "market-letter-2026-09-12",
+      "language": "en",
+      "version": "1.1",
+      "editionPreparedDate": "2026-10-11",
+      "originalPreparedOrPublishedDate": "2026-10-02",
+      "dataThrough": "2026-09-11",
+      "pdf": "assets/papers/ri-weekly-2026-09-12-en.pdf",
+      "pdfSha256": "864cd587baec99aa0369585d4eee481c3110a778ab26c8376b8dea0a4d7921a6",
+      "sourcePdfSha256": "3591c1ab093eafee5c15dd7c3795d24f2c052c20d781a0d563a7f796efa1a100"
+    },
+    {
+      "researchId": "RI-WR-2026-W38",
+      "slug": "market-letter-2026-09-19",
+      "language": "en",
+      "version": "1.1",
+      "editionPreparedDate": "2026-10-11",
+      "originalPreparedOrPublishedDate": "2026-10-02",
+      "dataThrough": "2026-09-18",
+      "pdf": "assets/papers/ri-weekly-2026-09-19-en.pdf",
+      "pdfSha256": "d32f75bb3f9d44b3bd8e18e01b677c8f7be9c87170b904f8bdb10513f85bef93",
+      "sourcePdfSha256": "d5c9443b4078235473d444beeb8b8a39bfc05705a9664969fe800726e1faae4b"
+    },
+    {
+      "researchId": "RI-WR-2026-W39",
+      "slug": "market-letter-2026-09-26",
+      "language": "en",
+      "version": "1.1",
+      "editionPreparedDate": "2026-10-11",
+      "originalPreparedOrPublishedDate": "2026-10-02",
+      "dataThrough": "2026-09-25",
+      "pdf": "assets/papers/ri-weekly-2026-09-26-en.pdf",
+      "pdfSha256": "ba0fbb0edb09299241f0fd4b5a9f65ad9254ce75f68973c307c5171cd053cdc9",
+      "sourcePdfSha256": "275beb3e509ce207b427255375770ad30397297dc3910382a13ba252c2e74bb2"
+    },
+    {
+      "researchId": "RI-WR-2026-W40",
+      "slug": "market-letter-2026-10-03",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-10-11",
+      "originalPreparedOrPublishedDate": "2026-10-03",
+      "dataThrough": "2026-10-02",
+      "pdf": "assets/papers/ri-weekly-2026-10-03-en.pdf",
+      "pdfSha256": "01bca47aa7e7b398b024ed42958474e95cd4d146fe82e58cf07b4735d70eefa0",
+      "sourcePdfSha256": "dd19f861d33cc8bd49b0802047994d2d03b547ebe834cc2e38361b8768633c71"
+    },
+    {
+      "researchId": "RI-WR-2026-W41",
+      "slug": "market-letter-2026-10-10",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-10-11",
+      "originalPreparedOrPublishedDate": "2026-10-10",
+      "dataThrough": "2026-10-09",
+      "pdf": "assets/papers/ri-weekly-2026-10-10-en.pdf",
+      "pdfSha256": "19f80fb3724e0ea3f454ded08240a0d161ef3c2cf0d11dd1b4eafa005737f50f",
+      "sourcePdfSha256": "d7038653bf53fd9fbb0637367280c512c0a124478fd7a6e9a370bc2813bbf1d0"
+    }
   ]
 }

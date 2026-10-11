@@ -240,11 +240,12 @@ class SiteTests(unittest.TestCase):
                     self.assertEqual(sum(a.get('href') == path for page in archive_pages for a in Elements(page).with_class('report-card-link')),1)
                     article = (ROOT / 'dist' / prefix / 'research' / r['slug'] / 'index.html').read_text(encoding='utf-8')
                     self.assertIn(r['published'], article)
-                    pdf_links = [attrs for _,attrs in Elements(article).elements if urlsplit(attrs.get('href','')).path == '/'+r['pdf']]
+                    expected_pdf = r.get('pdf_en', r['pdf']) if prefix == 'en/' else r['pdf']
+                    pdf_links = [attrs for _,attrs in Elements(article).elements if urlsplit(attrs.get('href','')).path == '/'+expected_pdf]
                     self.assertTrue(pdf_links)
                     self.assertTrue(all('download' not in attrs for attrs in pdf_links))
                     action = Elements(article).with_class('cover-primary')[0]
-                    self.assertEqual(urlsplit(action['href']).path, '/'+r['pdf'])
+                    self.assertEqual(urlsplit(action['href']).path, '/'+expected_pdf)
                     self.assertTrue(urlsplit(action['href']).query.startswith('v='))
                     self.assertNotIn('target', action)
                     self.assertFalse(Elements(article).with_class('pdf-document'))
