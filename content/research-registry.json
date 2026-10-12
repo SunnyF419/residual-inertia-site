@@ -128,7 +128,7 @@
       "registeredDate": "2026-10-12",
       "version": "1.1",
       "status": "published",
-      "pdfSha256": "f7faddca3baeb2ae0ad44e162b50740e93f005461a83f48264e1fc7658db004a",
+      "pdfSha256": "5213197143aef44b6af6ef94bfb1f214c2ccfbbf2a70975ccfb80975d11ca6ca",
       "sourcePdfSha256": "4b6fbd2c532e016214fa5a005dc9b883a5d546467daecb271d8e1be3f76205da",
       "author": "Taiyang Feng (Sunny)",
       "dataThrough": "2026-10-09"
@@ -216,8 +216,8 @@
       "originalPreparedOrPublishedDate": "2026-10-12",
       "dataThrough": "2026-10-09",
       "pdf": "assets/papers/ri-rn-2026-002-en.pdf",
-      "pdfSha256": "b991ce1c9da692454147b29c8aec90c20bf5487d0bfe11de2220aadda6b1f55a",
-      "sourcePdfSha256": "f7faddca3baeb2ae0ad44e162b50740e93f005461a83f48264e1fc7658db004a"
+      "pdfSha256": "1e5a4b82fa96df2d03958b384300ac41df016e6456603bb6de5bb0610bb39488",
+      "sourcePdfSha256": "5213197143aef44b6af6ef94bfb1f214c2ccfbbf2a70975ccfb80975d11ca6ca"
     }
   ]
 }

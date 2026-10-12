@@ -248,7 +248,7 @@ PILLAR_ZH = {'Financial Stress': '金融压力', 'Fragility': '市场脆弱度',
 SOURCES = {'市场研究': 'Market Research', '策略表现': 'Strategy Performance', '持仓档案': 'Holdings Archive', 'FOMC 政策研究': 'FOMC Policy Research', '全球态势': 'Global Situation', 'ACM 利率观察台': 'ACM Rate Observatory'}
 STATUS = {'current': ('当时已覆盖', 'Covered'), 'stale': ('当时滞后', 'Lagged')}
 QUALITY = {'pass': ('通过', 'Pass'), 'warning': ('存在提示', 'Warning'), 'fail': ('未通过', 'Fail')}
-CATEGORIES = {'周报': ('周报', 'Weekly'), '月报': ('月报', 'Monthly'), 'SSRN 论文': ('SSRN 论文', 'SSRN Paper'), 'FOMC研究': ('FOMC 政策研究', 'FOMC Policy Research')}
+CATEGORIES = {'周报': ('周报', 'Weekly'), '月报': ('月报', 'Monthly'), '专题研究': ('专题研究', 'Thematic Research'), 'SSRN 论文': ('SSRN 论文', 'SSRN Paper'), 'FOMC研究': ('FOMC 政策研究', 'FOMC Policy Research')}
 
 
 def L(key):
