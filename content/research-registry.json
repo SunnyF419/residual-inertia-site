@@ -117,6 +117,21 @@
       "version": "1.0",
       "status": "published",
       "pdfSha256": "d7038653bf53fd9fbb0637367280c512c0a124478fd7a6e9a370bc2813bbf1d0"
+    },
+    {
+      "researchId": "RI-RN-2026-002",
+      "slug": "sp500-ai-wave-2026",
+      "title": "标普 500：AI 浪潮中的市值、基本面与估值",
+      "collection": "personal",
+      "periodDate": "2026-10-12",
+      "preparedDate": "2026-10-12",
+      "registeredDate": "2026-10-12",
+      "version": "1.1",
+      "status": "published",
+      "pdfSha256": "f7faddca3baeb2ae0ad44e162b50740e93f005461a83f48264e1fc7658db004a",
+      "sourcePdfSha256": "4b6fbd2c532e016214fa5a005dc9b883a5d546467daecb271d8e1be3f76205da",
+      "author": "Taiyang Feng (Sunny)",
+      "dataThrough": "2026-10-09"
     }
   ],
   "englishEditions": [
@@ -191,6 +206,18 @@
       "pdf": "assets/papers/ri-weekly-2026-10-10-en.pdf",
       "pdfSha256": "8894ffd77cedb12eb1d4aa968dd684317fac6b8701150d97754ce83cfb11d5d8",
       "sourcePdfSha256": "d7038653bf53fd9fbb0637367280c512c0a124478fd7a6e9a370bc2813bbf1d0"
+    },
+    {
+      "researchId": "RI-RN-2026-002",
+      "slug": "sp500-ai-wave-2026",
+      "language": "en",
+      "version": "1.1",
+      "editionPreparedDate": "2026-10-12",
+      "originalPreparedOrPublishedDate": "2026-10-12",
+      "dataThrough": "2026-10-09",
+      "pdf": "assets/papers/ri-rn-2026-002-en.pdf",
+      "pdfSha256": "b991ce1c9da692454147b29c8aec90c20bf5487d0bfe11de2220aadda6b1f55a",
+      "sourcePdfSha256": "f7faddca3baeb2ae0ad44e162b50740e93f005461a83f48264e1fc7658db004a"
     }
   ]
 }
