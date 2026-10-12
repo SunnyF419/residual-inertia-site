@@ -1146,7 +1146,7 @@ def about(research=()):
         publications = external_publications(report)
         if publications and any(a['@id'].endswith('#taiyang-feng') for a in research_authors(report)):
             works.append('<li>' + action_link('research/' + report['slug'] + '.html', rfield(report, 'title')) + '<p class="caption">' + E(author_display(report)) + '</p></li>')
-    works_markup = ('<h3>' + L('founder_works') + '</h3><ul class="action-list publication-list">' + ''.join(works) + '</ul>') if works else ''
+    works_markup = ('<div class="founder-works"><h3>' + L('founder_works') + '</h3><ul class="action-list publication-list">' + ''.join(works) + '</ul></div>') if works else ''
     founder_intro = f'''<section class="founder-section" id="founder" aria-labelledby="founder-title">
 <div class="founder-card">
 <div class="founder-flip-card" role="button" tabindex="0" aria-label="{L('founder_card_label')}">
@@ -1160,13 +1160,14 @@ def about(research=()):
 </div>
 </div>
 <div class="founder-bio">
-<p class="eyebrow" id="founder-title">{L('founder_eyebrow')}</p>
-<h2>{E(CONFIG['founder'])}</h2>
+<p class="eyebrow">{L('founder_eyebrow')}</p>
+<h2 id="founder-title">{E(CONFIG['founder'])}</h2>
 <p class="brand-line">{E(CONFIG.get('brandLine', ''))}</p>
 <p>{L('founder_bio')}</p>
-<p>{L('founder_role')}</p><p class="caption">{L('founder_focus')}</p>{works_markup}
+<p>{L('founder_role')}</p><p class="caption">{L('founder_focus')}</p>
 </div>
 </div>
+{works_markup}
 </section>'''
     if LANG == 'en':
         intro_text = f'''<article class="prose about-intro">
