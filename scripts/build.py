@@ -18,6 +18,8 @@ SNAPSHOT_INDEXING = json.loads((ROOT / 'content/snapshot-indexing.json').read_te
 assert SNAPSHOT_INDEXING.get('version') == 1 and isinstance(SNAPSHOT_INDEXING.get('overrides'), dict), 'Invalid snapshot indexing policy'
 CSS_VERSION = hashlib.sha256((ROOT / 'assets/site.css').read_bytes()).hexdigest()[:12]
 ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexdigest()[:12]
+ACCOUNT_ORIGIN = CONFIG.get('accountServiceOrigin', 'https://global.residualinertia.com').rstrip('/')
+assert ACCOUNT_ORIGIN in {'https://residualinertia.com', 'https://global.residualinertia.com'}, 'Unknown account service origin'
 MOTION_VERSION = hashlib.sha256((ROOT / 'assets/site-motion.js').read_bytes()).hexdigest()[:12]
 CHART_VERSION = hashlib.sha256((ROOT / 'assets/market-chart.js').read_bytes()).hexdigest()[:12]
 ARCHIVE_VERSION = hashlib.sha256((ROOT / 'assets/archive-browser.js').read_bytes()).hexdigest()[:12]
@@ -29,6 +31,9 @@ E = lambda value: html.escape(str(value if value is not None else '—'), quote=
 
 # ── Bilingual support ─────────────────────────────────────────────────────
 LANG = 'zh'  # 'zh' or 'en'; set by main() before each build pass
+
+def account_url(path):
+    return E(ACCOUNT_ORIGIN + path + ('&' if '?' in path else '?') + 'lang=' + LANG)
 
 I18N = {
     # Nav
@@ -673,9 +678,9 @@ def footer(home=False):
     text = lambda cn, en: cn if LANG == 'zh' else en
     research = ''.join(anchor(f'research/{kind}/index.html', L('col_'+kind)) for kind in ('weekly', 'monthly', 'personal', 'fomc'))
     market = anchor('overview.html', L('nav_overview')) + anchor('overview.html#daily-snapshots', text('每日快照档案', 'Daily Snapshot Archive')) + anchor('global/index.html', L('nav_global'))
-    account = f'''<a data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a>
-<a href="https://global.residualinertia.com/auth/register">{text('注册读者账户', 'Create Reader Account')}</a>
-<a data-import-report hidden href="https://global.residualinertia.com/auth/login?next=/research/manage">{text('报告管理', 'Manage Reports')}</a>'''
+    account = f'''<a data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" href="{account_url("/auth/login?next=/account")}">{L('account_login')}</a>
+<a href="{account_url("/auth/register")}">{text('注册读者账户', 'Create Reader Account')}</a>
+<a data-import-report hidden href="{account_url("/auth/login?next=/research/manage")}">{text('报告管理', 'Manage Reports')}</a>'''
     about = anchor('about.html', L('nav_about')) + anchor('about.html#founder', L('home_founder')) + anchor('about.html#principles', text('品牌理念', 'Our Principles')) + anchor('about.html#disclosure', L('footer_disclosure'))
     columns = [(L('nav_research'), research), (text('市场与系统', 'Markets & Systems'), market), ('MyRI', account), ('Residual Inertia', about)]
     navigation = ''.join(f'<section class="footer-column"><h2>{E(title)}</h2><div>{links}</div></section>' for title, links in columns)
@@ -706,7 +711,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
         if record.get('updated'):
             article_meta += f'<meta property="article:modified_time" content="{E(record["updated"])}">'
     return f'''<!doctype html>
-<html lang="{lang_attr}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="{lang_attr}" data-account-origin="{E(ACCOUNT_ORIGIN)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(seo_title)}</title><meta name="description" content="{E(desc)}">
 <meta name="robots" content="{'index, follow' if indexable else 'noindex, follow'}">
 <link rel="canonical" href="{E(canonical)}"><meta property="og:title" content="{E(og_title)}">
@@ -726,7 +731,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <script defer src="{url('assets/archive-browser.js')}?v={ARCHIVE_VERSION}"></script>
 </head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}>{home_intro() if section == 'home' else ''}<a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
-<nav aria-label="{L('nav_aria')}">{nav}<button type="button" class="site-search-toggle" data-site-search-open aria-label="{L('site_search')}" aria-haspopup="dialog" aria-controls="site-search-dialog" aria-expanded="false" hidden>{search_icon()}</button><a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="https://global.residualinertia.com/auth/login?next=/account">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
+<nav aria-label="{L('nav_aria')}">{nav}<button type="button" class="site-search-toggle" data-site-search-open aria-label="{L('site_search')}" aria-haspopup="dialog" aria-controls="site-search-dialog" aria-expanded="false" hidden>{search_icon()}</button><a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="{account_url("/auth/login?next=/account")}">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
 {site_search_dialog()}{footer(home=section == 'home')}{SMART_NAV_JS}</body></html>'''
 
 
@@ -1113,7 +1118,7 @@ def research_library(reports, page=1, base='research', empty=''):
 
 def research_landing(research, page=1):
     body = head('RESEARCH ARCHIVE', L('research_head'), L('research_sub')) + research_navigation(research)
-    body += f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>'
+    body += f'<p class="library-actions"><a class="report-import" data-import-report href="{account_url("/auth/login?next=/research/manage")}" hidden>{L("import_report")}</a></p>'
     body += '<p class="eyebrow">' + ('最新研究' if LANG == 'zh' else 'Latest Research') + '</p>' if page == 1 else ''
     body += research_library(research, page)
     if page == 1:
@@ -1379,7 +1384,7 @@ def build_language(snapshots, research, latest):
             reports = [r for r in research if collection(r) == key]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + (L('formal_reports_pending') if key == 'market' else L('empty_text')) + '</p></div>'
             scholarly = ('<div id="scholarly-research"><h2>' + L('scholarly_label') + '</h2><p class="caption">' + L('scholarly_desc') + '</p></div>') if key == 'personal' else ''
-            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + scholarly + research_library(reports, page, f'research/{key}', empty)
+            return action_link('research/index.html', L('back_research'), 'back') + head(L(lkey), L(tkey), L(dkey)) + research_navigation(research, key) + (f'<p class="library-actions"><a class="report-import" data-import-report href="{account_url("/auth/login?next=/research/manage")}" hidden>{L("import_report")}</a></p>' if key == 'market' else '') + scholarly + research_library(reports, page, f'research/{key}', empty)
         reports = [r for r in research if collection(r) == key]
         for page in range(1, research_page_count(reports) + 1):
             write(research_page_route(f'research/{key}', page), L(tkey), lambda page=page: folder(page), 'research', L(dkey), archive_research=reports[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])
@@ -1387,7 +1392,7 @@ def build_language(snapshots, research, latest):
         def period_folder(page, kind=kind, label=label):
             reports = [r for r in research if report_variant(r) == kind]
             empty = '<div class="empty-research"><h2>' + L('empty_title') + '</h2><p>' + L('empty_text') + '</p></div>'
-            return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="https://global.residualinertia.com/auth/login?next=/research/manage" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
+            return action_link('research/index.html', L('back_research'), 'back') + head(label, L('col_'+kind), L('col_'+kind+'_desc')) + research_navigation(research, kind) + '<p class="library-actions"><a class="report-import" data-import-report href="' + account_url("/auth/login?next=/research/manage") + '" hidden>' + L('import_report') + '</a></p>' + research_library(reports, page, f'research/{kind}', empty)
         reports = [r for r in research if report_variant(r) == kind]
         for page in range(1, research_page_count(reports) + 1):
             write(research_page_route(f'research/{kind}', page), L('col_'+kind), lambda page=page: period_folder(page), 'research', L('col_'+kind+'_desc'), indexable=kind != 'monthly' or bool(reports), archive_research=reports[(page-1)*RESEARCH_PAGE_SIZE:page*RESEARCH_PAGE_SIZE])

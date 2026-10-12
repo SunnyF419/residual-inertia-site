@@ -226,7 +226,7 @@ class SiteTests(unittest.TestCase):
                 self.assertFalse(Elements(library).with_class('folder-card'))
                 owner_link = Elements(library).with_class('report-import')[0]
                 self.assertIn('hidden', owner_link)
-                self.assertEqual(owner_link['href'], 'https://global.residualinertia.com/auth/login?next=/research/manage')
+                self.assertEqual(owner_link['href'], build.ACCOUNT_ORIGIN + '/auth/login?next=/research/manage&lang=' + ('en' if prefix else 'zh'))
                 archive_pages = [library] + [(ROOT/'dist'/prefix/'research'/'page'/str(page)/'index.html').read_text(encoding='utf-8') for page in range(2, build.research_page_count(research)+1)]
                 for page in archive_pages:
                     self.assertLessEqual(len(Elements(page).with_class('research-card')), 6)

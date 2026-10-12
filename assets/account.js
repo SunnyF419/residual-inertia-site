@@ -1,6 +1,10 @@
 'use strict';
 (() => {
- const origin='https://global.residualinertia.com';
+ const root=document.documentElement;
+ const configured=root?.dataset.accountOrigin;
+ const origin=['https://residualinertia.com','https://global.residualinertia.com'].includes(configured)?configured:'https://global.residualinertia.com';
+ const language=root?.lang.startsWith('en')?'en':'zh';
+ const href=path=>origin+path+(path.includes('?')?'&':'?')+'lang='+language;
  let pending;
  async function updateAccount(){
   if(pending)pending.abort();
@@ -13,10 +17,10 @@
    if(pending!==controller)return;
    for(const link of document.querySelectorAll('[data-account-link]')){
     link.textContent=session.authenticated?(link.dataset.account||session.username):link.dataset.login;
-    link.href=origin+(session.authenticated?'/account':'/auth/login?next=/account');
+    link.href=href(session.authenticated?'/account':'/auth/login?next=/account');
    }
    for(const link of document.querySelectorAll('[data-import-report]')){
-    link.hidden=!session.canPublish;link.href=origin+'/research/manage';
+    link.hidden=!session.canPublish;link.href=href('/research/manage');
    }
   }catch{}finally{clearTimeout(timeout);}
  }
