@@ -3,9 +3,16 @@
 ## 状态（2026-10-12）
 
 账户中英文界面、表单、跳转、报告管理，以及 Cloudflare 账户路由代码已准备。
-本机验收通过；服务器更新、Cloudflare 部署、主站入口切换尚未完成。
-服务器现有 SSH 私钥对当前 Windows 账户不可读；当前环境没有 Cloudflare 授权。
-在后端和 Cloudflare 路由上线验收之前，保留现有账户服务地址。
+账户后端与 Cloudflare 主域名网关已部署，主站配置已切换为主域名。
+线上中英文登录/注册、未登录账户与报告管理跳转、语言 cookie、账户资源、
+会话接口、错误密码及跨站 Origin 拒绝检查通过。
+作者真实登录与 MFA、邮箱绑定、上传和发布仍需本人使用现有账户验收；
+未创建生产测试账户、未读取 MFA 密钥、未发布测试报告。
+
+Worker 版本：`e816b439-5a68-4d40-ab11-531ca25e3fda`。
+后端代码和环境备份：`/root/ri-account-backup-20261012T020142Z`。
+上游请求使用 `cache: 'no-store'`，避免缓存覆盖移除 Set-Cookie；
+测试确认语言与登录两条 cookie 分别保留，线上语言 cookie 已验证。
 
 ## 用户看到的入口
 
@@ -55,7 +62,7 @@
    为账户路由设置缓存绕过，不缓存 HTML、POST、cookie 或会话接口。
 8. 在真实主域名完成下面的上线验收。
 9. 主站 `site.json` 增加 `"accountServiceOrigin": "https://residualinertia.com"`，
-   再构建、检查并发布。当前未启用这个配置，因此不会提前切换到尚未部署的地址。
+   再构建、检查并发布。本次在主域名网关线上验收通过后启用此配置。
 
 Cloudflare Routes 需要主机名对应的 DNS 开启代理；参考
 [官方 Routes 文档](https://developers.cloudflare.com/workers/configuration/routing/routes/)。
@@ -87,4 +94,4 @@ Cloudflare Routes 需要主机名对应的 DNS 开启代理；参考
 Worker 路由 / Origin / cookie / 请求转发测试通过。
 浏览器：10 个中英文桌面与移动页面检查通过，无横向溢出或运行错误。
 仓库没有独立 lint/typecheck 命令；使用 Python 编译检查、JavaScript 语法检查及现有测试。
-这些是本机结果，不代表生产迁移完成。
+上述测试是本机结果；生产检查范围见本页状态，不能代替本人真实账户与 MFA 验收。
