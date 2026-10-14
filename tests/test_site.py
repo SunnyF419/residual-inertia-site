@@ -31,6 +31,20 @@ class Elements(HTMLParser):
 
 
 class SiteTests(unittest.TestCase):
+    def test_pending_and_unknown_snapshot_source_statuses_render_in_both_languages(self):
+        # Daily archives retain their original source status, including pending inputs.
+        snapshot = json.loads(next((ROOT / 'content/snapshots').glob('*.json')).read_text(encoding='utf-8'))
+        snapshot['sources'] = [dict(name='市场研究', asOf='2026-10-09',
+                                    status='waiting', qualityStatus='pass'),
+                               dict(name='Future source', asOf=None,
+                                    status='future-status', qualityStatus='future-quality')]
+        for lang, pending in [('zh', '当时待补齐'), ('en', 'Pending')]:
+            with self.subTest(language=lang), patch.object(build, 'LANG', lang):
+                page = build.snapshot_page(snapshot, None, None)
+                self.assertIn(pending, page)
+                self.assertIn('future-status', page)
+                self.assertIn('future-quality', page)
+
     def test_home_intro_is_optional_and_scoped_to_both_homepages(self):
         for lang in ('zh', 'en'):
             with patch.object(build, 'LANG', lang), patch.object(build, 'ROUTE', 'index.html'):

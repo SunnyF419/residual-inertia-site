@@ -246,7 +246,8 @@ I18N = {
 STATES = {'建设性': 'Constructive', '谨慎': 'Cautious', '中性': 'Neutral', '防御': 'Defensive', '压力': 'Stressed'}
 PILLAR_ZH = {'Financial Stress': '金融压力', 'Fragility': '市场脆弱度', 'Market Risk': '市场风险', 'Participation': '市场参与度'}
 SOURCES = {'市场研究': 'Market Research', '策略表现': 'Strategy Performance', '持仓档案': 'Holdings Archive', 'FOMC 政策研究': 'FOMC Policy Research', '全球态势': 'Global Situation', 'ACM 利率观察台': 'ACM Rate Observatory'}
-STATUS = {'current': ('当时已覆盖', 'Covered'), 'stale': ('当时滞后', 'Lagged')}
+STATUS = {'current': ('当时已覆盖', 'Covered'), 'stale': ('当时滞后', 'Lagged'),
+          'waiting': ('当时待补齐', 'Pending')}
 QUALITY = {'pass': ('通过', 'Pass'), 'warning': ('存在提示', 'Warning'), 'fail': ('未通过', 'Fail')}
 CATEGORIES = {'周报': ('周报', 'Weekly'), '月报': ('月报', 'Monthly'), '专题研究': ('专题研究', 'Thematic Research'), 'SSRN 论文': ('SSRN 论文', 'SSRN Paper'), 'FOMC研究': ('FOMC 政策研究', 'FOMC Policy Research')}
 
@@ -283,12 +284,16 @@ def category_label(value):
 
 def status_label(value):
     entry = STATUS.get(value)
-    return entry[1] if LANG == 'en' else value if entry is None else entry[0]
+    if entry is None:
+        return value
+    return entry[1] if LANG == 'en' else entry[0]
 
 
 def quality_label(value):
     entry = QUALITY.get(value)
-    return entry[1] if LANG == 'en' else value if entry is None else entry[0]
+    if entry is None:
+        return value
+    return entry[1] if LANG == 'en' else entry[0]
 
 
 def rfield(r, base):
