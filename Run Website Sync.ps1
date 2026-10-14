@@ -51,9 +51,16 @@ try {
     Invoke-SyncProcess $paths.node ('"{0}"' -f (Join-Path $portal 'scripts\sync-portal-data.mjs'))
     $shell = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
     $publishArgument = if ($CheckOnly) { '' } else { '-Publish' }
-    Invoke-SyncProcess $shell ('-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "{0}" -PortalPath "{1}" {2}' -f (Join-Path $PSScriptRoot 'Update Website.ps1'), $portal, $publishArgument)
-    $market = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'content\market\latest.json') -Raw | ConvertFrom-Json
-    $result = [ordered]@{ status = $(if ($CheckOnly) { 'validated' } else { 'pushed' }); startedAt = $started; finishedAt = (Get-Date).ToUniversalTime().ToString('o'); dataAsOf = $market.market.regimeDate; score = $market.market.regimeScore; message = 'Public content validated; GitHub Pages deployment follows a changed push.' }
+    $publicationResultPath = Join-Path $runtime 'publication-result.json'
+    Invoke-SyncProcess $shell ('-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "{0}" -PortalPath "{1}" -ResultPath "{2}" {3}' -f (Join-Path $PSScriptRoot 'Update Website.ps1'), $portal, $publicationResultPath, $publishArgument)
+    if ($CheckOnly) {
+        $market = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'content\market\latest.json') -Raw | ConvertFrom-Json
+        $reading = @{ dataAsOf = $market.market.regimeDate; score = $market.market.regimeScore; commit = $null }
+    } else {
+        $reading = Get-Content -LiteralPath $publicationResultPath -Raw | ConvertFrom-Json
+        if ($reading.status -ne 'pushed' -or [datetime]$reading.finishedAt -lt [datetime]$started) { throw 'Missing or stale publication result.' }
+    }
+    $result = [ordered]@{ status = $(if ($CheckOnly) { 'validated' } else { 'pushed' }); startedAt = $started; finishedAt = (Get-Date).ToUniversalTime().ToString('o'); dataAsOf = $reading.dataAsOf; score = $reading.score; publishedCommit = $reading.commit; message = 'Public content validated; GitHub Pages deployment follows a changed push.' }
     $result | ConvertTo-Json | Set-Content -LiteralPath $statusPath -Encoding UTF8
     Write-SyncLog 'Sync completed. Historical archives and author reports are preserved.'
 } catch {
