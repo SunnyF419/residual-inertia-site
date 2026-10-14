@@ -21,6 +21,8 @@ Existing source archive revision checks, data quality checks and protection agai
 backwards market dates remain in the importer. Import, build or validation failure
 does not push a new site. A merge conflict is retained in the publication clone for
 review. No automatic reset, stash, recursive cleanup or draft submission is used.
+Git diagnostics are logged separately from its returned file paths and commit IDs;
+Windows line-ending warnings cannot be mistaken for unrelated changes.
 
 After a successful push, `publication-result.json` records the actual clone's
 market date, score and pushed commit. `Run Website Sync.ps1` checks that this result

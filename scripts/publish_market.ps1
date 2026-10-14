@@ -4,15 +4,36 @@ function Invoke-MarketPublication {
     param([string]$SourceRoot, [string]$PortalPath, [string]$ResultPath)
     $publicationRoot = Join-Path $SourceRoot '.runtime\website-sync\publication'
     function Invoke-PublicationGit([string[]]$Arguments) {
-        $preference = $ErrorActionPreference
+        # stderr is diagnostic text, never a file path or commit identifier.
+        # JSON exporters use Windows newlines even when Git normalizes to LF.
+        $info = New-Object System.Diagnostics.ProcessStartInfo
+        $gitCommand = Get-Command git -CommandType Application -ErrorAction Stop | Select-Object -First 1
+        $info.FileName = $gitCommand.Source
+        $nativeArguments = @('-c', "safe.directory=$SourceRoot", '-c', "safe.directory=$publicationRoot") + $Arguments
+        $info.Arguments = ($nativeArguments | ForEach-Object {
+            '"' + ($_ -replace '(\\*)"', '$1$1\"' -replace '(\\+)$', '$1$1') + '"'
+        }) -join ' '
+        $info.WorkingDirectory = (Get-Location).ProviderPath
+        $info.UseShellExecute = $false
+        $info.CreateNoWindow = $true
+        $info.RedirectStandardOutput = $true
+        $info.RedirectStandardError = $true
+        $info.StandardOutputEncoding = New-Object System.Text.UTF8Encoding($false)
+        $info.StandardErrorEncoding = New-Object System.Text.UTF8Encoding($false)
+        $child = New-Object System.Diagnostics.Process
+        $child.StartInfo = $info
         try {
-            # Git progress uses stderr even on success in Windows PowerShell 5.
-            $ErrorActionPreference = 'Continue'
-            $output = @(& git -c "safe.directory=$SourceRoot" -c "safe.directory=$publicationRoot" @Arguments 2>&1)
-            $code = $LASTEXITCODE
-        } finally { $ErrorActionPreference = $preference }
-        if ($code -ne 0) { throw ('Git publication operation failed (exit {0}); local files are preserved.' -f $code) }
-        return @($output | ForEach-Object { $_.ToString() })
+            [void]$child.Start()
+            $stdout = $child.StandardOutput.ReadToEndAsync()
+            $stderr = $child.StandardError.ReadToEndAsync()
+            if (-not $child.WaitForExit(180000)) {
+                $child.Kill()
+                throw 'Git publication operation timed out; local files are preserved.'
+            }
+            if ($stderr.Result) { Write-Host $stderr.Result.TrimEnd() }
+            if ($child.ExitCode -ne 0) { throw ('Git publication operation failed (exit {0}); local files are preserved.' -f $child.ExitCode) }
+            return @($stdout.Result -split '\r?\n' | Where-Object { $_ })
+        } finally { $child.Dispose() }
     }
     function Assert-DataPaths($Paths) {
         foreach ($path in $Paths) {

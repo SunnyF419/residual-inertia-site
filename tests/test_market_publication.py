@@ -226,6 +226,26 @@ if flag.exists():
         self.publish()
         self.assertEqual(self.git(self.remote, 'rev-parse', 'main'), head)
 
+    def test_windows_line_ending_warnings_are_not_changed_file_paths(self):
+        # Match production: Git requires LF JSON, while Python writes CRLF.
+        config = self.base/'git-test-config'
+        with config.open('a', encoding='utf-8') as output:
+            output.write('[core]\n autocrlf = true\n')
+        (self.source/'.gitattributes').write_text('*.json text eol=lf\n', encoding='utf-8')
+        importer = self.source/'scripts/import_portal.py'
+        importer.write_text(importer.read_text(encoding='utf-8').replace(
+            '.write_text(json.dumps(v))', '.write_text(json.dumps(v, indent=2) + "\\n")'), encoding='utf-8')
+        self.git(self.source, 'add', '.gitattributes', 'scripts/import_portal.py')
+        self.git(self.source, 'commit', '-m', 'fixture LF JSON export policy')
+        self.git(self.source, 'push', 'origin', 'main')
+        result = self.publish()
+        self.assertIn('warning:', result.stdout)
+        published = json.loads(self.git(self.remote, 'show', 'main:content/market/latest.json'))
+        self.assertEqual(published, self.latest)
+        head = self.git(self.remote, 'rev-parse', 'main')
+        self.publish()
+        self.assertEqual(self.git(self.remote, 'rev-parse', 'main'), head)
+
     def test_run_status_reads_published_clone_not_stale_development_copy(self):
         node = shutil.which('node') or str(Path(os.environ.get('USERPROFILE', 'C:/Users/THINKBOOK'))/'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe')
         if not Path(node).exists():
