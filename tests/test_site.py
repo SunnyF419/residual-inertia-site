@@ -188,12 +188,19 @@ class SiteTests(unittest.TestCase):
         research = [json.loads(p.read_text(encoding='utf-8')) for p in (ROOT/'content/research').glob('*.json')]
         for prefix in ('','en/'):
             for kind in ('weekly','monthly','personal','fomc'):
-                page = (ROOT/'dist'/prefix/'research'/kind/'index.html').read_text(encoding='utf-8')
                 matching = [r for r in research if build.report_variant(r) == kind]
-                self.assertEqual(len(Elements(page).with_class('report-cover-'+kind)), len(matching))
-                active = [attrs for _,attrs in Elements(page).elements if attrs.get('aria-current') == 'page']
-                self.assertEqual(len(active), 1)
-                self.assertEqual(active[0]['href'], '/'+prefix+'research/'+kind+'/')
+                seen = []
+                for number in range(1, build.research_page_count(matching) + 1):
+                    route = build.research_page_route('research/'+kind, number)
+                    page = (ROOT/'dist'/prefix/route).read_text(encoding='utf-8')
+                    dom = Elements(page)
+                    expected_count = min(build.RESEARCH_PAGE_SIZE, len(matching) - (number-1)*build.RESEARCH_PAGE_SIZE)
+                    self.assertEqual(len(dom.with_class('report-cover-'+kind)), expected_count)
+                    active = [a for a in dom.with_class('filter-'+kind) if a.get('aria-current') == 'page']
+                    self.assertEqual(len(active), 1)
+                    self.assertEqual(active[0]['href'], '/'+prefix+'research/'+kind+'/')
+                    seen.extend(a['href'] for a in dom.with_class('report-card-link'))
+                self.assertCountEqual(seen, ['/'+prefix+'research/'+r['slug']+'/' for r in matching])
                 for r in matching:
                     article = (ROOT/'dist'/prefix/'research'/r['slug']/'index.html').read_text(encoding='utf-8')
                     self.assertIn('href="/'+prefix+'research/'+kind+'/"', article)

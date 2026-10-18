@@ -147,6 +147,20 @@
       "updatedDate": "2026-10-13",
       "sourceDocumentSha256": "3977042500ad2b94895dfd6b7fe6eb34e44e1dcab21c221f5f904725a2f4037c",
       "sourceDocumentFormat": "docx"
+    },
+    {
+      "researchId": "RI-WR-2026-W42",
+      "slug": "market-letter-2026-10-17",
+      "title": "美股周评 · 2026-10-17：结构未稳，硬件转弱",
+      "collection": "market",
+      "periodDate": "2026-10-17",
+      "preparedDate": "2026-10-18",
+      "registeredDate": "2026-10-18",
+      "version": "1.0",
+      "status": "published",
+      "pdfSha256": "06c19058a21e95615fc15fea32d98b0bd1323be3301bee2d56c484ffdb96187c",
+      "author": "Taiyang Feng (Sunny)",
+      "dataThrough": "2026-10-16"
     }
   ],
   "englishEditions": [
@@ -243,6 +257,18 @@
         }
       ],
       "sourceDocumentSha256": "3977042500ad2b94895dfd6b7fe6eb34e44e1dcab21c221f5f904725a2f4037c"
+    },
+    {
+      "researchId": "RI-WR-2026-W42",
+      "slug": "market-letter-2026-10-17",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-10-18",
+      "originalPreparedOrPublishedDate": "2026-10-18",
+      "dataThrough": "2026-10-16",
+      "pdf": "assets/papers/ri-weekly-2026-10-17-en.pdf",
+      "pdfSha256": "211a25bbe4ec78d102b33dc124819c720297f4dc46965cccd8ce30bd969cc48a",
+      "sourcePdfSha256": "06c19058a21e95615fc15fea32d98b0bd1323be3301bee2d56c484ffdb96187c"
     }
   ]
 }

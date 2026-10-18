@@ -1,0 +1,396 @@
+{
+  "meta": {
+    "researchId": "RI-WR-2026-W42",
+    "periodDate": "2026-10-17",
+    "published": "2026-10-18",
+    "dataThrough": "2026-10-16",
+    "author": "Taiyang Feng (Sunny)",
+    "version": "1.0",
+    "capturedAt": "2026-10-18T03:58:00.192869+00:00"
+  },
+  "regime": {
+    "date": "2026-10-15T00:00:00.000",
+    "regime_score": 58.1221198157,
+    "regime_state": "Caution",
+    "regime_state_zh": "谨慎"
+  },
+  "regimePublicationStatus": "PENDING_SOURCE",
+  "marketPillars": [
+    {
+      "pillar": "Financial Stress",
+      "pillar_score": 26.8817204301,
+      "pillar_state": "Constructive",
+      "pillar_state_zh": "建设性"
+    },
+    {
+      "pillar": "Fragility",
+      "pillar_score": 93.3179723502,
+      "pillar_state": "Stress",
+      "pillar_state_zh": "压力"
+    },
+    {
+      "pillar": "Market Risk",
+      "pillar_score": 55.4531490015,
+      "pillar_state": "Caution",
+      "pillar_state_zh": "谨慎"
+    },
+    {
+      "pillar": "Participation",
+      "pillar_score": 56.8356374808,
+      "pillar_state": "Caution",
+      "pillar_state_zh": "谨慎"
+    }
+  ],
+  "weekly": {
+    "signal_date": "2026-10-16T00:00:00.000",
+    "effective_date": "2026-10-19T00:00:00.000",
+    "risk_level": "Level 5",
+    "overall_score": 0.4506408895,
+    "target_exposure": 0.35,
+    "signal_status": "CURRENT_WITH_LAGGED_INPUTS",
+    "signal_usable": true
+  },
+  "credit": {
+    "latestObservation": "2026-10-15",
+    "requiredThrough": "2026-10-16",
+    "usedObservation": "2026-10-15",
+    "lagTradingDays": 1,
+    "maxLagTradingDays": 2
+  },
+  "weeklyPublicationStatus": "WAITING_RELEASE",
+  "monthlyBreadth": {
+    "above_200dma_ratio": {
+      "date": "2026-09-30T00:00:00.000",
+      "breadth_value": 0.4351167603,
+      "numerator": 1472,
+      "denominator": 3383,
+      "coverage_ratio": 0.9548405306
+    },
+    "outperform_sp500_12m_ratio": {
+      "date": "2026-09-30T00:00:00.000",
+      "breadth_value": 0.3651938683,
+      "numerator": 1215,
+      "denominator": 3327,
+      "coverage_ratio": 0.9541152853
+    }
+  },
+  "dailyBreadth": {
+    "period_end": "2026-10-16T00:00:00.000",
+    "breadth_value": 0.4171650718,
+    "numerator": 1395,
+    "denominator": 3344,
+    "coverage_ratio": 0.94383291
+  },
+  "nfci": {
+    "date": "2026-10-09T00:00:00.000",
+    "nfci": -0.499,
+    "anfci": -0.485,
+    "nfci_minus_anfci": -0.014,
+    "nfci_4w_change": 0.037,
+    "anfci_4w_change": 0.068
+  },
+  "factorCrowding": {
+    "long_only_beta_adjusted": {
+      "date": "2026-08-31T00:00:00.000",
+      "crowding_score": 0.8724082935,
+      "level": "L4",
+      "variant": "long_only_beta_adjusted"
+    },
+    "long_only_raw": {
+      "date": "2026-08-31T00:00:00.000",
+      "crowding_score": 0.2009063444,
+      "level": "L2",
+      "variant": "long_only_raw"
+    },
+    "long_short_no_market": {
+      "date": "2026-08-31T00:00:00.000",
+      "crowding_score": 0.7583081571,
+      "level": "L3",
+      "variant": "long_short_no_market"
+    },
+    "long_short_with_market": {
+      "date": "2026-08-31T00:00:00.000",
+      "crowding_score": 0.5151057402,
+      "level": "L3",
+      "variant": "long_short_with_market"
+    }
+  },
+  "factorValuation": {
+    "hml": {
+      "date": "2026-10-15T00:00:00.000",
+      "percentile_all_history": 98.7889399577,
+      "metric_value": 6.7740508236,
+      "signal_label": "极端便宜",
+      "title_zh": "HML · 价值 - 高 = 价值更便宜 · 全历史日频"
+    },
+    "umd": {
+      "date": "2026-10-15T00:00:00.000",
+      "percentile_all_history": 25.6935525302,
+      "metric_value": 0.4124656187,
+      "signal_label": "拥挤",
+      "title_zh": "UMD · 动量 - 低 = 动量更贵/拥挤 · 全历史日频"
+    }
+  },
+  "aiPillars": [
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "composite",
+      "score": 11.4935883996,
+      "state": "Weak",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "demand_momentum",
+      "score": 0.4781942904,
+      "state": "Weak",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "leadership_breadth",
+      "score": 8.9092978029,
+      "state": "Weak",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "relative_risk_appetite",
+      "score": 30.5294453224,
+      "state": "Weak",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "supply_chain_confirmation",
+      "score": 8.307017099,
+      "state": "Weak",
+      "direction": "constructive",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "crowding_heat",
+      "score": 29.7535029079,
+      "state": "Cool",
+      "direction": "risk",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "pillar_id": "divergence_fragility",
+      "score": 73.4602126869,
+      "state": "Elevated",
+      "direction": "risk",
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0714285714
+    }
+  ],
+  "etfs": [
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "symbol": "QQQ",
+      "ret_1d": -0.025,
+      "ret_5d": -0.0551998616,
+      "ret_20d": -0.0161480352,
+      "ret_20d_vs_spy": -0.0181961125,
+      "ret_20d_vs_qqq": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "symbol": "SMH",
+      "ret_1d": -0.034088469,
+      "ret_5d": -0.105315499,
+      "ret_20d": -0.0579581152,
+      "ret_20d_vs_spy": -0.0600061925,
+      "ret_20d_vs_qqq": -0.04181008
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "symbol": "SOXQ",
+      "ret_1d": -0.0384024578,
+      "ret_5d": -0.1141210957,
+      "ret_20d": -0.0662689111,
+      "ret_20d_vs_spy": -0.0683169884,
+      "ret_20d_vs_qqq": -0.0501208759
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "symbol": "SOXX",
+      "ret_1d": -0.0414213829,
+      "ret_5d": -0.1180014301,
+      "ret_20d": -0.0744367531,
+      "ret_20d_vs_spy": -0.0764848304,
+      "ret_20d_vs_qqq": -0.0582887179
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "symbol": "SPY",
+      "ret_1d": -0.0110651861,
+      "ret_5d": -0.0196771003,
+      "ret_20d": 0.0020480773,
+      "ret_20d_vs_spy": 0.0,
+      "ret_20d_vs_qqq": 0.0181961125
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "symbol": "XSD",
+      "ret_1d": -0.0423653284,
+      "ret_5d": -0.1248271551,
+      "ret_20d": -0.0880866854,
+      "ret_20d_vs_spy": -0.0901347627,
+      "ret_20d_vs_qqq": -0.0719386501
+    }
+  ],
+  "aiGroups": [
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "group": "Analog, MCU & Power / 模拟、MCU 与功率",
+      "members": 8,
+      "avg_ret_5d": -0.0531705337,
+      "avg_ret_20d": -0.009697887,
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.25
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "group": "Foundry & Equipment / 晶圆代工与设备",
+      "members": 7,
+      "avg_ret_5d": -0.1300697961,
+      "avg_ret_20d": -0.0641940604,
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "group": "AI Accelerators / AI 加速器",
+      "members": 5,
+      "avg_ret_5d": -0.1208279336,
+      "avg_ret_20d": -0.082704102,
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "group": "Servers & Networking / 服务器与网络硬件",
+      "members": 5,
+      "avg_ret_5d": -0.2323027507,
+      "avg_ret_20d": -0.1733694203,
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0
+    },
+    {
+      "date": "2026-10-16T00:00:00.000",
+      "group": "Memory & Storage / 存储",
+      "members": 3,
+      "avg_ret_5d": -0.1647135727,
+      "avg_ret_20d": -0.2128424972,
+      "above_20dma_ratio": 0.0,
+      "above_50dma_ratio": 0.0
+    }
+  ],
+  "livermore": {
+    "date": "2026-10-16",
+    "score": 40.4,
+    "state": "Normal",
+    "source": "Author-provided dashboard screenshot"
+  },
+  "notes": [
+    "Regime framework changed: do not compare 58.1 with last week as a like-for-like risk decline.",
+    "The regime and factor valuation views are retained 2026-10-15 snapshots pending source/method migration; not fully refreshed 2026-10-16 observations.",
+    "Weekly signal is usable under the configured one-day credit lag, not all-inputs-complete. Effective date is 2026-10-19.",
+    "HML 98.8th percentile is a valuation-spread measure with high = value cheaper, not 99% crowding.",
+    "Monthly breadth mean, daily market 200DMA breadth and AI sample 20DMA breadth have different definitions.",
+    "Future-dated standalone WQS card excluded as a realized current observation.",
+    "Price changes are dashboard adjusted-price changes, not independently reconstructed total returns or strategy performance.",
+    "Mountains on the cover are brand artwork, not market data."
+  ],
+  "monthlyBreadthMean": 0.4001553143,
+  "acmLatest": {
+    "date": "2026-10-15",
+    "ACMY10": 5.0745935241141575,
+    "ACMRNY10": 4.327140978007495,
+    "ACMTP10": 0.7474525461066621
+  },
+  "acmWindows": [
+    {
+      "label": "1 month",
+      "start": "2026-09-15",
+      "end": "2026-10-15",
+      "yield_bp": 10.006232244100666,
+      "expected_bp": 5.78600572203074,
+      "premium_bp": 4.220226522069925
+    },
+    {
+      "label": "3 months",
+      "start": "2026-07-15",
+      "end": "2026-10-15",
+      "yield_bp": 47.00454484581451,
+      "expected_bp": 40.13944226603896,
+      "premium_bp": 6.865102579775639
+    },
+    {
+      "label": "6 months",
+      "start": "2026-04-15",
+      "end": "2026-10-15",
+      "yield_bp": 75.23355328788321,
+      "expected_bp": 65.22495434471955,
+      "premium_bp": 10.008598943163705
+    },
+    {
+      "label": "1 year",
+      "start": "2025-10-15",
+      "end": "2026-10-15",
+      "yield_bp": 97.31740085266054,
+      "expected_bp": 78.81846417113327,
+      "premium_bp": 18.49893668152727
+    }
+  ],
+  "acmRecent": [
+    {
+      "DATE": "2026-10-08",
+      "ACMY10": 5.216738053785395,
+      "ACMRNY10": 4.296955229370392,
+      "ACMTP10": 0.9197828244150036
+    },
+    {
+      "DATE": "2026-10-09",
+      "ACMY10": 5.228382779885093,
+      "ACMRNY10": 4.326085631992512,
+      "ACMTP10": 0.9022971478925816
+    },
+    {
+      "DATE": "2026-10-13",
+      "ACMY10": 5.191906984866823,
+      "ACMRNY10": 4.340451612711582,
+      "ACMTP10": 0.8514553721552414
+    },
+    {
+      "DATE": "2026-10-14",
+      "ACMY10": 5.168205061301033,
+      "ACMRNY10": 4.359602189772712,
+      "ACMTP10": 0.8086028715283211
+    },
+    {
+      "DATE": "2026-10-15",
+      "ACMY10": 5.0745935241141575,
+      "ACMRNY10": 4.327140978007495,
+      "ACMTP10": 0.7474525461066621
+    }
+  ],
+  "acmWeeklyChange": {
+    "ACMY10": -14.214452967123758,
+    "ACMRNY10": 3.018574863710377,
+    "ACMTP10": -17.233027830834146
+  }
+}
