@@ -1,0 +1,97 @@
+{
+  "observationDate": "2026-10-21",
+  "capturedAt": "2026-10-21T04:20:20.200Z",
+  "snapshotId": "snapshot-9d0ba061d6134e69579c",
+  "contentHash": "2a39a9f75ea68c8938aac0b9518259b745d182360ef165a171b329477aedc505",
+  "market": {
+    "riskLevel": "Level 5",
+    "riskScore": 0.4839210176,
+    "targetExposure": 0.35,
+    "signalDate": "2026-10-16T00:00:00.000",
+    "effectiveDate": "2026-10-19T00:00:00.000",
+    "regimeState": "谨慎",
+    "regimeScore": 61.8165280506,
+    "regimeDate": "2026-10-19T00:00:00.000",
+    "breadth": 0.4341594506,
+    "breadthDate": "2026-10-20T00:00:00.000",
+    "pillars": [
+      {
+        "name": "Financial Stress",
+        "state": "建设性",
+        "score": 26.8817204301
+      },
+      {
+        "name": "Fragility",
+        "state": "压力",
+        "score": 92.3505976096
+      },
+      {
+        "name": "Market Risk",
+        "state": "谨慎",
+        "score": 64.5161290323
+      },
+      {
+        "name": "Participation",
+        "state": "谨慎",
+        "score": 63.5176651306
+      }
+    ]
+  },
+  "brief": {
+    "asOf": "2026-10-20",
+    "headline": "存在 1 条严重告警，今日先处理风险与数据问题",
+    "posture": "综合状态 谨慎，得分 61.8 / 100，市场宽度 43%。",
+    "dataStatus": "4/5 数据源最新，5/5 质量门禁可用"
+  },
+  "sources": [
+    {
+      "id": "marketResearch",
+      "name": "市场研究",
+      "asOf": "2026-10-20",
+      "status": "stale",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "strategyPerformance",
+      "name": "策略表现",
+      "asOf": "2026-10-20",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "holdings",
+      "name": "持仓档案",
+      "asOf": "2026-10",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "fomc",
+      "name": "FOMC 政策研究",
+      "asOf": "2026-09-16",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "globalSituation",
+      "name": "全球态势",
+      "asOf": null,
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "acm",
+      "name": "ACM 利率观察台",
+      "asOf": "2026-10-19",
+      "status": "current",
+      "qualityStatus": "pass"
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "critical",
+      "title": "市场脆弱度处于高位",
+      "detail": "Fragility 92 / 100"
+    }
+  ]
+}

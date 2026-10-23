@@ -38,7 +38,7 @@ class MarketPublication(unittest.TestCase):
         self.git(self.base, 'init', '--bare', '--initial-branch=main', str(self.remote))
         seed = self.base/'seed'
         self.git(self.base, 'init', '--initial-branch=main', str(seed))
-        for name in ['Update Website.ps1', 'Run Website Sync.ps1', 'scripts/publish_market.ps1']:
+        for name in ['Update Website.ps1', 'Run Website Sync.ps1', 'scripts/publish_market.ps1', 'scripts/resolve_portal.mjs']:
             destination = seed/name
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT/name, destination)
@@ -74,6 +74,7 @@ if flag.exists():
         self.git(seed, 'push', 'origin', 'main')
         self.git(self.base, 'clone', '--branch', 'main', ORIGIN, str(self.source))
         self.portal.mkdir()
+        (self.portal/'portal.config.json').write_text('{}')
         self.latest = {'market': {'regimeDate': '2026-10-13', 'regimeScore': 66.3}}
         (self.portal/'latest.json').write_text(json.dumps(self.latest), encoding='utf-8')
         self.before = self.git(self.remote, 'rev-parse', 'main')

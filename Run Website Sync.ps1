@@ -1,5 +1,7 @@
-param([switch]$CheckOnly)
+﻿param([switch]$CheckOnly)
 $ErrorActionPreference = 'Stop'
+$OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+[Console]::OutputEncoding = $OutputEncoding
 $runtime = Join-Path $PSScriptRoot '.runtime\website-sync'
 New-Item -ItemType Directory -Force -Path $runtime | Out-Null
 $log = Join-Path $runtime 'sync.log'
@@ -45,10 +47,13 @@ try {
     $env:PATH = (@($paths.node, $paths.python, $paths.git) | ForEach-Object { Split-Path -Parent $_ }) -join ';'
     $env:PATH += ';' + [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
     $env:PYTHONDONTWRITEBYTECODE = '1'
-    $portal = Join-Path (Split-Path -Parent $PSScriptRoot) 'quant_research_portal'
-    Write-SyncLog 'Refreshing the local summary and publishing validated market data.'
-    # Read committed dashboard outputs only. Do not run updates or create a daily archive.
-    Invoke-SyncProcess $paths.node ('"{0}"' -f (Join-Path $portal 'scripts\sync-portal-data.mjs'))
+    $env:TEMP = Join-Path $runtime 'temp'
+    $env:TMP = $env:TEMP
+    New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+    $portal = & $paths.node (Join-Path $PSScriptRoot 'scripts\resolve_portal.mjs') $PSScriptRoot
+    if ($LASTEXITCODE -ne 0) { throw 'Could not locate the market portal.' }
+    Write-SyncLog 'Reading the completed dashboard export and publishing validated market data.'
+    # Read source outputs only. Do not update the dashboard, portal, or daily archive.
     $shell = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
     $publishArgument = if ($CheckOnly) { '' } else { '-Publish' }
     $publicationResultPath = Join-Path $runtime 'publication-result.json'

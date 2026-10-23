@@ -8,43 +8,43 @@ from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+try:
+    from dashboard_public import dashboard_paths, history_table, enrich_reading, dashboard_snapshot
+except ModuleNotFoundError:
+    from scripts.dashboard_public import dashboard_paths, history_table, enrich_reading, dashboard_snapshot
 
 
-def import_regime_history(portal, asof, expected_score=None):
+def import_regime_history(portal, asof, expected_score=None, model_version=None):
     import duckdb  # Local importer only; GitHub builds from the exported JSON.
-    config = json.loads((portal/'portal.config.json').read_text(encoding='utf-8-sig'))
-    signals = Path(config['sources']['marketResearch']).resolve()
-    project = signals.parent.parent
-    dashboard_config = project/'config.yaml'
-    if dashboard_config.exists():
-        import yaml  # Existing local dashboard dependency; not needed on GitHub Pages.
-        settings = yaml.safe_load(dashboard_config.read_text(encoding='utf-8-sig'))
-        database = Path(settings['paths']['duckdb_path'])
-        if not database.is_absolute():
-            database = project/database
-    else:
-        database = project/'data/dashboard.duckdb'
-    if not database.is_file():
-        raise FileNotFoundError('Configured market history database is unavailable')
+    _, _, database = dashboard_paths(portal)
+    table = history_table(model_version)
     end = date.fromisoformat(asof[:10])
     try:
         start = end.replace(year=end.year-5)
     except ValueError:
         start = end.replace(year=end.year-5, day=28)
     with duckdb.connect(str(database), read_only=True) as con:
-        rows = con.execute('SELECT date, regime_score, regime_state_zh FROM market_regime_history WHERE date >= ? AND date <= ? ORDER BY date', [start, end]).fetchall()
+        rows = con.execute(f'SELECT date, regime_score, regime_state_zh FROM {table} WHERE date >= ? AND date <= ? ORDER BY date', [start, end]).fetchall()
     points = []
+    missing = []
+    gap = False
     for day, score, state in rows:
         if score is None:
+            missing.append(day.isoformat()[:10])
+            gap = True
             continue
         assert math.isfinite(score) and 0 <= score <= 100, 'Invalid historical regime score'
-        points.append(dict(date=day.date().isoformat(), score=score, state=state))
+        point = dict(date=day.isoformat()[:10], score=score, state=state)
+        if gap:
+            point['breakBefore'] = True
+        points.append(point)
+        gap = False
     assert points and (date.fromisoformat(points[0]['date'])-start).days <= 7, 'Five-year history incomplete'
     assert (end-date.fromisoformat(points[-1]['date'])).days <= 7, 'Historical regime data is stale'
     assert len({p['date'] for p in points}) == len(points), 'Duplicate history dates'
     if expected_score is not None:
         assert points[-1]['date'] == end.isoformat() and math.isclose(points[-1]['score'], expected_score, abs_tol=0.01), 'Latest reading and history disagree'
-    output = dict(windowStart=start.isoformat(), windowEnd=end.isoformat(), source='市场研究 Dashboard · market_regime_history', points=points)
+    output = dict(windowStart=start.isoformat(), windowEnd=end.isoformat(), source='市场研究 Dashboard · '+table, modelVersion=model_version, missingDates=missing, points=points)
     target = ROOT/'content/market/regime-history.json'
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(output, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
@@ -117,12 +117,14 @@ def newer_market(candidate, baseline):
                for key in ('regimeDate', 'signalDate', 'breadthDate'))
 
 
-def current_reading(portal, archived):
+def current_reading(portal, archived, enrich=None, strict=False, read_snapshot=None):
     target = ROOT/'content/market/latest.json'
     previous = json.loads(target.read_text(encoding='utf-8')) if target.exists() else archived
     try:
-        snapshot = json.loads((portal/'public/portal-data.json').read_text(encoding='utf-8-sig'))
+        snapshot = read_snapshot(portal) if read_snapshot else json.loads((portal/'public/portal-data.json').read_text(encoding='utf-8-sig'))
         candidate = export_current(snapshot)
+        if enrich:
+            candidate = enrich(portal, candidate)
         if not newer_market(candidate, archived) or not newer_market(candidate, previous):
             raise ValueError('Market dates would move backwards')
         if previous.get('kind') == 'current' and candidate['capturedAt'] < previous['capturedAt']:
@@ -133,6 +135,8 @@ def current_reading(portal, archived):
             candidate = previous
         return candidate
     except (ValueError, KeyError, TypeError, OSError) as error:
+        if strict:
+            raise
         print(f'Latest market reading retained: {error}.')
         return previous if newer_market(previous, archived) else archived
 
@@ -156,9 +160,9 @@ def main():
             raise SystemExit(f'Archive changed: {path.name}; review the revision before replacing its public copy.')
         pending.append((target, encoded))
     archived = json.loads(pending[-1][1])
-    latest = current_reading(args.portal, archived)
+    latest = current_reading(args.portal, archived, enrich=enrich_reading, strict=True, read_snapshot=dashboard_snapshot)
     # Validate history before writing public content; preserve the last good publication on failure.
-    import_regime_history(args.portal, latest['market']['regimeDate'], latest['market']['regimeScore'] if latest.get('kind') == 'current' else None)
+    import_regime_history(args.portal, latest['market']['regimeDate'], latest['market']['regimeScore'] if latest.get('kind') == 'current' else None, latest['market'].get('modelVersion'))
     for target, encoded in pending:
         target.parent.mkdir(parents=True, exist_ok=True)
         if not target.exists():

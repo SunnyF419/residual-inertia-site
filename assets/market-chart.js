@@ -90,7 +90,7 @@
         grid.push(node('text', {x:left-8,y:y(score)+4,'text-anchor':'end'}, score));
       }
       panel.querySelector('[data-chart-grid]').replaceChildren(...grid);
-      panel.querySelector('[data-chart-series]').setAttribute('points', view.points.map(p => `${x(p.date).toFixed(2)},${y(p.score).toFixed(2)}`).join(' '));
+      panel.querySelector('[data-chart-series]').setAttribute('d', view.points.map((p, i) => `${i === 0 || p.breakBefore ? 'M' : 'L'}${x(p.date).toFixed(2)},${y(p.score).toFixed(2)}`).join(' '));
       const tickCount = width < 500 ? 3 : 6;
       const ticks = [];
       for (let i = 0; i < tickCount; i++) {

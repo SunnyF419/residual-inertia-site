@@ -11,6 +11,11 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
+try:
+    from market_modules import model_note, render_modules
+except ModuleNotFoundError:
+    from scripts.market_modules import model_note, render_modules
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist'
 CONFIG = json.loads((ROOT / 'site.json').read_text(encoding='utf-8'))
@@ -945,11 +950,11 @@ def history_chart(snapshots, embedded=False):
               ('caution', '谨慎', 50, 65), ('defensive', '防御', 65, 80), ('stress', '压力', 80, 100)]
     x = lambda day: 40 + (date.fromisoformat(day).toordinal()-start)/max(end-start,1)*1140
     y = lambda score: 266-score*2.42
-    points = ' '.join(f'{x(p["date"]):.2f},{y(p["score"]):.2f}' for p in usable)
+    points = ' '.join(f'{"M" if i == 0 or p.get("breakBefore") else "L"}{x(p["date"]):.2f},{y(p["score"]):.2f}' for i, p in enumerate(usable))
     bands = ''.join(f'<rect class="market-band tone-{tone}" x="40" y="{y(hi)}" width="1140" height="{(hi-lo)*2.42}"/>' for tone, _, lo, hi in states)
     grid = ''.join(f'<line x1="40" y1="{y(v)}" x2="1180" y2="{y(v)}"/><text x="30" y="{y(v)+4}" text-anchor="end">{v}</text>' for v in [0, 35, 50, 65, 80, 100])
     ticks = ''.join(f'<text x="{x(date(yr,1,1).isoformat())}" y="292" text-anchor="middle">{yr}</text>' for yr in range(date.fromordinal(start).year+1, date.fromordinal(end).year+1))
-    svg = f'<svg class="market-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" role="img" aria-labelledby="history-title history-desc"><title id="history-title">{L("chart_svg_title")}</title><desc id="history-desc">{history["windowStart"]} — {history["windowEnd"]}, {len(usable)} {L("chart_caption_suffix")}</desc><g data-chart-bands>{bands}</g><g class="market-grid" data-chart-grid>{grid}</g><polyline class="market-series" data-chart-series points="{points}"/><g data-chart-ticks>{ticks}</g><circle class="market-endpoint tone-{score_tone(latest["score"])}" data-chart-endpoint cx="{x(latest["date"])}" cy="{y(latest["score"])}" r="4"/><g data-chart-cursor hidden><line class="market-cursor"/><circle r="4"/></g></svg>'
+    svg = f'<svg class="market-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" role="img" aria-labelledby="history-title history-desc"><title id="history-title">{L("chart_svg_title")}</title><desc id="history-desc">{history["windowStart"]} — {history["windowEnd"]}, {len(usable)} {L("chart_caption_suffix")}</desc><g data-chart-bands>{bands}</g><g class="market-grid" data-chart-grid>{grid}</g><path class="market-series" data-chart-series d="{points}"/><g data-chart-ticks>{ticks}</g><circle class="market-endpoint tone-{score_tone(latest["score"])}" data-chart-endpoint cx="{x(latest["date"])}" cy="{y(latest["score"])}" r="4"/><g data-chart-cursor hidden><line class="market-cursor"/><circle r="4"/></g></svg>'
     zh = LANG == 'zh'
     text = lambda cn, en: cn if zh else en
     buttons = ''.join(f'<button type="button" data-chart-range="{months}" aria-pressed="{"true" if months == 60 else "false"}">{label}</button>' for months, label in [(1,text('近 1 月','1M')), (6,text('近半年','6M')), (12,text('近 1 年','1Y')), (60,text('近 5 年','5Y'))])
@@ -964,7 +969,7 @@ def history_chart(snapshots, embedded=False):
 <div class="market-browse" data-chart-controls hidden><label for="market-day">{text('逐日查看','Explore by date')}</label><input id="market-day" data-chart-slider type="range" min="0" max="{len(usable)-1}" value="{len(usable)-1}" aria-label="{text('用方向键查看历史日期和分数','Use arrow keys to explore historical dates and scores')}"><output data-chart-readout for="market-day" aria-live="polite"></output></div>
 <ul class="market-legend" aria-label="{L('score_ranges')}">{legend}</ul>
 <p class="market-window mono" data-chart-window>{history['windowStart']} — {history['windowEnd']} · {len(usable)} {text('个数据点','data points')}</p><p class="market-source">{text('来源：市场研究 Dashboard 历史序列。滚动 5 年；分数越高，越需要关注。色带按原始分数区间划分。','Source: Market Research Dashboard historical series. Rolling 5-year window; higher scores warrant more attention. Bands use raw score thresholds.')}</p>
-<script type="application/json" data-chart-data>{payload}</script></div>'''
+<p class="market-source">{text('同版估算输入历史；缺失观察值以断线保留，不插值、不拼接旧版历史。','History uses the same estimate-input model; missing observations remain gaps, without interpolation or splicing older versions.') if history.get('modelVersion') else ''}</p><script type="application/json" data-chart-data>{payload}</script></div>'''
 
 
 def snapshot_rows(snapshots, limit=None):
@@ -1032,7 +1037,7 @@ def overview_reading(s):
         posture = brief.get('posture', f"综合状态 {m['regimeState']}。")
     tone = 'tone-' + score_tone(m['regimeScore'])
     stamp = L('updated_label') + ' ' + E(s['capturedAt'].replace('T', ' ').replace('Z', ' UTC')) if s.get('kind') == 'current' else E(s['observationDate']) + ' ' + L('archived_label')
-    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{stamp}</p></div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{action_link(reading_route(s), L("current_read") if s.get("kind") == "current" else L("read_full"))}</div></section>'
+    return f'<section class="reading-card {tone}"><div class="reading-main"><p class="eyebrow">{L("reading_eyebrow")}</p><h2 class="reading-state">{E(state_label(m["regimeState"]))}</h2><p class="reading-posture">{E(posture)}</p><p class="reading-caption">{L("composite_cutoff")} {shortdate(m["regimeDate"])}<br>{stamp}</p>{model_note(m, LANG)}</div><div class="reading-score"><span class="mono score-value">{number(m["regimeScore"])}</span><small>/ 100</small><span class="score-label">{L("score_label")}</span></div><div class="reading-foot">{action_link(reading_route(s), L("current_read") if s.get("kind") == "current" else L("read_full"))}</div></section>'
 
 
 def research_cards(research):
@@ -1344,7 +1349,7 @@ def snapshot_page(s, previous, following, research=()):
 
 def current_market_page(s):
     body = action_link('overview.html', L('back_overview'), 'back') + head('LATEST MARKET READING', L('current_title'), L('current_lede'))
-    body += overview_reading(s) + metrics(s) + pillars(s)
+    body += overview_reading(s) + metrics(s) + pillars(s) + render_modules(s['market'], LANG)
     body += '<p class="caption">' + L('summary_caption') + '</p>'
     body += action_link('overview.html#daily-snapshots', L('ov_archive_title'))
     return body
@@ -1365,6 +1370,8 @@ def build_language(snapshots, research, latest):
         intro += '<div class="overview-current">' + overview_reading(latest)
         intro += f'<section class="overview-pillars"><p class="eyebrow">{L("ov_pillars_eyebrow")}</p><h2>{L("pillars_title")}</h2>{overview_pillars(latest)}<p class="caption">{L("pillars_caption")}</p></section></div>'
         intro += score_legend()
+        intro += render_modules(latest['market'], LANG, compact=True)
+        intro += action_link('market/latest.html', '查看全部模块' if LANG == 'zh' else 'View all modules')
         intro += '<div class="action-group">' + action_link('about.html#research-process', L('research_process')) + action_link('global/index.html', L('nav_global')) + '</div>'
         intro += f'<section class="overview-trend"><div class="editorial-heading"><div><p class="eyebrow">{L("ov_trend_eyebrow")}</p><h2>{L("ov_trend_title")}</h2></div><span class="mono">{L("chart_rolling")}</span></div>{history_chart(snapshots, embedded=True)}</section>'
         intro += f'<section class="overview-archive" id="daily-snapshots"><p class="eyebrow">{L("ov_archive_eyebrow")}</p><h2>{L("ov_archive_title")}</h2><p class="section-intro">{L("ov_archive_intro").format(len(snapshots))}</p>{overview_snapshot_list(snapshots)}</section>'

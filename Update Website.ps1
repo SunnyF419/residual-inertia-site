@@ -1,9 +1,15 @@
-param(
-    [string]$PortalPath = (Join-Path (Split-Path -Parent $PSScriptRoot) 'quant_research_portal'),
+﻿param(
+    [string]$PortalPath = '',
     [switch]$Publish,
     [string]$ResultPath = (Join-Path $PSScriptRoot '.runtime\website-sync\publication-result.json')
 )
 $ErrorActionPreference = 'Stop'
+$OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+[Console]::OutputEncoding = $OutputEncoding
+if (-not $PortalPath) {
+    $PortalPath = & node (Join-Path $PSScriptRoot 'scripts\resolve_portal.mjs') $PSScriptRoot
+    if ($LASTEXITCODE -ne 0) { throw 'Could not locate the market portal.' }
+}
 $PortalPath = (Resolve-Path -LiteralPath $PortalPath).ProviderPath
 $ResultPath = [System.IO.Path]::GetFullPath($ResultPath)
 $env:GIT_TERMINAL_PROMPT = '0'

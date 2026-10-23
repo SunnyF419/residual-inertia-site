@@ -3,6 +3,8 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, renameSync, watch,
 import { spawn } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { resolvePortal } from './resolve_portal.mjs';
+import { createHash } from 'node:crypto';
 
 export function completedMarketUpdate(record, processedId) {
   return Boolean(record?.dashboardId === 'marketResearch' && record.action === 'update'
@@ -50,18 +52,32 @@ export function createCompletionQueue({ readEvent, publish, save, isBusy, log = 
 
 async function main() {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-  const portal = resolve(root, '..', 'quant_research_portal');
+  const portal = resolvePortal(root);
   const runtime = resolve(root, '.runtime', 'website-sync');
   const historyDir = resolve(portal, '.runtime', 'updates');
   const requests = resolve(runtime, 'requests');
   const statePath = resolve(runtime, 'completed.json');
-  [runtime, historyDir, requests].forEach(p => mkdirSync(p, { recursive: true }));
+  [runtime, requests].forEach(p => mkdirSync(p, { recursive: true }));
   const load = path => { try { return JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, '')); } catch { return null; } };
   let processed = load(statePath) ?? {};
+  const dashboardFingerprint = () => {
+    const config = load(resolve(portal, 'portal.config.json'));
+    const path = config?.sources?.marketResearch;
+    if (!path) return null;
+    try {
+      const contents = readFileSync(resolve(portal, path), 'utf8');
+      const data = JSON.parse(contents.replace(/^\uFEFF/, ''));
+      if (!data.market_regime?.latest || !data.weekly_risk_model?.signal_usable) return null;
+      return createHash('sha256').update(contents).digest('hex');
+    } catch { return null; }
+  };
   const log = line => appendFileSync(resolve(runtime, 'events.log'), `[${new Date().toISOString()}] ${line}\n`, 'utf8');
   const { readDailyArchiveRunLock } = await import(pathToFileURL(resolve(portal, 'scripts', 'daily-archive-lock.mjs')).href);
   const queue = createCompletionQueue({
     readEvent() {
+      // Catch completed exports after a directory migration or a missed portal event.
+      const fingerprint = dashboardFingerprint();
+      if (fingerprint && fingerprint !== processed.dashboardHash) return { id: fingerprint, type: 'dashboard' };
       // A successful direct dashboard UI update can also request publication.
       const direct = load(resolve(requests, 'latest.json'));
       if (direct?.status === 'success' && direct.id && direct.id !== processed.directId) return { id: direct.id, type: 'direct' };
@@ -78,7 +94,7 @@ async function main() {
       child.once('close', code => code === 0 ? resolveRun() : rejectRun(new Error('Sync exited ' + code + '; see sync.log')));
     }),
     save(event) {
-      processed = { ...processed, [event.type === 'direct' ? 'directId' : 'runId']: event.id, pushedAt: new Date().toISOString() };
+      processed = { ...processed, [event.type === 'dashboard' ? 'dashboardHash' : event.type === 'direct' ? 'directId' : 'runId']: event.id, pushedAt: new Date().toISOString() };
       writeFileSync(statePath + '.tmp', JSON.stringify(processed, null, 2) + '\n', 'utf8');
       renameSync(statePath + '.tmp', statePath);
     },

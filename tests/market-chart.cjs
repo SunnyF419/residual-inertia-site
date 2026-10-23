@@ -24,11 +24,11 @@ for (const [score, expected] of [[34.99,'constructive'],[35,'neutral'],[49.99,'n
 for (const prefix of ['', 'en/']) {
   const html = fs.readFileSync(path.join(__dirname, '../dist/', prefix, 'overview/index.html'), 'utf8');
   const embedded = JSON.parse(html.match(/<script type="application\/json" data-chart-data>(.*?)<\/script>/s)[1]);
-  assert.deepEqual(embedded.points.map(({date,score,state}) => ({date,score,state})), data.points);
+  assert.deepEqual(embedded.points.map(({label,...p}) => p), data.points);
   assert.ok(embedded.points.every(p => p.label));
   assert.equal((html.match(/data-chart-range="/g) || []).length, 4);
   assert.ok(html.includes('data-chart-range="60" aria-pressed="true"'));
-  assert.ok(html.includes('data-chart-series points="'));
+  assert.ok(html.includes('data-chart-series d="'));
   assert.ok(html.includes('aria-live="polite"'));
   assert.ok(html.includes('/assets/market-chart.js?v='));
   const map = fs.readFileSync(path.join(__dirname, '../dist/', prefix, 'global/index.html'), 'utf8');
@@ -63,7 +63,7 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../assets/market-chart.
   window:{addEventListener() {}}, Date, JSON, Math
 });
 const series = ui['[data-chart-series]'];
-const pointCount = () => series.attrs.points.split(' ').length;
+const pointCount = () => series.attrs.d.split(' ').length;
 assert.equal(pointCount(), data.points.length);
 assert.ok(controls.every(c => !c.hidden));
 assert.equal(ui['[data-chart-bands]'].children.length, 5);
