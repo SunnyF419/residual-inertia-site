@@ -10,8 +10,35 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 try:
     from dashboard_public import dashboard_paths, history_table, enrich_reading, dashboard_snapshot
+    from market_calendar import regular_closure
 except ModuleNotFoundError:
     from scripts.dashboard_public import dashboard_paths, history_table, enrich_reading, dashboard_snapshot
+    from scripts.market_calendar import regular_closure
+
+
+def history_points(rows, sessions=()):
+    """Join consecutive observations over closures, retaining real trading gaps."""
+    records = {day.isoformat()[:10]: (score, state) for day, score, state in rows}
+    assert len(records) == len(rows), 'Duplicate history dates'
+    sessions = {day.isoformat()[:10] for day in sessions}
+    points, missing, closures = [], [], []
+    gap = False
+    for day in sorted(set(records) | sessions):
+        score, state = records.get(day, (None, None))
+        if score is None:
+            if day not in sessions and regular_closure(date.fromisoformat(day)):
+                closures.append(day)
+            else:
+                missing.append(day)
+                gap = True
+            continue
+        assert math.isfinite(score) and 0 <= score <= 100, 'Invalid historical regime score'
+        point = dict(date=day, score=score, state=state)
+        if gap:
+            point['breakBefore'] = True
+        points.append(point)
+        gap = False
+    return points, missing, closures
 
 
 def import_regime_history(portal, asof, expected_score=None, model_version=None):
@@ -25,26 +52,15 @@ def import_regime_history(portal, asof, expected_score=None, model_version=None)
         start = end.replace(year=end.year-5, day=28)
     with duckdb.connect(str(database), read_only=True) as con:
         rows = con.execute(f'SELECT date, regime_score, regime_state_zh FROM {table} WHERE date >= ? AND date <= ? ORDER BY date', [start, end]).fetchall()
-    points = []
-    missing = []
-    gap = False
-    for day, score, state in rows:
-        if score is None:
-            missing.append(day.isoformat()[:10])
-            gap = True
-            continue
-        assert math.isfinite(score) and 0 <= score <= 100, 'Invalid historical regime score'
-        point = dict(date=day.isoformat()[:10], score=score, state=state)
-        if gap:
-            point['breakBefore'] = True
-        points.append(point)
-        gap = False
+        tables = {r[0] for r in con.execute('SHOW TABLES').fetchall()}
+        sessions = [r[0] for r in con.execute('SELECT DISTINCT date FROM sp500_benchmark_daily WHERE date >= ? AND date <= ? AND close > 0 ORDER BY date', [start, end]).fetchall()] if 'sp500_benchmark_daily' in tables else []
+    points, missing, closures = history_points(rows, sessions)
     assert points and (date.fromisoformat(points[0]['date'])-start).days <= 7, 'Five-year history incomplete'
     assert (end-date.fromisoformat(points[-1]['date'])).days <= 7, 'Historical regime data is stale'
     assert len({p['date'] for p in points}) == len(points), 'Duplicate history dates'
     if expected_score is not None:
         assert points[-1]['date'] == end.isoformat() and math.isclose(points[-1]['score'], expected_score, abs_tol=0.01), 'Latest reading and history disagree'
-    output = dict(windowStart=start.isoformat(), windowEnd=end.isoformat(), source='市场研究 Dashboard · '+table, modelVersion=model_version, missingDates=missing, points=points)
+    output = dict(windowStart=start.isoformat(), windowEnd=end.isoformat(), source='市场研究 Dashboard · '+table, modelVersion=model_version, missingDates=missing, nonTradingDates=closures, points=points)
     target = ROOT/'content/market/regime-history.json'
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(output, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')

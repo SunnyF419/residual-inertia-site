@@ -969,7 +969,7 @@ def history_chart(snapshots, embedded=False):
 <div class="market-browse" data-chart-controls hidden><label for="market-day">{text('逐日查看','Explore by date')}</label><input id="market-day" data-chart-slider type="range" min="0" max="{len(usable)-1}" value="{len(usable)-1}" aria-label="{text('用方向键查看历史日期和分数','Use arrow keys to explore historical dates and scores')}"><output data-chart-readout for="market-day" aria-live="polite"></output></div>
 <ul class="market-legend" aria-label="{L('score_ranges')}">{legend}</ul>
 <p class="market-window mono" data-chart-window>{history['windowStart']} — {history['windowEnd']} · {len(usable)} {text('个数据点','data points')}</p><p class="market-source">{text('来源：市场研究 Dashboard 历史序列。滚动 5 年；分数越高，越需要关注。色带按原始分数区间划分。','Source: Market Research Dashboard historical series. Rolling 5-year window; higher scores warrant more attention. Bands use raw score thresholds.')}</p>
-<p class="market-source">{text('同版估算输入历史；缺失观察值以断线保留，不插值、不拼接旧版历史。','History uses the same estimate-input model; missing observations remain gaps, without interpolation or splicing older versions.') if history.get('modelVersion') else ''}</p><script type="application/json" data-chart-data>{payload}</script></div>'''
+<p class="market-source">{text('同版估算输入历史；休市日正常连线，缺失交易日数据才断线。不填补分数、不拼接旧版历史。','History uses the same estimate-input model. Lines span market closures; missing trading-session observations remain gaps. No scores are filled or older model versions spliced in.') if history.get('modelVersion') else ''}</p><script type="application/json" data-chart-data>{payload}</script></div>'''
 
 
 def snapshot_rows(snapshots, limit=None):

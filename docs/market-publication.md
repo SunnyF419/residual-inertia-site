@@ -62,7 +62,7 @@ explicit path fails instead of creating a new portal folder.
 The dashboard runtime database configuration takes priority over its legacy file.
 Model versions select an allowlisted history table; unknown versions stop for
 review. History and headline endpoints must agree before content is written.
-Null history observations remain gaps in both initial HTML and interactive charts.
+Missing trading-session observations remain gaps in both initial HTML and interactive charts.
 Archived snapshots keep their original values and are not rewritten to the new model.
 
 The public whitelist covers weekly risk, breadth, financial conditions, effective
@@ -84,3 +84,14 @@ Rollback: revert the website repair commit through Git. Do not restore or modify
 research databases. Reverting only the importer while retaining the new public
 model will deliberately fail the consistency gate; keep the last good deployed
 site until code and exported model agree again.
+
+### Non-trading date correction
+
+The first repair treated every null date as missing. Cross-checking all 1,255
+observations with the benchmark showed that the 47 null records were weekends or
+regular exchange holidays, with no missing benchmark-session scores. The chart
+now connects observations across confirmed regular closures without inserting
+scores. A benchmark observation overrides the closure rule; null or absent Regime
+rows on benchmark sessions still break the line. Unknown weekday closures remain
+gaps conservatively. The export separates `nonTradingDates` from `missingDates`.
+See the [NYSE calendar](https://www.nyse.com/trade/hours-calendars) for regular holidays.
