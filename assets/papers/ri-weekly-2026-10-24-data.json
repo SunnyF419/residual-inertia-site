@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "researchId": "RI-WR-2026-W43",
+    "author": "Taiyang Feng (Sunny)",
+    "published": "2026-10-24",
+    "dataThrough": "2026-10-23",
+    "source": "Author-supplied commentary and dashboard screenshots; displayed values; no model recalculation"
+  },
+  "regime": {
+    "date": "2026-10-21",
+    "score": 65.7,
+    "state": "Defensive",
+    "status": "PARTIAL / PENDING_SOURCE",
+    "pillars": {
+      "Market Risk": 62.8,
+      "Participation": 56.5,
+      "Financial Stress": 51.8,
+      "Fragility": 92.0
+    }
+  },
+  "ai": {
+    "date": "2026-10-23",
+    "score": 0,
+    "rawScore": -3.8,
+    "smh20dPct": -13.1,
+    "relativeQQQ20dPp": -7.7,
+    "above20dmaPct": 7,
+    "above50dmaPct": 11,
+    "stocks": 28,
+    "pillars": {
+      "Demand momentum": 0,
+      "Leadership breadth": 7,
+      "Supply-chain confirmation": 0,
+      "Relative risk appetite": 16,
+      "Crowding / heat": 34,
+      "Divergence fragility": 77
+    }
+  },
+  "weeklyRisk": {
+    "date": "2026-10-23",
+    "level": 5,
+    "referenceExposurePct": 35,
+    "status": "PARTIAL / FRESH"
+  },
+  "breadth": {
+    "date": "2026-09-30",
+    "monthlyPct": 40.0
+  },
+  "factorCrowding": {
+    "date": "2026-08-31",
+    "longShort": 0.758,
+    "longShortLevel": 3,
+    "longOnlyBeta": 0.872,
+    "longOnlyLevel": 4
+  },
+  "valuation": {
+    "displayDate": "2026-10-23",
+    "hmlPercentile": 96,
+    "umdPercentile": 28,
+    "note": "HML percentile indicates relative valuation, not crowding; underlying input dates may differ"
+  },
+  "financialConditions": {
+    "date": "2026-10-16",
+    "nfciMinusAnfci": 0.022
+  },
+  "acm": {
+    "date": "2026-10-22",
+    "fitted": 4.926,
+    "expected": 4.287,
+    "premium": 0.639
+  },
+  "acmWindows": [
+    {
+      "label": "1 month",
+      "start": "2026-09-22",
+      "expected_bp": -6.03,
+      "premium_bp": 6.7,
+      "yield_bp": 0.67
+    },
+    {
+      "label": "3 months",
+      "start": "2026-07-22",
+      "expected_bp": 25.27,
+      "premium_bp": -6.12,
+      "yield_bp": 19.14
+    },
+    {
+      "label": "6 months",
+      "start": "2026-04-22",
+      "expected_bp": 59.7,
+      "premium_bp": -1.14,
+      "yield_bp": 58.56
+    },
+    {
+      "label": "1 year",
+      "start": "2025-10-22",
+      "expected_bp": 75.39,
+      "premium_bp": 15.62,
+      "yield_bp": 91.01
+    }
+  ]
+}

@@ -161,6 +161,20 @@
       "pdfSha256": "06c19058a21e95615fc15fea32d98b0bd1323be3301bee2d56c484ffdb96187c",
       "author": "Taiyang Feng (Sunny)",
       "dataThrough": "2026-10-16"
+    },
+    {
+      "researchId": "RI-WR-2026-W43",
+      "slug": "market-letter-2026-10-24",
+      "title": "美股周评 · 2026-10-24：防御延续，硬件失速",
+      "collection": "market",
+      "periodDate": "2026-10-24",
+      "preparedDate": "2026-10-24",
+      "registeredDate": "2026-10-24",
+      "version": "1.0",
+      "status": "published",
+      "pdfSha256": "52053d0fcf04aa3ac72f620629fadf8b3c5a386f3b29437eed24572d9628156b",
+      "author": "Taiyang Feng (Sunny)",
+      "dataThrough": "2026-10-23"
     }
   ],
   "englishEditions": [
@@ -269,6 +283,18 @@
       "pdf": "assets/papers/ri-weekly-2026-10-17-en.pdf",
       "pdfSha256": "211a25bbe4ec78d102b33dc124819c720297f4dc46965cccd8ce30bd969cc48a",
       "sourcePdfSha256": "06c19058a21e95615fc15fea32d98b0bd1323be3301bee2d56c484ffdb96187c"
+    },
+    {
+      "researchId": "RI-WR-2026-W43",
+      "slug": "market-letter-2026-10-24",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-10-24",
+      "originalPreparedOrPublishedDate": "2026-10-24",
+      "dataThrough": "2026-10-23",
+      "pdf": "assets/papers/ri-weekly-2026-10-24-en.pdf",
+      "pdfSha256": "0dc21d89e57b5c8037e875ae0beee244160e5c44a2fb9c906f67145487f91b00",
+      "sourcePdfSha256": "52053d0fcf04aa3ac72f620629fadf8b3c5a386f3b29437eed24572d9628156b"
     }
   ]
 }
