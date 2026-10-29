@@ -175,6 +175,20 @@
       "pdfSha256": "52053d0fcf04aa3ac72f620629fadf8b3c5a386f3b29437eed24572d9628156b",
       "author": "Taiyang Feng (Sunny)",
       "dataThrough": "2026-10-23"
+    },
+    {
+      "researchId": "RI-RN-2026-003",
+      "slug": "fomc-october-2026",
+      "title": "FOMC · 2026 年 10 月：偏鸽暂停，尚非转向",
+      "collection": "fomc",
+      "periodDate": "2026-10-28",
+      "preparedDate": "2026-10-29",
+      "registeredDate": "2026-10-29",
+      "version": "1.0",
+      "status": "published",
+      "pdfSha256": "e77b4c9c8ef1db8fdc4d7611e101d625f0ba492a9317e0a7f8011b41f5afef13",
+      "author": "Taiyang Feng (Sunny)",
+      "dataThrough": "2026-10-28"
     }
   ],
   "englishEditions": [
@@ -295,6 +309,18 @@
       "pdf": "assets/papers/ri-weekly-2026-10-24-en.pdf",
       "pdfSha256": "0dc21d89e57b5c8037e875ae0beee244160e5c44a2fb9c906f67145487f91b00",
       "sourcePdfSha256": "52053d0fcf04aa3ac72f620629fadf8b3c5a386f3b29437eed24572d9628156b"
+    },
+    {
+      "researchId": "RI-RN-2026-003",
+      "slug": "fomc-october-2026",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-10-29",
+      "originalPreparedOrPublishedDate": "2026-10-29",
+      "dataThrough": "2026-10-28",
+      "pdf": "assets/papers/ri-fomc-2026-10-28-en.pdf",
+      "pdfSha256": "86317a687c2ea7515986d60423ce6690e63c3101e9f58cbbe4f9cae3d261fd7a",
+      "sourcePdfSha256": "e77b4c9c8ef1db8fdc4d7611e101d625f0ba492a9317e0a7f8011b41f5afef13"
     }
   ]
 }
