@@ -1,7 +1,7 @@
 {
   "kind": "current",
   "observationDate": "2026-10-28",
-  "capturedAt": "2026-10-28T02:05:52.695635+00:00",
+  "capturedAt": "2026-10-28T05:48:19.636880+00:00",
   "market": {
     "riskLevel": "Level 5",
     "riskScore": 0.5316331872,
@@ -9,8 +9,8 @@
     "signalDate": "2026-10-23T00:00:00.000",
     "effectiveDate": "2026-10-26T00:00:00.000",
     "regimeState": "防御",
-    "regimeScore": 68.8191336112,
-    "regimeDate": "2026-10-26T00:00:00.000",
+    "regimeScore": 67.6116611176,
+    "regimeDate": "2026-10-27T00:00:00.000",
     "breadth": 0.4560881215,
     "breadthDate": "2026-10-27T00:00:00.000",
     "pillars": [
@@ -22,22 +22,22 @@
       {
         "name": "Fragility",
         "state": "压力",
-        "score": 89.7926634769
+        "score": 90.0318979266
       },
       {
         "name": "Market Risk",
         "state": "防御",
-        "score": 68.0491551459
+        "score": 66.8970814132
       },
       {
         "name": "Participation",
-        "state": "防御",
-        "score": 65.668202765
+        "state": "谨慎",
+        "score": 61.7511520737
       }
     ],
     "modelVersion": "HML_DUAL99_ESTIMATE_REGIME_V1",
     "estimateInput": true,
-    "publicationStatus": "PENDING_SOURCE",
+    "publicationStatus": "COMPLETED",
     "inputDates": [
       {
         "component_id": "nfci_anfci",
@@ -48,8 +48,8 @@
       {
         "component_id": "bubble_factor",
         "component_name": "Bubble Factor Layer",
-        "data_date": "2026-10-26T00:00:00.000",
-        "effective_date": "2026-10-26T00:00:00.000"
+        "data_date": "2026-10-27T00:00:00.000",
+        "effective_date": "2026-10-27T00:00:00.000"
       },
       {
         "component_id": "factor_crowding",
@@ -60,8 +60,8 @@
       {
         "component_id": "livermore_s2",
         "component_name": "Livermore S2",
-        "data_date": "2026-10-26T00:00:00.000",
-        "effective_date": "2026-10-26T00:00:00.000"
+        "data_date": "2026-10-27T00:00:00.000",
+        "effective_date": "2026-10-27T00:00:00.000"
       },
       {
         "component_id": "weekly_risk",
@@ -78,8 +78,8 @@
       {
         "component_id": "market_breadth",
         "component_name": "Market Breadth",
-        "data_date": "2026-10-26T00:00:00.000",
-        "effective_date": "2026-10-26T00:00:00.000"
+        "data_date": "2026-10-27T00:00:00.000",
+        "effective_date": "2026-10-27T00:00:00.000"
       }
     ],
     "modules": {
@@ -418,16 +418,16 @@
     }
   },
   "brief": {
-    "asOf": "2026-10-26",
-    "posture": "综合状态 防御，得分 68.8 / 100，市场宽度 46%。"
+    "asOf": "2026-10-27",
+    "posture": "综合状态 防御，得分 67.6 / 100，市场宽度 46%。"
   },
   "sources": [
     {
       "id": "marketResearch",
       "name": "市场研究",
       "asOf": "2026-10-27",
-      "status": "partial",
-      "qualityStatus": "warning"
+      "status": "current",
+      "qualityStatus": "pass"
     }
   ]
 }
