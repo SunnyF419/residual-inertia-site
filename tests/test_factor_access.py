@@ -9,6 +9,9 @@ class FactorEntryTests(unittest.TestCase):
             page=(ROOT/'dist'/language/'factors/index.html').read_text(encoding='utf-8')
             self.assertIn(title,page);self.assertIn('data-factor-access',page)
             self.assertIn('noindex, follow',page)
+            self.assertIn('data-factor-denied hidden',page)
+            self.assertIn('aria-busy="true"',page)
+            self.assertIn('data-factor-retry hidden',page)
             self.assertIn('assets/factor-access.js',page)
             self.assertIn('factors/',(ROOT/'dist'/language/'index.html').read_text(encoding='utf-8'))
     def test_no_private_app_or_snapshot_in_static_output(self):
