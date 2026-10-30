@@ -852,7 +852,8 @@ def redirect(route, target, title):
     lang_attr = 'en' if LANG == 'en' else 'zh-CN'
     p = out_dir() / route
     p.parent.mkdir(parents=True, exist_ok=True)
-    canonical = 'https://' + CONFIG['domain'] + target.split('#')[0]
+    origin = 'https://' + CONFIG['domain']
+    canonical = (target if target.startswith(origin + '/') else origin + target).split('#')[0]
     p.write_text(f'''<!doctype html><html lang="{lang_attr}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{E(title)} · 余势</title>
 <meta name="robots" content="noindex, follow">
@@ -1389,9 +1390,9 @@ def build_language(snapshots, research, latest):
     def factor_access_page():
         text=lambda cn,en:cn if LANG=='zh' else en
         login=account_url('/auth/login?next=%2Faccount%3Fview%3Dfactors')
-        return head('FACTOR RESEARCH / PRIVATE PREVIEW',text('因子查询','Factor Research'),text('公司画像、因子排名与历史相对位置。','Company profiles, factor rankings and historical positioning.'))+f'''<section class="factor-access" data-factor-access aria-labelledby="factor-access-title"><p class="eyebrow">{text('内部测试 · 暂未开放','PRIVATE TESTING · NOT YET AVAILABLE')}</p><h2 id="factor-access-title">{text('因子查询暂未开放','Factor research is not available yet')}</h2><p data-factor-message role="status">{text('当前账户暂无访问权限。该功能仍在内部测试中，暂未向其他用户和访客开放。','Your account does not have access. This tool is currently in private testing and is not available to other users or visitors.')}</p><div class="action-group"><a class="action-link" data-factor-login href="{E(login)}">{text('登录账户','Log in')} <span aria-hidden="true">↗</span></a>{action_link('index.html',text('返回首页','Back to home'))}</div></section><script defer src="{url('assets/factor-access.js')}"></script>'''
+        return head('FACTOR RESEARCH / PRIVATE PREVIEW',text('因子查询','Factor Research'),text('公司画像、因子排名与历史相对位置。','Company profiles, factor rankings and historical positioning.'))+f'''<section class="factor-access" data-factor-access aria-labelledby="factor-access-title"><p class="eyebrow">{text('内部测试 · 暂未开放','PRIVATE TESTING · NOT YET AVAILABLE')}</p><h2 id="factor-access-title">{text('因子查询暂未开放','Factor research is not available yet')}</h2><p data-factor-message role="status">{text('当前账户暂无访问权限。该功能仍在内部测试中，暂未向其他用户和访客开放。','Your account does not have access. This tool is currently in private testing and is not available to other users or visitors.')}</p><div class="action-group"><a class="action-link" data-factor-login href="{login}">{text('登录账户','Log in')} <span aria-hidden="true">↗</span></a>{action_link('index.html',text('返回首页','Back to home'))}</div></section><script defer src="{url('assets/factor-access.js')}"></script>'''
     write('factors/index.html','因子查询' if LANG=='zh' else 'Factor Research',factor_access_page,'factors',indexable=False)
-    redirect('factor-query/index.html',account_url('/account?view=factors'),'因子查询' if LANG=='zh' else 'Factor Research')
+    redirect('factor-query/index.html',ACCOUNT_ORIGIN+'/account?view=factors&lang='+LANG,'因子查询' if LANG=='zh' else 'Factor Research')
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         # Archive commentary has no English translation yet; do not claim a translated pair.
