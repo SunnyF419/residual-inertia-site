@@ -709,6 +709,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
     nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
         ('home', 'index.html', L('nav_home')), ('overview', 'overview.html', L('nav_overview')),
         ('global', 'global/index.html', L('nav_global')),
+        ('factors', 'factors/index.html', '因子查询' if LANG == 'zh' else 'Factor Research'),
         ('research', 'research/index.html', L('nav_research')), ('about', 'about.html', L('nav_about'))])
     toggle_label = 'EN' if LANG == 'zh' else '中文'
     canonical = production_url(ROUTE, LANG)
@@ -1385,6 +1386,11 @@ def build_language(snapshots, research, latest):
     if latest.get('kind') == 'current':
         write('market/latest.html', L('current_title'), lambda: current_market_page(latest), 'overview')
     write('global/index.html', L('global_title'), global_pulse, 'global', L('global_intro'))
+    def factor_access_page():
+        text=lambda cn,en:cn if LANG=='zh' else en
+        login=account_url('/auth/login?next=%2Faccount%3Fview%3Dfactors')
+        return head('FACTOR RESEARCH / PRIVATE PREVIEW',text('因子查询','Factor Research'),text('公司画像、因子排名与历史相对位置。','Company profiles, factor rankings and historical positioning.'))+f'''<section class="factor-access" data-factor-access aria-labelledby="factor-access-title"><p class="eyebrow">{text('内部测试 · 暂未开放','PRIVATE TESTING · NOT YET AVAILABLE')}</p><h2 id="factor-access-title">{text('因子查询暂未开放','Factor research is not available yet')}</h2><p data-factor-message role="status">{text('当前账户暂无访问权限。该功能仍在内部测试中，暂未向其他用户和访客开放。','Your account does not have access. This tool is currently in private testing and is not available to other users or visitors.')}</p><div class="action-group"><a class="action-link" data-factor-login href="{E(login)}">{text('登录账户','Log in')} <span aria-hidden="true">↗</span></a>{action_link('index.html',text('返回首页','Back to home'))}</div></section><script defer src="{url('assets/factor-access.js')}"></script>'''
+    write('factors/index.html','因子查询' if LANG=='zh' else 'Factor Research',factor_access_page,'factors',indexable=False)
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         # Archive commentary has no English translation yet; do not claim a translated pair.
