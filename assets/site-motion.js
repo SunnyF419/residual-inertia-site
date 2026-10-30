@@ -2,6 +2,7 @@
 (() => {
   // A fixed map workspace keeps all gestures and scrolling inside its panels.
   if (document.body.classList.contains('global-page')) return;
+  const isHome = document.body.classList.contains('home-page');
   const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
   const cover = document.querySelector('.brand-cover');
@@ -58,6 +59,7 @@
     updateKline();
     if (!window.IntersectionObserver) return;
     observer = new IntersectionObserver(entries => {
+      let revealIndex = 0;
       entries.forEach(entry => {
         if (surfaces.has(entry.target)) entry.target.classList.toggle('card-motion-visible', entry.isIntersecting && !preference.matches && !document.hidden);
         if (preference.matches || document.hidden) return;
@@ -71,12 +73,12 @@
         const animation = element.animate([
           {opacity: 0, transform: 'translateY(18px)'},
           {opacity: 1, transform: 'translateY(0)'}
-        ], {duration: 600, easing: 'cubic-bezier(.22,1,.36,1)'});
+        ], {duration: isHome ? 600 : 850, delay: isHome ? 0 : Math.min(revealIndex++ * 60, 120), fill: 'backwards', easing: isHome ? 'cubic-bezier(.22,1,.36,1)' : 'cubic-bezier(.22,.7,.3,1)'});
         animations.add(animation);
         animation.finished.then(() => animations.delete(animation), () => animations.delete(animation));
       });
     }, {threshold: .08});
-    document.querySelectorAll('.pagehead:has(+.factor-access),.factor-access,.editorial-heading,.research-card,.reading-card,.home-updates,.overview-current,.overview-trend,.principle-grid>article').forEach(element => {
+    document.querySelectorAll('.pagehead,.factor-access,.editorial-heading,.research-card,.reading-card,.home-updates,.overview-current,.overview-trend,.principle-grid>article').forEach(element => {
       if (!seen.has(element) || surfaces.has(element)) observer.observe(element);
     });
   }
