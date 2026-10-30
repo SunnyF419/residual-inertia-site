@@ -12,7 +12,10 @@ class FactorEntryTests(unittest.TestCase):
             self.assertIn('assets/factor-access.js',page)
             self.assertIn('factors/',(ROOT/'dist'/language/'index.html').read_text(encoding='utf-8'))
     def test_no_private_app_or_snapshot_in_static_output(self):
-        self.assertFalse((ROOT/'dist/factor-query').exists())
+        alias=(ROOT/'dist/factor-query/index.html').read_text(encoding='utf-8')
+        self.assertIn('http-equiv="refresh"',alias)
+        self.assertNotIn('app.js',alias)
+        self.assertFalse((ROOT/'dist/factor-query/app.js').exists())
         self.assertFalse(list((ROOT/'dist').rglob('*.duckdb')))
         self.assertNotIn('/factors/',(ROOT/'dist/sitemap.xml').read_text(encoding='utf-8'))
     def test_navigation_check_uses_explicit_owner_capability(self):
