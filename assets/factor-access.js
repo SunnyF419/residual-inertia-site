@@ -9,7 +9,14 @@
  const denied=root.querySelector('[data-factor-denied]');
  const login=root.querySelector('[data-factor-login]');
  const retry=root.querySelector('[data-factor-retry]');
+ const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
  async function openWorkspace(){
+  const started=Date.now();
+  const settle=async()=>{
+   await pause(Math.max(0,1000-(Date.now()-started)));
+   root.classList.add('factor-access--leaving');
+   await pause(window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:200);
+  };
   root.setAttribute('aria-busy','true');
   denied.hidden=retry.hidden=true;
   login.hidden=false;
@@ -23,6 +30,8 @@
    if(!response.ok)throw new Error('Session unavailable');
    const session=await response.json();
    if(typeof session?.authenticated!=='boolean'||(session.authenticated&&typeof session.canQueryFactors!=='boolean'))throw new Error('Invalid session');
+   clearTimeout(timer);
+   await settle();
    if(session.authenticated===true&&session.canQueryFactors===true){
     message.textContent=text('正在打开你的因子查询台…','Opening your factor workspace…');
     window.location.replace('/account?view=factors&lang='+language);
@@ -31,18 +40,23 @@
     title.textContent=text('请先登录账户','Please log in');
     message.textContent=text('登录后将确认你的因子查询访问权限。','After login, we will check your access to factor research.');
     login.hidden=false;
+    root.classList.remove('factor-access--leaving');
    }else{
     root.setAttribute('aria-busy','false');
     title.hidden=true;
     message.textContent='';
     denied.hidden=false;
     login.hidden=session.authenticated;
+    root.classList.remove('factor-access--leaving');
    }
   }catch{
+   clearTimeout(timer);
+   await settle();
    root.setAttribute('aria-busy','false');
    title.textContent=text('暂时无法确认登录状态','Unable to check your session');
    message.textContent=text('请重试，或返回其他页面。','Please try again or return to another page.');
    retry.hidden=false;
+   root.classList.remove('factor-access--leaving');
   }finally{clearTimeout(timer);}
  }
  retry.addEventListener('click',openWorkspace);

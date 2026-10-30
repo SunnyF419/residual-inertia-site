@@ -9,12 +9,15 @@ for(const lang of ['zh','en']){
    const nodes=Object.fromEntries(['title','message','denied','login','retry'].map(key=>[key,{hidden:['denied','login','retry'].includes(key),textContent:'',addEventListener(type,fn){this.click=fn;}}]));
    let resolve,reject,redirect;
    const pending=new Promise((a,b)=>{resolve=a;reject=b;});
-   const root={querySelector:sel=>nodes[sel.match(/data-factor-(.*)\]/)[1]],setAttribute(){}};
-   vm.runInNewContext(source,{document:{querySelector:()=>root,documentElement:{lang}},AbortController,setTimeout,clearTimeout,fetch:()=>pending,window:{location:{replace:url=>{redirect=url;}}}});
+   const root={querySelector:sel=>nodes[sel.match(/data-factor-(.*)\]/)[1]],setAttribute(){},classList:{add(){},remove(){}}};
+   vm.runInNewContext(source,{document:{querySelector:()=>root,documentElement:{lang}},AbortController,setTimeout,clearTimeout,fetch:()=>pending,window:{matchMedia:()=>({matches:false}),location:{replace:url=>{redirect=url;}}}});
    assert.equal(nodes.denied.hidden,true,'No denial while session is pending');
    if(scenario==='network')reject(new Error('offline'));
    else resolve({ok:scenario!=='server',json:async()=>scenario==='invalid'?{}:{authenticated:scenario!=='guest',canQueryFactors:scenario==='owner'}});
    await new Promise(done=>setImmediate(done));
+   assert.equal(redirect,undefined,'No immediate redirect');
+   assert.equal(nodes.title.textContent,lang==='en'?'Opening factor research':'正在打开因子查询','Loading remains readable');
+   await new Promise(done=>setTimeout(done,1250));
    if(scenario==='owner'){
     assert.equal(redirect,'/account?view=factors&lang='+lang);
     assert.equal(nodes.denied.hidden,true);
@@ -32,7 +35,7 @@ for(const lang of ['zh','en']){
     assert.equal(nodes.retry.hidden,false);
     nodes.retry.click();
     assert.equal(nodes.denied.hidden,true);
-    await new Promise(done=>setImmediate(done));
+    await new Promise(done=>setTimeout(done,1250));
    }
   });
  }
