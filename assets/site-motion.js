@@ -76,7 +76,7 @@
         animation.finished.then(() => animations.delete(animation), () => animations.delete(animation));
       });
     }, {threshold: .08});
-    document.querySelectorAll('.editorial-heading,.research-card,.reading-card,.home-updates,.overview-current,.overview-trend,.principle-grid>article').forEach(element => {
+    document.querySelectorAll('.pagehead:has(+.factor-access),.factor-access,.editorial-heading,.research-card,.reading-card,.home-updates,.overview-current,.overview-trend,.principle-grid>article').forEach(element => {
       if (!seen.has(element) || surfaces.has(element)) observer.observe(element);
     });
   }
