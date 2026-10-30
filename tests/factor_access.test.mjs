@@ -18,7 +18,12 @@ for(const lang of ['zh','en']){
    if(scenario==='owner'){
     assert.equal(redirect,'/account?view=factors&lang='+lang);
     assert.equal(nodes.denied.hidden,true);
-   }else if(['reader','guest'].includes(scenario)){
+   }else if(scenario==='guest'){
+    assert.equal(nodes.denied.hidden,true);
+    assert.equal(nodes.login.hidden,false);
+    assert.equal(nodes.title.textContent,lang==='en'?'Please log in':'请先登录账户');
+    assert.equal(redirect,undefined);
+   }else if(scenario==='reader'){
     assert.equal(nodes.denied.hidden,false);
     assert.equal(nodes.login.hidden,scenario==='reader');
     assert.equal(redirect,undefined);

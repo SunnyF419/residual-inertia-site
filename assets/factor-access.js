@@ -11,7 +11,8 @@
  const retry=root.querySelector('[data-factor-retry]');
  async function openWorkspace(){
   root.setAttribute('aria-busy','true');
-  denied.hidden=login.hidden=retry.hidden=true;
+  denied.hidden=retry.hidden=true;
+  login.hidden=false;
   title.hidden=false;
   title.textContent=text('正在打开因子查询','Opening factor research');
   message.textContent=text('正在确认登录状态…','Checking your session…');
@@ -25,6 +26,11 @@
    if(session.authenticated===true&&session.canQueryFactors===true){
     message.textContent=text('正在打开你的因子查询台…','Opening your factor workspace…');
     window.location.replace('/account?view=factors&lang='+language);
+   }else if(!session.authenticated){
+    root.setAttribute('aria-busy','false');
+    title.textContent=text('请先登录账户','Please log in');
+    message.textContent=text('登录后将确认你的因子查询访问权限。','After login, we will check your access to factor research.');
+    login.hidden=false;
    }else{
     root.setAttribute('aria-busy','false');
     title.hidden=true;

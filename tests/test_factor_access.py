@@ -12,7 +12,8 @@ class FactorEntryTests(unittest.TestCase):
             self.assertIn('data-factor-denied hidden',page)
             self.assertIn('aria-busy="true"',page)
             self.assertIn('data-factor-retry hidden',page)
-            self.assertIn('assets/factor-access.js',page)
+            self.assertRegex(page,r'assets/factor-access\.js\?v=[0-9a-f]{12}')
+            self.assertNotIn('data-factor-login hidden',page)
             self.assertIn('factors/',(ROOT/'dist'/language/'index.html').read_text(encoding='utf-8'))
     def test_no_private_app_or_snapshot_in_static_output(self):
         alias=(ROOT/'dist/factor-query/index.html').read_text(encoding='utf-8')
