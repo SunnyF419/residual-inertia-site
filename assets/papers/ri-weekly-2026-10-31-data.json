@@ -1,0 +1,34 @@
+{
+  "researchId": "RI-WR-2026-W44",
+  "regime": {
+    "date": "2026-10-30",
+    "status": "PROVISIONAL",
+    "score": 66.9,
+    "marketRisk": 68.3,
+    "participation": 61.8,
+    "financialStress": 49.0,
+    "fragility": 88.6
+  },
+  "hardware": {
+    "date": "2026-10-30",
+    "raw": -12.7,
+    "score": 0,
+    "smh20dPct": -17.1,
+    "relativeQQQpp": -9.3,
+    "above20dmaPct": 14,
+    "above50dmaPct": 14,
+    "stocks": 28,
+    "demand": 0,
+    "supplyChain": 0,
+    "leadership": 11,
+    "divergence": 82
+  },
+  "acm": {
+    "date": "2026-10-29",
+    "fittedYieldPct": 4.952,
+    "oneMonthBp": -27.3,
+    "expectedRatesChangeBp": -9.37,
+    "termPremiumChangeBp": -17.94,
+    "oneYearBp": 83.39
+  }
+}
