@@ -19,6 +19,7 @@
     link.textContent=session.authenticated?(link.dataset.account||session.username):link.dataset.login;
     link.href=href(session.authenticated?'/account':'/auth/login?next=/account');
    }
+   for(const link of document.querySelectorAll('[data-factor-owner]'))link.hidden=session.canQueryFactors!==true;
    for(const link of document.querySelectorAll('[data-import-report]')){
     link.hidden=!session.canPublish;link.href=href('/research/manage');
    }

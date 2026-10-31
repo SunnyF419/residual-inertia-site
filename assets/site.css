@@ -404,3 +404,4 @@ a{color:var(--ink);text-decoration:none}
 .factor-access{opacity:1;transition:opacity 200ms ease}
 .factor-access--leaving{opacity:0;pointer-events:none}
 @media(prefers-reduced-motion:reduce){.factor-access{transition:none}}
+.factor-access input,.factor-access select{font:inherit;padding:10px 14px;background:var(--paper);color:inherit;border:1px solid var(--slate)}.factor-access table{width:100%;border-collapse:collapse;margin:20px 0}.factor-access th,.factor-access td{text-align:start;padding:10px;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums}.factor-access [data-results]{gap:8px}.factor-access [data-owner]{margin-top:16px}

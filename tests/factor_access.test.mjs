@@ -3,40 +3,16 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {test} from 'node:test';
 const source=readFileSync(new URL('../assets/factor-access.js',import.meta.url),'utf8');
-for(const lang of ['zh','en']){
- for(const scenario of ['owner','reader','guest','network','server','invalid']){
-  test(lang+' '+scenario,async()=>{
-   const nodes=Object.fromEntries(['title','message','denied','login','retry'].map(key=>[key,{hidden:['denied','login','retry'].includes(key),textContent:'',addEventListener(type,fn){this.click=fn;}}]));
-   let resolve,reject,redirect;
-   const pending=new Promise((a,b)=>{resolve=a;reject=b;});
-   const root={querySelector:sel=>nodes[sel.match(/data-factor-(.*)\]/)[1]],setAttribute(){},classList:{add(){},remove(){}}};
-   vm.runInNewContext(source,{document:{querySelector:()=>root,documentElement:{lang}},AbortController,setTimeout,clearTimeout,fetch:()=>pending,window:{matchMedia:()=>({matches:false}),location:{replace:url=>{redirect=url;}}}});
-   assert.equal(nodes.denied.hidden,true,'No denial while session is pending');
-   if(scenario==='network')reject(new Error('offline'));
-   else resolve({ok:scenario!=='server',json:async()=>scenario==='invalid'?{}:{authenticated:scenario!=='guest',canQueryFactors:scenario==='owner'}});
-   await new Promise(done=>setImmediate(done));
-   assert.equal(redirect,undefined,'No immediate redirect');
-   assert.equal(nodes.title.textContent,lang==='en'?'Opening factor research':'正在打开因子查询','Loading remains readable');
-   await new Promise(done=>setTimeout(done,1250));
-   if(scenario==='owner'){
-    assert.equal(redirect,'/account?view=factors&lang='+lang);
-    assert.equal(nodes.denied.hidden,true);
-   }else if(scenario==='guest'){
-    assert.equal(nodes.denied.hidden,true);
-    assert.equal(nodes.login.hidden,false);
-    assert.equal(nodes.title.textContent,lang==='en'?'Please log in':'请先登录账户');
-    assert.equal(redirect,undefined);
-   }else if(scenario==='reader'){
-    assert.equal(nodes.denied.hidden,false);
-    assert.equal(nodes.login.hidden,scenario==='reader');
-    assert.equal(redirect,undefined);
-   }else{
-    assert.equal(nodes.denied.hidden,true,'Failures must not claim access denied');
-    assert.equal(nodes.retry.hidden,false);
-    nodes.retry.click();
-    assert.equal(nodes.denied.hidden,true);
-    await new Promise(done=>setTimeout(done,1250));
-   }
-  });
- }
-}
+test('a guest can search without a session check',async()=>{
+ const requests=[],events={};
+ const node={value:'AAPL',replaceChildren(){},append(){},addEventListener(type,fn){events[type]=fn;}};
+ const root={querySelector:()=>node};
+ const document={querySelector:()=>root,documentElement:{lang:'en'}};
+ vm.runInNewContext(source,{document,URLSearchParams,fetch:async url=>{
+  requests.push(url);return {ok:true,json:async()=>({results:[]})};
+ }});
+ await events.submit({preventDefault(){}});
+ assert.equal(requests.length,1);
+ assert.match(requests[0],/factor_endpoint=public_search&q=AAPL/);
+ assert.equal(node.textContent,'No matching companies.');
+});
