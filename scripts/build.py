@@ -22,7 +22,6 @@ CONFIG = json.loads((ROOT / 'site.json').read_text(encoding='utf-8'))
 SNAPSHOT_INDEXING = json.loads((ROOT / 'content/snapshot-indexing.json').read_text(encoding='utf-8'))
 assert SNAPSHOT_INDEXING.get('version') == 1 and isinstance(SNAPSHOT_INDEXING.get('overrides'), dict), 'Invalid snapshot indexing policy'
 CSS_VERSION = hashlib.sha256((ROOT / 'assets/site.css').read_bytes()).hexdigest()[:12]
-FACTOR_ACCESS_VERSION = hashlib.sha256((ROOT / 'assets/factor-access.js').read_bytes()).hexdigest()[:12]
 ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexdigest()[:12]
 ACCOUNT_ORIGIN = CONFIG.get('accountServiceOrigin', 'https://global.residualinertia.com').rstrip('/')
 assert ACCOUNT_ORIGIN in {'https://residualinertia.com', 'https://global.residualinertia.com'}, 'Unknown account service origin'
@@ -741,9 +740,9 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
 <script defer src="{url('assets/archive-browser.js')}?v={ARCHIVE_VERSION}"></script>
-</head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ''}>{home_intro() if section == 'home' else ''}<a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
+</head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ' class="factors-page"' if section == 'factors' else ''}>{home_intro() if section == 'home' else ''}<a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
-<nav aria-label="{L('nav_aria')}">{nav}<button type="button" class="site-search-toggle" data-site-search-open aria-label="{L('site_search')}" aria-haspopup="dialog" aria-controls="site-search-dialog" aria-expanded="false" hidden>{search_icon()}</button><a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="{account_url("/auth/login?next=/account")}">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ''}">{content}</main>
+<nav aria-label="{L('nav_aria')}">{nav}<button type="button" class="site-search-toggle" data-site-search-open aria-label="{L('site_search')}" aria-haspopup="dialog" aria-controls="site-search-dialog" aria-expanded="false" hidden>{search_icon()}</button><a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="{account_url("/auth/login?next=/account")}">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ' factors-main' if section == 'factors' else ''}">{content}</main>
 {site_search_dialog()}{footer(home=section == 'home')}{SMART_NAV_JS}</body></html>'''
 
 
@@ -1390,9 +1389,11 @@ def build_language(snapshots, research, latest):
     write('global/index.html', L('global_title'), global_pulse, 'global', L('global_intro'))
     def factor_access_page():
         text=lambda cn,en:cn if LANG=='zh' else en
-        return head('FACTOR RESEARCH',text('因子查询','Factor Research'),text('按公司查询历史因子评分，以及同期的市场和行业排名。','Explore historical factor scores and market and industry ranks for one company at a time.'))+f'''<section class="factor-access" data-factor-access><form data-search><label for="company-search">{text('股票代码或公司名称','Ticker or company name')}</label><div class="action-group"><input id="company-search" type="search" required maxlength="80" placeholder="AAPL"><button class="action-link">{text('查询','Search')}</button></div></form><p role="status" data-status></p><div class="action-group" data-results></div><section data-profile hidden><h2 data-company></h2><label>{text('观察日期','Observation date')} <select data-date></select></label><div style="overflow-x:auto"><table><thead><tr><th>{text('因子','Factor')}</th><th>{text('评分','Score')}</th><th>{text('市场排名','Market rank')}</th><th>{text('行业排名','Industry rank')}</th></tr></thead><tbody></tbody></table></div></section><a data-factor-owner hidden href="{account_url('/account?view=factors')}">{text('进入完整研究台','Open full research workspace')}</a></section><script defer src="{url('assets/factor-access.js')}?v={FACTOR_ACCESS_VERSION}"></script>'''
+        workspace=account_url('/account?view=factors&embed=1')
+        full=account_url('/account?view=factors')
+        return f'''<div class="sr-only"><h1>{text('因子查询','Factor Research')}</h1><p>{text('完整公司画像、八因子历史曲线、全市场排名、公司对比与方法数据。无需登录。','Full company profiles, eight-factor history, market rankings, comparisons and methodology. No sign-in required.')}</p></div><iframe class="factor-frame" src="{workspace}" title="{text('完整公司因子研究台','Full company factor research dashboard')}" width="1280" height="800" style="display:block;flex:1;min-height:0;width:100%;height:0;border:0" allowfullscreen referrerpolicy="same-origin"></iframe><p class="factor-fallback"><span>{text('只读研究台 · 数据与方法由作者维护','Read-only workspace · Data and methods maintained by the author')}</span><a href="{full}">{text('独立窗口打开完整研究台 ↗','Open the full workspace in a separate page ↗')}</a></p>'''
     write('factors/index.html','因子查询' if LANG=='zh' else 'Factor Research',factor_access_page,'factors',indexable=False)
-    redirect('factor-query/index.html',ACCOUNT_ORIGIN+'/account?view=factors&lang='+LANG,'因子查询' if LANG=='zh' else 'Factor Research')
+    redirect('factor-query/index.html',url('factors/index.html'),'因子查询' if LANG=='zh' else 'Factor Research')
     redirect('snapshots/index.html', url('overview.html#daily-snapshots'), L('snapshots_redirect'))
     for i, s in enumerate(snapshots):
         # Archive commentary has no English translation yet; do not claim a translated pair.
