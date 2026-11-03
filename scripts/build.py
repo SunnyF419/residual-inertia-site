@@ -67,7 +67,6 @@ I18N = {
     'redirect_text': ('页面地址已更新。', 'Page address has been updated.'),
     'redirect_continue': ('继续阅读', 'Continue'),
     # Cover / homepage
-    'cover_hero': ('从市场状态，到下一笔决策。', 'From market state to the next decision.'),
     'cover_system': ('独立投资研究与决策系统', 'Independent Investment Research & Systems'),
     'cover_system_sub': ('Independent Investment Research & Systems', '独立投资研究与决策系统'),
     'cover_read': ('阅读研究', 'Read Research'),
@@ -891,7 +890,7 @@ def cover():
 <div class="cover-actions">{anchor('research/index.html', action_content(L('cover_read')), 'cover-primary')}{action_link('overview.html', L('cover_overview'), 'cover-secondary')}</div></div>
 <div class="cover-emblem"><span class="emblem-wordmark">Residual Inertia | 余势</span>
 <img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="" width="232" height="164">
-<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p><span>{E(CONFIG['motto'])}</span></div></div>{cover_kline()}
+<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p></div></div>{cover_kline()}
 </section>
 '''
 
