@@ -746,6 +746,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 
 
 def home_intro():
+    headline = E(CONFIG["hero_en" if LANG == "en" else "hero"]).replace(", ", ",</span> <span>", 1)
     """A decorative, optional opening; the real homepage stays server-rendered."""
     text = lambda cn, en: cn if LANG == 'zh' else en
     # Animate the actual brand geometry, preserving its cut-out and proportions.
@@ -760,8 +761,8 @@ def home_intro():
 <div class="intro-layout" aria-hidden="true"><div class="intro-wordmark"><strong>RESIDUAL<br>INERTIA<span> / 余势</span></strong><p>INVESTMENT RESEARCH<br>&amp; DECISION SYSTEMS</p></div>
 <div class="intro-center"><p class="intro-access mono"><span data-intro-access data-text="OBSERVE. RESEARCH. DECIDE."></span><span class="intro-caret"></span></p>
 <div class="intro-brand-stage"><div class="intro-mark"><svg class="intro-orbits" viewBox="0 0 360 360" fill="none"><circle class="intro-orbit-outer" cx="180" cy="180" r="156" pathLength="1"/><circle class="intro-orbit-inner" cx="180" cy="180" r="132" pathLength="1"/><path class="intro-axis" d="M180 12v20m0 296v20M12 180h20m296 0h20"/><g class="intro-orbit-dot"><circle cx="180" cy="24" r="3" fill="currentColor" stroke="none"/></g></svg>{symbol}<p class="intro-mark-caption">RESIDUAL INERTIA</p></div>
-<div class="intro-research"><p class="intro-status mono"><span class="intro-status-dot"></span><span data-intro-status data-text="{text('独立研究 · 从简出发', 'INDEPENDENT RESEARCH')}"></span></p><p>{text('从观察中提取证据。', 'Evidence from observation.')}<br>{text('为下一笔决策建立依据。', 'Research for the next decision.')}</p><span class="intro-research-rule"></span></div></div>
-<div class="intro-welcome"><p class="intro-welcome-label">RESIDUAL INERTIA{ ' / 余势' if LANG == 'zh' else ''}</p><p class="intro-headline"><span>{text('从市场状态，', 'From market state')}</span><span>{text('到下一笔决策。', 'to the next decision.')}</span></p><p class="intro-welcome-caption">{text('独立投资研究与决策系统', 'Independent Investment Research &amp; Decision Systems')}</p></div></div>
+<div class="intro-research"><p class="intro-status mono"><span class="intro-status-dot"></span><span data-intro-status data-text="{text('独立研究 · 从简出发', 'INDEPENDENT RESEARCH')}"></span></p><p>{text('Residual Inertia | 余势', 'Residual Inertia')}</p><span class="intro-research-rule"></span></div></div>
+<div class="intro-welcome"><p class="intro-welcome-label">RESIDUAL INERTIA{ ' / 余势' if LANG == 'zh' else ''}</p><p class="intro-headline"><span>{headline}</span></p><p class="intro-welcome-caption">{text('独立投资研究与决策系统', 'Independent Investment Research &amp; Decision Systems')}</p></div></div>
 <div class="intro-foot"><div class="intro-steps"><span data-intro-step="observe"><i>01</i>{text('观察', 'OBSERVE')}</span><span data-intro-step="research"><i>02</i>{text('研究', 'RESEARCH')}</span><span data-intro-step="decide"><i>03</i>{text('决策', 'DECIDE')}</span></div><p>What remains persists.</p></div></div>
 <button type="button" class="intro-enter action-link" data-intro-skip autofocus>{action_content(text('进入网站', 'Enter website'))}</button>
 </dialog>'''
