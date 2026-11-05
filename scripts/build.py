@@ -744,13 +744,14 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
 <script defer src="{url('assets/archive-browser.js')}?v={ARCHIVE_VERSION}"></script>
-</head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ' class="factors-page"' if section == 'factors' else ''}>{home_intro() if section == 'home' else ''}<a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
+</head><body id="top"{' class="global-page"' if section == 'global' else ' class="home-page"' if section == 'home' else ' class="factors-page"' if section == 'factors' else ' class="research-page"' if section == 'research' else ''}>{home_intro() if section == 'home' else ''}<a class="skip" href="#main">{L('skip')}</a><header class="masthead"><div class="wrap header-inner">
 {anchor('index.html', '<img src="'+url('assets/brand/RI-horizontal-white.svg')+'" alt="Residual Inertia | 余势" width="260" height="64">', 'brand')}
 <nav aria-label="{L('nav_aria')}">{nav}<button type="button" class="site-search-toggle" data-site-search-open aria-label="{L('site_search')}" aria-haspopup="dialog" aria-controls="site-search-dialog" aria-expanded="false" hidden>{search_icon()}</button><a class="account-link" data-account-link data-login="{L('account_login')}" data-account="{L('account_label')}" data-manage="{L('account_label')}" href="{account_url("/auth/login?next=/account")}">{L('account_login')}</a><a class="lang-toggle" href="{E(other_lang_url())}">{toggle_label}</a></nav></div></header><main id="main" class="wrap{' global-main' if section == 'global' else ' factors-main' if section == 'factors' else ''}">{content}</main>
 {site_search_dialog()}{footer(home=section == 'home')}{SMART_NAV_JS}</body></html>'''
 
 
 def home_intro():
+    headline = E(CONFIG["hero_en" if LANG == "en" else "hero"]).replace(", ", ",</span> <span>", 1)
     """A decorative, optional opening; the real homepage stays server-rendered."""
     text = lambda cn, en: cn if LANG == 'zh' else en
     # Animate the actual brand geometry, preserving its cut-out and proportions.
@@ -765,8 +766,8 @@ def home_intro():
 <div class="intro-layout" aria-hidden="true"><div class="intro-wordmark"><strong>RESIDUAL<br>INERTIA<span> / 余势</span></strong><p>INVESTMENT RESEARCH<br>&amp; DECISION SYSTEMS</p></div>
 <div class="intro-center"><p class="intro-access mono"><span data-intro-access data-text="OBSERVE. RESEARCH. DECIDE."></span><span class="intro-caret"></span></p>
 <div class="intro-brand-stage"><div class="intro-mark"><svg class="intro-orbits" viewBox="0 0 360 360" fill="none"><circle class="intro-orbit-outer" cx="180" cy="180" r="156" pathLength="1"/><circle class="intro-orbit-inner" cx="180" cy="180" r="132" pathLength="1"/><path class="intro-axis" d="M180 12v20m0 296v20M12 180h20m296 0h20"/><g class="intro-orbit-dot"><circle cx="180" cy="24" r="3" fill="currentColor" stroke="none"/></g></svg>{symbol}<p class="intro-mark-caption">RESIDUAL INERTIA</p></div>
-<div class="intro-research"><p class="intro-status mono"><span class="intro-status-dot"></span><span data-intro-status data-text="{text('独立研究 · 从简出发', 'INDEPENDENT RESEARCH')}"></span></p><p>{text('从观察中提取证据。', 'Evidence from observation.')}<br>{text('为下一笔决策建立依据。', 'Research for the next decision.')}</p><span class="intro-research-rule"></span></div></div>
-<div class="intro-welcome"><p class="intro-welcome-label">RESIDUAL INERTIA{ ' / 余势' if LANG == 'zh' else ''}</p><p class="intro-headline"><span>{text('从市场状态，', 'From market state')}</span><span>{text('到下一笔决策。', 'to the next decision.')}</span></p><p class="intro-welcome-caption">{text('独立投资研究与决策系统', 'Independent Investment Research &amp; Decision Systems')}</p></div></div>
+<div class="intro-research"><p class="intro-status mono"><span class="intro-status-dot"></span><span data-intro-status data-text="{text('独立研究 · 从简出发', 'INDEPENDENT RESEARCH')}"></span></p><p>{text('Residual Inertia | 余势', 'Residual Inertia')}</p><span class="intro-research-rule"></span></div></div>
+<div class="intro-welcome"><p class="intro-welcome-label">RESIDUAL INERTIA{ ' / 余势' if LANG == 'zh' else ''}</p><p class="intro-headline"><span>{headline}</span></p><p class="intro-welcome-caption">{text('独立投资研究与决策系统', 'Independent Investment Research &amp; Decision Systems')}</p></div></div>
 <div class="intro-foot"><div class="intro-steps"><span data-intro-step="observe"><i>01</i>{text('观察', 'OBSERVE')}</span><span data-intro-step="research"><i>02</i>{text('研究', 'RESEARCH')}</span><span data-intro-step="decide"><i>03</i>{text('决策', 'DECIDE')}</span></div><p>What remains persists.</p></div></div>
 <button type="button" class="intro-enter action-link" data-intro-skip autofocus>{action_content(text('进入网站', 'Enter website'))}</button>
 </dialog>'''
@@ -1362,9 +1363,8 @@ def current_market_page(s):
 
 
 def global_pulse():
-    return f'''<section class="global-heading"><div><p class="eyebrow">GLOBAL PULSE</p><h1>{L('global_title')}</h1><p>{L('global_intro')}</p></div><div class="global-actions"><a class="global-login" href="https://global.residualinertia.com/?manage=1" target="_blank" rel="noopener">{L('global_login')}</a><a href="https://global.residualinertia.com/?focus=1&amp;lang={'en' if LANG == 'en' else 'zh'}" target="_blank" rel="noopener">{L('global_open')}</a></div></section>
-<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" style="display:block;flex:1;min-height:0;width:100%;height:0;border:1px solid var(--grid,#d9dbd4)" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-<p class="global-note">{L('global_note')}</p>'''
+    return f'''<div class="sr-only"><h1>{L('global_title')}</h1></div><iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'''
+
 
 
 def build_language(snapshots, research, latest):
