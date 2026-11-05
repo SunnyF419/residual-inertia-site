@@ -100,14 +100,14 @@ def main():
         assert '<iframe class="global-frame"' in embedded
         language='en' if route.startswith('en/') else 'zh'
         assert f'src="https://global.residualinertia.com/?embed=1&amp;lang={language}"' in embedded
-        assert f'href="https://global.residualinertia.com/?focus=1&amp;lang={language}"' in embedded
+        assert '?focus=1' not in embedded
         assert 'allowfullscreen' in embedded
-        assert 'width="1280" height="800"' in embedded and 'flex:1;min-height:0;width:100%;height:0;' in embedded
+        assert 'width="1280" height="800"' in embedded
         assert 'global-page' in parsed[(OUT/route).resolve()].body_classes
         assert re.search(r'href="/assets/site\.css\?v=[a-f0-9]{12}"',embedded)
         assert 'https://global.residualinertia.com/' in embedded
-        assert 'class="global-actions"' in embedded
-        assert 'class="global-login" href="https://global.residualinertia.com/?manage=1" target="_blank" rel="noopener"' in embedded
+        assert 'class="global-actions"' not in embedded
+        assert '?manage=1' not in embedded
         assert ('https://residualinertia.com/'+route.replace('index.html','')) in embedded
     assert 'href="/global/"' in (OUT/'index.html').read_text(encoding='utf-8')
     assert 'href="/en/global/"' in (OUT/'en/index.html').read_text(encoding='utf-8')
