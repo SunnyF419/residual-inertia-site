@@ -49,7 +49,8 @@
       savedY = window.scrollY;
       previousOverflow = document.body.style.overflow;
       previousPadding = document.body.style.paddingRight;
-      const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+      const stableGutter = (getComputedStyle(document.documentElement).scrollbarGutter || '').includes('stable');
+      const scrollbar = stableGutter ? 0 : window.innerWidth - document.documentElement.clientWidth;
       const padding = parseFloat(getComputedStyle(document.body).paddingRight) || 0;
       document.body.style.paddingRight = `${padding + scrollbar}px`;
       document.body.style.overflow = 'hidden';

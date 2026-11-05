@@ -71,7 +71,7 @@
         // Content is always readable without JavaScript or animation support.
         if (typeof element.animate !== 'function') return;
         const animation = element.animate([
-          {opacity: 0, transform: 'translateY(18px)'},
+          {opacity: 1, transform: 'translateY(8px)'},
           {opacity: 1, transform: 'translateY(0)'}
         ], {duration: isHome ? 600 : 850, delay: isHome ? 0 : Math.min(revealIndex++ * 60, 120), fill: 'backwards', easing: isHome ? 'cubic-bezier(.22,1,.36,1)' : 'cubic-bezier(.22,.7,.3,1)'});
         animations.add(animation);

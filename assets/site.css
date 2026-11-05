@@ -411,3 +411,26 @@ body.factors-page{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-d
 .factors-page .site-footer{display:none}.factor-fallback{flex:0 0 auto;display:flex;justify-content:space-between;gap:12px;text-align:right;font-size:11px;color:var(--slate);margin:0;padding:3px 24px}
 @media(max-width:1100px){.factors-page .header-inner{min-height:64px;padding:8px 0;gap:8px 24px}.factors-page .brand img{width:200px;height:48px}.factors-page nav{gap:20px}}
 @media(max-width:600px){.factors-page .header-inner{min-height:0;padding:6px 0}.factors-page .brand img{width:160px;height:40px}.factors-page nav{width:100%;overflow-x:auto;gap:20px}.factors-page nav a{padding:6px 0;font-size:13px}.factor-fallback{padding:2px 16px}}
+
+/* Shared masthead geometry: every route reserves the same columns and scrollbar. */
+html{scrollbar-gutter:stable}
+body .masthead .header-inner{display:grid;grid-template-columns:220px minmax(0,1fr);width:min(1280px,calc(100% - 80px));min-height:88px;margin:0 auto;padding:12px 0;gap:24px;align-items:center}
+body .masthead .brand img{width:220px;height:56px}
+body .masthead nav{display:flex;justify-content:flex-end;align-items:center;gap:18px;min-width:0;width:100%;flex-wrap:nowrap}
+body .masthead nav a{font-size:14px;padding:12px 0;flex-shrink:0}
+body .masthead .account-link{width:112px;text-align:center}
+body .masthead .lang-toggle{width:44px;text-align:center;padding:6px 8px}
+body .masthead .site-search-toggle{width:40px;height:40px;flex:0 0 40px}
+body .masthead .site-search-toggle[hidden]{display:inline-flex!important;visibility:hidden}
+@media(max-width:1350px){body .masthead .header-inner{grid-template-columns:minmax(0,1fr);gap:4px;min-height:132px;padding:10px 0}body .masthead nav{justify-content:flex-start;overflow-x:auto;scrollbar-width:none}body .masthead nav::-webkit-scrollbar{display:none}}
+@media(max-width:600px){body .masthead .header-inner{width:calc(100% - 32px);min-height:116px;padding:8px 0;gap:4px}body .masthead .brand img{width:180px;height:44px}body .masthead nav{gap:20px}body .masthead nav a{font-size:13px;padding:10px 0}}
+
+/* Keep the shared chrome stable during same-origin document navigation. */
+@view-transition{navigation:auto}
+::view-transition{pointer-events:none}
+.masthead{view-transition-name:site-masthead}
+::view-transition-group(site-masthead){animation:none}
+::view-transition-old(site-masthead){animation:none;opacity:0}
+::view-transition-new(site-masthead){animation:none;mix-blend-mode:normal}
+::view-transition-old(root),::view-transition-new(root){animation-duration:180ms}
+@media(prefers-reduced-motion:reduce){@view-transition{navigation:none}}

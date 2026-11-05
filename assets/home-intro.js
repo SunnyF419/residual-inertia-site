@@ -97,7 +97,8 @@
       if (seen() || window.location.hash || window.scrollY > 0 || (navigation && navigation.type !== 'navigate')) return;
     }
     saved = {overflow: document.body.style.overflow, padding: document.body.style.paddingRight, y: window.scrollY, focus: document.activeElement};
-    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    const stableGutter = (window.getComputedStyle(document.documentElement).scrollbarGutter || '').includes('stable');
+    const scrollbar = stableGutter ? 0 : window.innerWidth - document.documentElement.clientWidth;
     const padding = parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = `${padding + scrollbar}px`;

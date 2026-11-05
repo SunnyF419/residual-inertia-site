@@ -21,6 +21,7 @@ OUT = ROOT / 'dist'
 CONFIG = json.loads((ROOT / 'site.json').read_text(encoding='utf-8'))
 SNAPSHOT_INDEXING = json.loads((ROOT / 'content/snapshot-indexing.json').read_text(encoding='utf-8'))
 assert SNAPSHOT_INDEXING.get('version') == 1 and isinstance(SNAPSHOT_INDEXING.get('overrides'), dict), 'Invalid snapshot indexing policy'
+WATCH_VERSION = hashlib.sha256(b''.join((ROOT / 'assets' / name).read_bytes() for name in ('market-watch.css', 'market-watch.js'))).hexdigest()[:12]
 CSS_VERSION = hashlib.sha256((ROOT / 'assets/site.css').read_bytes()).hexdigest()[:12]
 ACCOUNT_VERSION = hashlib.sha256((ROOT / 'assets/account.js').read_bytes()).hexdigest()[:12]
 ACCOUNT_ORIGIN = CONFIG.get('accountServiceOrigin', 'https://global.residualinertia.com').rstrip('/')
@@ -709,6 +710,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
         ('home', 'index.html', L('nav_home')), ('overview', 'overview.html', L('nav_overview')),
         ('global', 'global/index.html', L('nav_global')),
         ('factors', 'factors/index.html', '因子查询' if LANG == 'zh' else 'Factor Research'),
+        ('market-watch', 'market-watch/index.html', '市场追踪' if LANG == 'zh' else 'Market Watch'),
         ('research', 'research/index.html', L('nav_research')), ('about', 'about.html', L('nav_about'))])
     toggle_label = 'EN' if LANG == 'zh' else '中文'
     canonical = production_url(ROUTE, LANG)
@@ -722,6 +724,8 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
             article_meta += f'<meta property="article:modified_time" content="{E(record["updated"])}">'
     return f'''<!doctype html>
 <html lang="{lang_attr}" data-account-origin="{E(ACCOUNT_ORIGIN)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preload" href="{url('assets/brand/fonts/IBMPlexSans.woff2')}" as="font" type="font/woff2" crossorigin>
+{f'<link rel="preload" href="{url("assets/brand/fonts/NotoSansSC.woff2")}" as="font" type="font/woff2" crossorigin>' if LANG == 'zh' else ''}
 <title>{E(seo_title)}</title><meta name="description" content="{E(desc)}">
 <meta name="robots" content="{'index, follow' if indexable else 'noindex, follow'}">
 <link rel="canonical" href="{E(canonical)}"><meta property="og:title" content="{E(og_title)}">
@@ -735,6 +739,7 @@ def shell(title, content, section='', description=None, indexable=True, schema_n
 <link rel="icon" href="{url('assets/brand/favicon.svg')}?v={ICON_VERSION}" sizes="any" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{url('assets/brand/apple-touch-icon.png')}?v={ICON_VERSION}" sizes="180x180"><link rel="stylesheet" href="{url('assets/site.css')}?v={CSS_VERSION}">
 {f'<link rel="stylesheet" href="{url("assets/home-intro.css")}?v={INTRO_VERSION}"><script defer src="{url("assets/home-intro.js")}?v={INTRO_VERSION}"></script>' if section == 'home' else ''}
+{f'<link rel="stylesheet" href="{url("assets/market-watch.css")}?v={WATCH_VERSION}">' if section == 'market-watch' else ''}
 <script defer src="{url('assets/account.js')}?v={ACCOUNT_VERSION}"></script>
 <script defer src="{url('assets/site-motion.js')}?v={MOTION_VERSION}"></script>
 {f'<script defer src="{url("assets/market-chart.js")}?v={CHART_VERSION}"></script>' if 'data-market-chart' in content else ''}
@@ -1386,6 +1391,10 @@ def build_language(snapshots, research, latest):
     if latest.get('kind') == 'current':
         write('market/latest.html', L('current_title'), lambda: current_market_page(latest), 'overview')
     write('global/index.html', L('global_title'), global_pulse, 'global', L('global_intro'))
+    def market_watch_page():
+        title = '市场追踪' if LANG == 'zh' else 'Market Watch'
+        return f'''<section class="mw" data-market-watch><h1>{title}</h1><p>{'正在读取 SEC 披露…' if LANG == 'zh' else 'Loading SEC disclosures…'}</p><noscript>{'请开启 JavaScript 查看最新数据。' if LANG == 'zh' else 'Enable JavaScript to view the latest data.'}</noscript></section><script defer src="{url('assets/market-watch.js')}?v={WATCH_VERSION}"></script>'''
+    write('market-watch/index.html', '市场追踪' if LANG == 'zh' else 'Market Watch', market_watch_page, 'market-watch')
     def factor_access_page():
         text=lambda cn,en:cn if LANG=='zh' else en
         workspace=account_url('/account?view=factors&embed=1')
