@@ -1358,7 +1358,7 @@ def current_market_page(s):
 
 
 def global_pulse():
-    return f'''<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'''
+    return f'''<div class="sr-only"><h1>{L('global_title')}</h1></div><iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'''
 
 
 
