@@ -170,7 +170,7 @@
       page = 1;
       render();
       const address = new URL(location.href);
-      if (input.value.trim()) address.searchParams.set('q', input.value.trim()); else address.searchParams.delete('q');
+      if (input.value.trim()) address.searchParams.set('q', input.value.trim()); else address.searchParams.delete('q'); address.searchParams.delete('search');
       history.replaceState(history.state, '', address.pathname + address.search + address.hash);
     }
     input.addEventListener('compositionstart', () => {composing = true;});
@@ -182,11 +182,11 @@
     previous.addEventListener('click', () => {page--; render();});
     next.addEventListener('click', () => {page++; render();});
     dialog.addEventListener('close', () => {
-      const address = new URL(location.href); address.searchParams.delete('q');
+      const address = new URL(location.href); address.searchParams.delete('q'); address.searchParams.delete('search');
       history.replaceState(history.state, '', address.pathname + address.search + address.hash);
     });
     const query = new URL(location.href).searchParams.get('q');
-    if (query && controller) {input.value = query; controller.open();}
+    if (controller && (query || new URL(location.href).searchParams.get('search') === '1')) {input.value = query || ''; controller.open();}
   }
 
   document.querySelectorAll('[data-snapshot-archive]').forEach(root => {
