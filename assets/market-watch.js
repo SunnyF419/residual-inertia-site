@@ -83,7 +83,10 @@ calendarPanel.onclick = event => {
   page=1;
   load();
 };
-document.addEventListener('click',event=>{if (!dateFilter.contains(event.target)) dateFilter.open=false;});
+document.addEventListener('click', event => {
+  // Rendering another month replaces the arrow, but the click path still identifies the calendar.
+  if (!event.composedPath().includes(dateFilter)) dateFilter.open = false;
+});
 dateFilter.onkeydown = event => {
   if (event.key==='Escape') { dateFilter.open=false; calendarLabel.focus(); }
 };
