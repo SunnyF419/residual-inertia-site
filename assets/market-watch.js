@@ -24,6 +24,19 @@ const pages=Math.max(1,Math.ceil(data.total/data.page_size));root.querySelector(
 root.querySelector('.mw-footnote').innerHTML=insider?T('Form 3 是初始持股申报；Form 4 是持股变动；Form 5 是年度补充申报。窗口按申报日期筛选，交易可能发生在更早日期。P / S 可包含公开市场或私人买卖；授予、行权、缴税和赠与单独展示。修订申报保留 /A 标记，不与原申报合并统计交易金额。','Form 3 reports initial ownership; Form 4 reports changes; Form 5 is an annual supplemental filing. The window uses filing dates; transactions may be earlier. P / S can include open-market or private purchases and sales. Grants, exercises, tax payments and gifts remain separate. Amendments retain /A and are not added to original filings as transaction totals.'):T('FTD 是某结算日尚未交割的累计净余额，并非当日新增量，也不等于裸卖空。不同日期的余额不可相加。列表展示最新可得结算日，展开查看最近两个官方半月批次；参考金额为股数 × SEC 文件参考价，并非成交额或空头仓位。缺失日期不自动补零。','FTD is the aggregate net outstanding balance on a settlement date, not new daily failures or evidence of naked short selling. Do not sum balances across dates. The list shows the latest available settlement date; expand for the latest two official half-month batches. Reference value is shares × the SEC reference price, not turnover or a short position. Missing dates are not filled with zeros.');
 root.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=Number(b.dataset.page);load()});
 root.querySelectorAll('.mw-record').forEach(row=>{const button=row.querySelector('[data-detail]');button.setAttribute('aria-controls','mw-detail-'+button.dataset.row);row.onclick=e=>{if(e.target.closest('a'))return;if(window.getSelection()?.toString())return;detail(button)};});}
+const buyerHint = () => T('点击色块或买家姓名，查看金额与占比。','Select a slice or buyer to see the amount and share.');
+document.addEventListener('click', event => {
+  const hit = event.target.closest?.('[data-slice],[data-buyer],.mw-mix-info.open');
+  for (const card of root.querySelectorAll('.mw-mix-info.open')) {
+    const panel = card.closest('.mw-buyers');
+    if (hit && panel.contains(hit)) continue;
+    panel.querySelector('.selected')?.classList.remove('selected');
+    panel.querySelector('[aria-pressed="true"]')?.setAttribute('aria-pressed','false');
+    card.getAnimations().forEach(anim=>anim.cancel());
+    card.classList.remove('open');
+    card.textContent = buyerHint();
+  }
+}, true);
 function drawBuyerMix(body, mix) {
   if (!mix) return;
   const panel = document.createElement('section');
@@ -68,7 +81,7 @@ function drawBuyerMix(body, mix) {
     const hit = event.target.closest('[data-slice],[data-buyer]');
     if (hit) select(Number(hit.dataset.slice ?? hit.dataset.buyer));
   };
-  card.textContent = T('点击色块或买家姓名，查看金额与占比。','Select a slice or buyer to see the amount and share.');
+  card.textContent = buyerHint();
 }
 async function detail(button){const detailMode=mode,detailVersion=version;const box=root.querySelector('#mw-detail-'+button.dataset.row),body=box.querySelector('.mw-detail-content');if(box.classList.contains('open')){box.classList.remove('open');button.setAttribute('aria-expanded','false');return}box.classList.add('open');button.setAttribute('aria-expanded','true');body.textContent=T('正在读取详情…','Loading details…');
 try{const d=await get('/'+detailMode+'/detail?id='+encodeURIComponent(button.dataset.detail));if(detailVersion!==version||!box.isConnected)return;
