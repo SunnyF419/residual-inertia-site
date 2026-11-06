@@ -122,7 +122,7 @@ def buyer_mix(db, issuer_cik, today):
                         and trade['acquired_disposed'] == 'A' and start <= trade['date'] <= end
                         and trade['value'] is not None and trade['value'] > 0):
                     continue
-                buyer = totals.setdefault(owner['cik'], {'name': owner['name'], 'amount': 0})
+                buyer = totals.setdefault(owner['cik'], {**owner, 'amount': 0})
                 buyer['amount'] += trade['value']
     buyers = sorted(totals.values(), key=lambda item: (-item['amount'], item['name']))
     return {'start': start, 'end': end, 'buyers': buyers}
@@ -270,9 +270,18 @@ class Store:
                 SELECT filed, MAX(accession) AS accession, COUNT(*) AS filings,
                        MAX(json_extract(payload,'$.ticker')) AS ticker,
                        COALESCE(MAX(json_extract(payload,'$.issuer')),MAX(name)) AS issuer,
-                       GROUP_CONCAT(DISTINCT form) AS forms, COUNT(payload) AS parsed
+                       GROUP_CONCAT(DISTINCT form) AS forms, COUNT(payload) AS parsed,
+                       json_group_array(DISTINCT json_extract(payload,'$.owners')) AS owner_sets
                 """ + group + ' ORDER BY filed DESC,accession DESC LIMIT ? OFFSET ?',
                 args + [limit, (max(page, 1)-1)*limit])]
+            for row in rows:
+                owners = {}
+                for group_owners in json.loads(row.pop('owner_sets')):
+                    for owner in group_owners or []:
+                        key = (owner.get('cik') or owner['name'], owner.get('officer_title'),
+                               owner.get('director'), owner.get('officer'), owner.get('ten_percent'))
+                        owners[key] = owner
+                row['owners'] = sorted(owners.values(), key=lambda owner: owner['name'])
         return dict(rows=rows, total=total, page_size=limit, status=self.status())
 
     def day_detail(self, key, form, query):
