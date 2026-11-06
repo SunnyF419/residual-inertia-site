@@ -246,6 +246,57 @@ class Store:
                 rows = [dict(x) for x in db.execute('SELECT * FROM ftd WHERE ' + where + ' ORDER BY quantity DESC,cusip LIMIT ? OFFSET ?', args + [limit, (page-1)*limit])]
         return {'rows': rows, 'total': total, 'page': page, 'page_size': limit, 'status': self.status()}
 
+    def company_days(self, query, form, day, page):
+        today = sec_today()
+        first = today - timedelta(days=29)
+        if day and not first <= date.fromisoformat(day) <= today:
+            raise ValueError('Outside filing window')
+        where = ['filed BETWEEN ? AND ?']
+        args = [day or first.isoformat(), day or today.isoformat()]
+        if form in FORMS:
+            where.append('form=?')
+            args.append(form)
+        if query.strip():
+            needle = query.strip().upper()[:100]
+            where.append('(instr(upper(name),?) OR instr(upper(payload),?))')
+            args.extend([needle, needle])
+        # Unresolved issuer identities must never be merged by a reporting owner's name.
+        group = """FROM filings WHERE """ + ' AND '.join(where) + """
+            GROUP BY filed, COALESCE(NULLIF(json_extract(payload,'$.issuer_cik'),''), accession)"""
+        limit = 50
+        with self.connect() as db:
+            total = db.execute('SELECT COUNT(*) FROM (SELECT 1 ' + group + ')', args).fetchone()[0]
+            rows = [dict(row) for row in db.execute("""
+                SELECT filed, MAX(accession) AS accession, COUNT(*) AS filings,
+                       MAX(json_extract(payload,'$.ticker')) AS ticker,
+                       COALESCE(MAX(json_extract(payload,'$.issuer')),MAX(name)) AS issuer,
+                       GROUP_CONCAT(DISTINCT form) AS forms, COUNT(payload) AS parsed
+                """ + group + ' ORDER BY filed DESC,accession DESC LIMIT ? OFFSET ?',
+                args + [limit, (max(page, 1)-1)*limit])]
+        return dict(rows=rows, total=total, page_size=limit, status=self.status())
+
+    def day_detail(self, key, form, query):
+        with self.connect() as db:
+            seed = db.execute("SELECT filed,json_extract(payload,'$.issuer_cik') FROM filings WHERE accession=?", (key,)).fetchone()
+            if seed is None:
+                return None
+            sql = 'SELECT accession,source,payload FROM filings WHERE '
+            if seed[1]:
+                sql += "filed=? AND json_extract(payload,'$.issuer_cik')=?"
+                args = [seed[0], seed[1]]
+            else:
+                sql += 'accession=?'
+                args = [key]
+            if form in FORMS:
+                sql += ' AND form=?'
+                args.append(form)
+            if query.strip():
+                sql += ' AND (instr(upper(name),?) OR instr(upper(payload),?))'
+                args.extend([query.strip().upper()[:100]]*2)
+            filings = [dict(row, payload=json.loads(row['payload']) if row['payload'] else None)
+                       for row in db.execute(sql + ' ORDER BY accession DESC', args)]
+            return dict(filings=filings, buyer_mix=buyer_mix(db, seed[1], sec_today()) if seed[1] else None)
+
     def detail(self, kind, key):
         with self.connect() as db:
             if kind == 'insider':
@@ -426,6 +477,12 @@ def handler(store, static_root=None):
             try:
                 if path == '/status':
                     result = store.status()
+                elif path == '/insider/days':
+                    result = store.company_days(arg('q'), arg('form'), arg('day'), int(arg('page','1')))
+                elif path == '/insider/days/detail':
+                    result = store.day_detail(arg('id'), arg('form'), arg('q'))
+                    if result is None:
+                        return self.reply({'error': 'Record not found'}, 404)
                 elif path in ('/insider', '/ftd'):
                     result = store.listings(path[1:], arg('q'), arg('form', 'all'), int(arg('page', '1')))
                 elif path in ('/insider/detail', '/ftd/detail'):
