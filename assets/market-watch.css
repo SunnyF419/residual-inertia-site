@@ -27,3 +27,9 @@ html:has([data-market-watch]){overflow-y:scroll;scrollbar-gutter:stable}
 .mw-mix-key i { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
 @media(prefers-reduced-motion:reduce){.mw-buyers [data-slice]{transition:none}}
 .mw-mix-info:not(.open) { border-color: transparent; color: var(--slate); }
+
+.mw-mix-key button { text-align:start; }
+.mw-chart-role { display:block; margin-inline-start:15px; color:var(--slate,#526260); }
+.mw-filing { border-bottom:1px solid var(--grid,#d9dbd4); }
+.mw-filing summary { padding:12px 0; cursor:pointer; font-weight:500; }
+.mw-filing summary:focus-visible { outline:2px solid currentColor; outline-offset:2px; }

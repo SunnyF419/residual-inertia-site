@@ -15,6 +15,14 @@ function ownerRole(owner) {
   ];
   return roles.filter(Boolean).join(' · ');
 }
+function chartBuyer(buyer) {
+  const role = ownerRole(buyer)
+    .replace(/\bChief Executive Officer\b/gi, 'CEO')
+    .replace(/\bChief Technology Officer\b/gi, 'CTO')
+    .replace(/\bChief Financial Officer\b/gi, 'CFO')
+    .replace(/\bChief Operating Officer\b/gi, 'COO');
+  return esc(buyer.name) + (role ? '<span class="mw-chart-role">'+esc(role)+'</span>' : '');
+}
 function ownerLine(owner) {
   return [owner.name, ownerRole(owner)].filter(Boolean).map(esc).join(' · ');
 }
@@ -101,7 +109,7 @@ function drawBuyerMix(body, mix) {
     const path = 'M '+point(86,start)+' A86 86 0 '+large+' 1 '+point(86,angle)+' L '+point(52,angle)+' A52 52 0 '+large+' 0 '+point(52,start)+' Z';
     return '<path data-slice="'+i+'" fill="'+color+'" d="'+path+'"/>';
   }).join('');
-  panel.insertAdjacentHTML('beforeend','<div class="mw-mix-layout"><svg viewBox="0 0 200 200" aria-hidden="true">'+slices+'<text x="100" y="99">'+buyers.length+'</text><text x="100" y="116" class="mw-ring-label">'+T('位买家','buyers')+'</text></svg><div class="mw-mix-info" aria-live="polite"></div></div><div class="mw-mix-key">'+buyers.map((b,i)=>'<button type="button" aria-pressed="false" data-buyer="'+i+'"><i style="background:'+colors[i%colors.length]+'"></i>'+esc(b.name)+'</button>').join('')+'</div><small>'+T('按交易日汇总已解析的非衍生证券 P 类买入；仅计单一申报人、金额已知的原始申报。涉及修订的同人同报告期记录暂不计入。','Based on parsed, priced non-derivative P purchases by transaction date. Single-filer original reports only; amended owner-periods are excluded.')+'</small>');
+  panel.insertAdjacentHTML('beforeend','<div class="mw-mix-layout"><svg viewBox="0 0 200 200" aria-hidden="true">'+slices+'<text x="100" y="99">'+buyers.length+'</text><text x="100" y="116" class="mw-ring-label">'+T('位买家','buyers')+'</text></svg><div class="mw-mix-info" aria-live="polite"></div></div><div class="mw-mix-key">'+buyers.map((b,i)=>'<button type="button" aria-pressed="false" data-buyer="'+i+'"><i style="background:'+colors[i%colors.length]+'"></i>'+chartBuyer(b)+'</button>').join('')+'</div><small>'+T('按交易日汇总已解析的非衍生证券 P 类买入；仅计单一申报人、金额已知的原始申报。涉及修订的同人同报告期记录暂不计入。','Based on parsed, priced non-derivative P purchases by transaction date. Single-filer original reports only; amended owner-periods are excluded.')+'</small>');
   const card = panel.querySelector('.mw-mix-info');
   const select = index => {
     const buyer = buyers[index];
@@ -129,9 +137,19 @@ if(detailMode==='insider'){
   body.innerHTML = '<h3>'+esc(button.textContent)+'</h3>';
   drawBuyerMix(body,d.buyer_mix);
   for (const filing of d.filings) {
-    const section = document.createElement('section');
-    body.append(section);
-    renderFiling(section,filing);
+    const disclosure = document.createElement('details');
+    disclosure.className = 'mw-filing';
+    const summary = document.createElement('summary');
+    const filingData = filing.payload;
+    summary.textContent = filingData
+      ? ['Form '+filingData.form, ...filingData.owners.map(owner=>owner.name)].join(' · ')
+      : T('申报','Filing')+' · '+filing.accession;
+    const content = document.createElement('div');
+    disclosure.append(summary, content);
+    body.append(disclosure);
+    disclosure.addEventListener('toggle', () => {
+      if (disclosure.open && !content.hasChildNodes()) renderFiling(content,filing);
+    });
   }
 }else{const h=d.history,max=Math.max(...h.map(r=>r.quantity),1);body.innerHTML=`<h3>${esc(h[0].ticker)} · ${esc(d.cusip)}</h3><p>${T('各结算日未交割余额；仅展示文件中存在的记录。','Outstanding balance by settlement date; only reported records are shown.')}</p><svg viewBox="0 0 800 160" role="img" aria-label="${T('未交割余额柱状图','FTD balance bar chart')}">${h.map((r,i)=>`<rect x="${i*780/h.length+10}" y="${130-r.quantity/max*115}" width="${Math.max(2,780/h.length-4)}" height="${r.quantity/max*115}" fill="#5d8f7e"><title>${esc(r.day)}: ${num(r.quantity)}</title></rect>`).join('')}<text x="10" y="155" font-size="12" fill="#526260">${esc(h[0].day)}</text><text x="690" y="155" font-size="12" fill="#526260">${esc(h.at(-1).day)}</text></svg><p>${T('窗口内单日峰值','Highest daily balance in window')}: ${num(max)} · ${T('最近记录','Latest record')}: ${esc(h.at(-1).day)}</p><a href="${safeLink(h.at(-1).batch)}" target="_blank" rel="noopener">${T('SEC 来源批次','SEC source batch')} ↗</a>`}
 }catch{body.textContent=T('详情暂不可用，请稍后重试。','Details unavailable. Please try again shortly.')}}
