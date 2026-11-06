@@ -28,32 +28,72 @@ function ownerLine(owner) {
 }
 let mode='insider',page=1,query='',form='all',version=0,lastStatus=null;
 root.innerHTML=`<h1>${T('市场追踪','Market Watch')}</h1><p class="mw-intro">${T('近期内部人披露与交割观察。数据直接来自 SEC。','Recent insider filings and settlement observations, sourced directly from the SEC.')}</p><div class="mw-tabs" role="tablist" aria-label="${T('市场追踪栏目','Market Watch sections')}"><button role="tab" aria-selected="true" data-tab="insider">${T('内部人交易','Insider filings')}</button><button role="tab" aria-selected="false" data-tab="ftd">${T('FTD 交割观察','Fails to deliver')}</button></div><div class="mw-status" aria-live="polite"></div><div class="mw-stats"></div><form class="mw-toolbar"><div class="mw-search"><input aria-label="${T('查询公司','Search companies')}" placeholder="${T('股票代码、公司或内部人姓名','Ticker, company or insider name')}"><button type="submit">${T('搜索','Search')}</button></div><select aria-label="${T('申报类型','Filing type')}"><option value="all">${T('全部申报','All filings')}</option>${['3','4','5','3/A','4/A','5/A'].map(f=>`<option value="${f}">Form ${f}</option>`).join('')}</select><button type="button" class="mw-refresh">${T('刷新','Refresh')}</button></form><div class="mw-list" aria-live="polite"></div><div class="mw-pager"></div><p class="mw-footnote"></p>`;
-const dateFilter = document.createElement('select');
-dateFilter.setAttribute('aria-label', T('按申报日筛选','Filter by filing date'));
+const dateFilter = document.createElement('details');
+dateFilter.className = 'mw-calendar';
+dateFilter.innerHTML = '<summary></summary><div class="mw-calendar-panel"></div>';
 root.querySelector('.mw-refresh').before(dateFilter);
+const calendarLabel = dateFilter.querySelector('summary');
+const calendarPanel = dateFilter.querySelector('.mw-calendar-panel');
+let selectedDay = new URLSearchParams(location.search).get('day') || '';
+let firstDay = '', lastDay = '', month = '';
+const isoDay = date => date.toISOString().slice(0,10);
+function updateDates(start) {
+  if (start === firstDay) return;
+  firstDay = start;
+  const end = new Date(start+'T00:00:00Z');
+  end.setUTCDate(end.getUTCDate()+29);
+  lastDay = isoDay(end);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(selectedDay) || selectedDay < start || selectedDay > lastDay) selectedDay = '';
+  calendarLabel.textContent = selectedDay || T('全部申报日','All filing dates');
+  month = (selectedDay || lastDay).slice(0,7);
+  renderCalendar();
+}
+function renderCalendar() {
+  const first = new Date(month+'-01T00:00:00Z');
+  const caption = first.toLocaleDateString(en?'en-US':'zh-CN',{timeZone:'UTC',month:'long',year:'numeric'});
+  const weekdays = en ? ['M','T','W','T','F','S','S'] : [...'一二三四五六日'];
+  const days = [];
+  const cursor = new Date(first);
+  cursor.setUTCDate(1-(first.getUTCDay()+6)%7);
+  for (let i=0; i<42; i++, cursor.setUTCDate(cursor.getUTCDate()+1)) {
+    const day = isoDay(cursor);
+    const active = day >= firstDay && day <= lastDay && day.startsWith(month);
+    days.push(`<button type="button" data-day="${day}" aria-label="${day}" aria-pressed="${selectedDay===day}" ${active?'':'disabled'}>${cursor.getUTCDate()}</button>`);
+  }
+  calendarPanel.innerHTML = `<div class="mw-month"><strong aria-live="polite">${caption}</strong><button type="button" data-step="-1" aria-label="${T('上个月','Previous month')}" ${month<=firstDay.slice(0,7)?'disabled':''}>‹</button><button type="button" data-step="1" aria-label="${T('下个月','Next month')}" ${month>=lastDay.slice(0,7)?'disabled':''}>›</button></div><div class="mw-days">${weekdays.map(x=>'<span>'+x+'</span>').join('')}${days.join('')}</div><div class="mw-calendar-actions"><button type="button" data-day="">${T('清除','Clear')}</button><button type="button" data-day="${lastDay}">${T('今天','Today')}</button></div>`;
+}
+dateFilter.ontoggle = () => {
+  if (dateFilter.open) { month=(selectedDay || lastDay).slice(0,7); renderCalendar(); }
+};
+calendarPanel.onclick = event => {
+  const button = event.target.closest('button');
+  if (!button || button.disabled) return;
+  if (button.dataset.step) {
+    const next = new Date(month+'-01T00:00:00Z');
+    next.setUTCMonth(next.getUTCMonth()+Number(button.dataset.step));
+    month=isoDay(next).slice(0,7);
+    renderCalendar();
+    calendarPanel.querySelector('[data-step]:not(:disabled)')?.focus();
+    return;
+  }
+  selectedDay = button.dataset.day;
+  calendarLabel.textContent = selectedDay || T('全部申报日','All filing dates');
+  dateFilter.open = false;
+  calendarLabel.focus();
+  page=1;
+  load();
+};
+document.addEventListener('click',event=>{if (!dateFilter.contains(event.target)) dateFilter.open=false;});
+dateFilter.onkeydown = event => {
+  if (event.key==='Escape') { dateFilter.open=false; calendarLabel.focus(); }
+};
 const parts = new Intl.DateTimeFormat('en-US', {
   timeZone:'America/New_York', year:'numeric', month:'2-digit', day:'2-digit'
 }).formatToParts(new Date());
 const todayET = Object.fromEntries(parts.map(({type,value})=>[type,value]));
 const firstDate = new Date(Date.UTC(+todayET.year,+todayET.month-1,+todayET.day));
 firstDate.setUTCDate(firstDate.getUTCDate()-29);
-updateDates(firstDate.toISOString().slice(0,10));
-const linkedDay = new URLSearchParams(location.search).get('day');
-if ([...dateFilter.options].some(option => option.value === linkedDay)) dateFilter.value = linkedDay;
-function updateDates(firstDay) {
-  if (dateFilter.dataset.start === firstDay) return;
-  const selected = dateFilter.value;
-  const options = [new Option(T('全部申报日','All filing dates'), '')];
-  const day = new Date(firstDay + 'T00:00:00Z');
-  for (let i = 0; i < 30; i++, day.setUTCDate(day.getUTCDate()+1)) {
-    const iso = day.toISOString().slice(0,10);
-    options.splice(1, 0, new Option(iso, iso));
-  }
-  dateFilter.replaceChildren(...options);
-  dateFilter.value = [...dateFilter.options].some(o => o.value === selected) ? selected : '';
-  dateFilter.dataset.start = firstDay;
-}
-dateFilter.onchange = () => { page = 1; load(); };
+updateDates(isoDay(firstDate));
 async function get(path){const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),20000);try{let r=await fetch(api+path,{signal:ctrl.signal,credentials:'omit'});if(!r.ok)throw Error(String(r.status));return await r.json()}finally{clearTimeout(timer)}}
 function showStatus(s){lastStatus=s;updateDates(s.window_start);const error=mode==='insider'?(s.feed_error||s.index_error):s.ftd_error;
 root.querySelector('.mw-status').innerHTML=`${mode==='insider'?T('披露窗口：','Filing window: ')+esc(s.window_start)+T(' 至今 · 每分钟检查 SEC',' to present · SEC checked every minute'):T('最新可得窗口：','Latest available window: ')+esc(s.ftd_start)+' — '+esc(s.ftd_end)+T(' · 每 6 小时检查新批次',' · New batches checked every 6 hours')}<br>${T('最近成功检查：','Last successful check: ')}${esc(time(mode==='insider'?s.checked:s.ftd_checked))}${mode==='insider'&&s.pending?`<br>${T('近期索引已收录','Recent index contains')} ${num(s.filings)} ${T('份披露；详情已解析','filings; details parsed for')} ${num(s.parsed)}${T('份，其余待补录。搜索覆盖会随解析进度完善。','; the remainder are pending. Search coverage expands as parsing completes.')}`:''}`;
@@ -61,7 +101,7 @@ root.querySelector('.mw-stats').innerHTML=mode==='insider'?`<div><span>${T('近�
 }
 async function load(quiet=false){const v=++version;
 if(!quiet){const list=root.querySelector('.mw-list');list.style.minHeight=list.getBoundingClientRect().height+'px';}if(!quiet)root.querySelector('.mw-list').innerHTML=`<p>${T('正在读取 SEC 披露…','Loading SEC disclosures…')}</p>`;
-try{const data=await get((mode==='insider'?'/insider/days':'/ftd')+'?'+new URLSearchParams({q:query,form,page,day:dateFilter.value}));if(v!==version)return;showStatus(data.status);draw(data)}catch(e){if(v!==version)return;if(quiet){root.querySelector('.mw-status').textContent=T('刷新暂未成功，保留当前数据。','Refresh failed; keeping current data.');return}root.querySelector('.mw-list').innerHTML=`<p class="mw-error">${T('暂时无法读取数据，请稍后点击刷新。','Data is temporarily unavailable. Please try Refresh shortly.')}</p>`}}
+try{const data=await get((mode==='insider'?'/insider/days':'/ftd')+'?'+new URLSearchParams({q:query,form,page,day:selectedDay}));if(v!==version)return;showStatus(data.status);draw(data)}catch(e){if(v!==version)return;if(quiet){root.querySelector('.mw-status').textContent=T('刷新暂未成功，保留当前数据。','Refresh failed; keeping current data.');return}root.querySelector('.mw-list').innerHTML=`<p class="mw-error">${T('暂时无法读取数据，请稍后点击刷新。','Data is temporarily unavailable. Please try Refresh shortly.')}</p>`}}
 function draw(data){const insider=mode==='insider';root.querySelector('.mw-list').style.minHeight='';root.querySelector('.mw-list').classList.toggle('mw-panel',true);
 const headers=insider?[T('申报日','Filed'),T('公司','Company'),T('申报数','Filings'),T('申报类型','Forms')]:[T('股票／CUSIP','Ticker / CUSIP'),T('结算日','Settlement date'),T('未交割股数','FTD shares'),T('参考价格','Reference price'),T('参考金额','Reference value'),T('来源','Source')];
 root.querySelector('.mw-list').innerHTML=`<table><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${data.rows.length?data.rows.map((r,i)=>`<tr class="mw-record"><td>${insider?esc(r.filed):`<button class="mw-link" aria-expanded="false" data-detail="${esc(r.cusip)}" data-row="${i}">${esc(r.ticker)}</button><small>${esc(r.cusip)}</small>`}</td>${insider?`<td><button class="mw-link" aria-expanded="false" data-detail="${esc(r.accession)}" data-row="${i}">${esc(r.ticker||r.issuer)}</button>${r.ticker?`<small>${esc(r.issuer)}</small>`:''}${!r.parsed?`<small>${T('公司身份待解析','Issuer pending')}</small>`:''}</td><td>${num(r.filings)}</td><td>${r.forms.split(',').map(f=>'Form '+esc(f)).join(' · ')}</td>`:`<td>${esc(r.day)}<small>${esc(r.name)}</small></td><td class="mw-number">${num(r.quantity)}</td><td class="mw-number">${r.price==null?'—':'$'+num(r.price)}</td><td class="mw-number">${r.price==null?'—':'$'+num(r.price*r.quantity)}</td><td><a href="${safeLink(r.batch)}" target="_blank" rel="noopener">SEC ↗</a></td>`}</tr><tr class="mw-detail-row"><td colspan="${headers.length}"><div class="mw-detail" id="mw-detail-${i}"><div><div class="mw-detail-content"></div></div></div></td></tr>`).join(''):`<tr><td colspan="${headers.length}" class="mw-empty">${T('当前条件下暂无已收录记录。','No collected records match these filters.')}</td></tr>`}</tbody></table>`;

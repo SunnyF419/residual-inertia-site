@@ -33,3 +33,19 @@ html:has([data-market-watch]){overflow-y:scroll;scrollbar-gutter:stable}
 .mw-filing { border-bottom:1px solid var(--grid,#d9dbd4); }
 .mw-filing summary { padding:12px 0; cursor:pointer; font-weight:500; }
 .mw-filing summary:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+.mw-calendar { position:relative; }
+.mw-calendar summary { cursor:pointer; white-space:nowrap; padding:12px 5px; border-bottom:1px solid #a5aba6; list-style:none; }
+.mw-calendar summary::-webkit-details-marker { display:none; }
+.mw-calendar summary::after { content:'⌄'; margin-inline-start:12px; }
+.mw-calendar-panel { position:absolute; z-index:5; right:0; top:calc(100% + 4px); width:min(280px,90vw); box-sizing:border-box; padding:12px; border:1px solid var(--grid,#d9dbd4); border-radius:5px; background:var(--surface,#fafaf6); box-shadow:0 6px 18px #0a212218; }
+.mw-calendar-panel button { padding:5px; border:0; background:transparent; color:inherit; font:inherit; cursor:pointer; border-radius:3px; }
+.mw-calendar-panel button:disabled { color:#a9ada9; cursor:default; }
+.mw-calendar-panel button:not(:disabled):hover { background:#e4eae4; }
+.mw-month,.mw-calendar-actions { display:flex; align-items:center; gap:6px; }
+.mw-month strong { margin-right:auto; }
+.mw-month button { width:32px; font-size:20px; }
+.mw-days { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; }
+.mw-days span { padding-block:6px; color:var(--slate,#526260); font-size:12px; }
+.mw-days button[aria-pressed=true] { background:#103b38; color:white; }
+.mw-calendar-actions { justify-content:space-between; margin-top:6px; }
+@media(max-width:650px){.mw-toolbar:has(.mw-calendar[open]) { position:relative; }.mw-calendar { position:static; }.mw-calendar-panel { left:0; right:auto; }}
