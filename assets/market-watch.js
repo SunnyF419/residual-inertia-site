@@ -82,17 +82,33 @@ document.addEventListener('click', event => {
     card.textContent = buyerHint();
   }
 }, true);
-function drawBuyerMix(body, mix) {
+function drawBuyerMix(body, mix, filings) {
   if (!mix) return;
+  if (!mix.buyers.length) {
+    const types = new Set();
+    for (const {payload} of filings) {
+      if (!payload) continue;
+      if (payload.form.split('/')[0] === '3') types.add(T('初始持仓','initial holdings'));
+    }
+    for (const {payload} of filings) {
+      for (const trade of payload?.transactions || []) {
+        if (trade.transaction && trade.code) types.add(trade.code === 'A' ? T('股权授予','equity grants') : code(trade.code));
+      }
+    }
+    const note = document.createElement('p');
+    note.textContent = T('近 30 天未查到可统计的买入。','No qualifying purchases found in the past 30 days.');
+    if (types.size) {
+      const labels = new Intl.ListFormat(en ? 'en' : 'zh-CN').format([...types]);
+      note.textContent += T('本日披露包括',' This day’s filings include ') + labels + T('。','.');
+    }
+    body.append(note);
+    return;
+  }
   const panel = document.createElement('section');
   panel.className = 'mw-buyers';
   body.querySelector('h3').after(panel);
   const heading = T('近 30 天买入金额占比', 'Share of purchases over 30 days');
   panel.innerHTML = '<h4>'+heading+'</h4><small>'+esc(mix.start)+' — '+esc(mix.end)+'</small>';
-  if (!mix.buyers.length) {
-    panel.insertAdjacentHTML('beforeend', '<p>'+T('这家公司在窗口内暂无可归属到个人申报人的已知金额买入。','No priced purchases attributable to individual filers in this window.')+'</p>');
-    return;
-  }
   const colors = ['#184b46','#65988b','#b08240','#467b9b','#a46160','#687655'];
   const buyers = mix.buyers;
   const total = buyers.reduce((sum, buyer) => sum + buyer.amount, 0);
@@ -135,7 +151,7 @@ const d = await get(path+'?'+params);
 if(detailVersion!==version||!box.isConnected)return;
 if(detailMode==='insider'){
   body.innerHTML = '<h3>'+esc(button.textContent)+'</h3>';
-  drawBuyerMix(body,d.buyer_mix);
+  drawBuyerMix(body,d.buyer_mix,d.filings);
   for (const filing of d.filings) {
     const disclosure = document.createElement('details');
     disclosure.className = 'mw-filing';
