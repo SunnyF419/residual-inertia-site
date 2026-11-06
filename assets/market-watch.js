@@ -79,7 +79,7 @@ drawBuyerMix(body,d.buyer_mix);
 }catch{body.textContent=T('详情暂不可用，请稍后重试。','Details unavailable. Please try again shortly.')}}
 root.querySelector('form').onsubmit=e=>{e.preventDefault();query=root.querySelector('input').value;page=1;load()};root.querySelector('select').onchange=e=>{form=e.target.value;page=1;load()};root.querySelector('.mw-refresh').onclick=()=>load();
 root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(mode===b.dataset.tab)return;mode=b.dataset.tab;if(lastStatus)showStatus(lastStatus);page=1;query='';form='all';root.querySelector('input').value='';root.querySelector('select').value='all';root.querySelector('select').style.visibility=mode==='ftd'?'hidden':'';root.querySelector('select').disabled=mode==='ftd';root.querySelector('input').placeholder=mode==='ftd'?T('股票代码、公司或 CUSIP','Ticker, company or CUSIP'):T('股票代码、公司或内部人姓名','Ticker, company or insider name');root.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));load()});
-query = (new URLSearchParams(location.search).get('q') || '').trim().slice(0, 100);
+query = (new URLSearchParams(location.search).get('company') || '').trim().slice(0, 100);
 root.querySelector('.mw-search input').value = query;
 load();setInterval(()=>{if(!document.hidden&&!root.querySelector('.mw-detail.open'))load(true)},60000);
 })();
