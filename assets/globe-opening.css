@@ -1,0 +1,14 @@
+.global-main { position:relative; }
+.globe-opening:not([hidden]) { position:absolute; inset:0; z-index:2; display:grid; place-content:center; justify-items:center; gap:16px; background:#f2f2eb; color:#526260; font:500 13px/1.5 system-ui,sans-serif; pointer-events:none; will-change:opacity; transition:opacity 1s ease; }
+.globe-opening.leaving { opacity:0; }
+.globe-stage { position:relative; width:min(82vw,60vh,clamp(238px,40vmin,410px)); aspect-ratio:1; isolation:isolate; }
+.globe-stage::after { content:""; position:absolute; inset:8%; background:linear-gradient(#93a69c,#93a69c) center top/1px 6px,linear-gradient(#93a69c,#93a69c) center bottom/1px 6px,linear-gradient(#93a69c,#93a69c) left center/6px 1px,linear-gradient(#93a69c,#93a69c) right center/6px 1px; background-repeat:no-repeat; }
+.globe-ring { position:absolute; inset:10%; border-radius:50%; border:1px solid transparent; border-top-color:#93a69c; animation:globe-sweep 12s linear infinite; will-change:transform; }
+.globe-land { position:absolute; inset:23%; background:url(globe-regions.png) center var(--land-position,0%)/100% 700% no-repeat; transform:translateZ(0); }
+.globe-track { position:absolute; inset:0; will-change:transform,opacity; }
+.globe-track i { position:absolute; top:48.65%; left:45%; width:10%; height:2.7%; background:linear-gradient(90deg,#204942 0 32%,transparent 32% 38%,#af8c54 38% 62%,transparent 62% 68%,#204942 68%); border-radius:1px; }
+.globe-track.back { opacity:0; }
+.globe-land { opacity:0; transition:opacity .45s ease; will-change:opacity; }
+.land-ready .globe-land { opacity:1; }
+@keyframes globe-sweep { from {transform:rotate(-48deg)} to {transform:rotate(312deg)} }
+@media(prefers-reduced-motion:reduce){.globe-ring { animation:none; }.globe-opening:not([hidden]) { transition:none; }}

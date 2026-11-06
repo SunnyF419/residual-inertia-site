@@ -99,7 +99,7 @@ def main():
         embedded=(OUT/route).read_text(encoding='utf-8')
         assert '<iframe class="global-frame"' in embedded
         language='en' if route.startswith('en/') else 'zh'
-        assert f'src="https://global.residualinertia.com/?embed=1&amp;lang={language}"' in embedded
+        assert f'src="https://global.residualinertia.com/?embed=1&amp;lang={language}&amp;intro=host"' in embedded
         assert '?focus=1' not in embedded
         assert 'allowfullscreen' in embedded
         assert 'width="1280" height="800"' in embedded

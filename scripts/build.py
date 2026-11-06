@@ -1363,7 +1363,13 @@ def current_market_page(s):
 
 
 def global_pulse():
-    return f'''<div class="sr-only"><h1>{L('global_title')}</h1></div><iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}" title="{L('global_title')}" width="1280" height="800" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'''
+    return f'''<div class="sr-only"><h1>{L('global_title')}</h1></div>
+<link rel="stylesheet" href="/assets/globe-opening.css">
+<div class="globe-opening" hidden role="status"><div class="globe-stage" aria-hidden="true">
+<div class="globe-ring"></div><div class="globe-track back"><i></i></div><div class="globe-land"></div><div class="globe-track front"><i></i></div></div>
+<span>{'Loading globe…' if LANG == 'en' else '正在载入地球…'}</span></div>
+<script defer src="/assets/globe-opening.js"></script>
+<iframe class="global-frame" src="https://global.residualinertia.com/?embed=1&amp;lang={'en' if LANG == 'en' else 'zh'}&amp;intro=host" title="{L('global_title')}" width="1280" height="800" allow="fullscreen; camera https://global.residualinertia.com" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'''
 
 
 
