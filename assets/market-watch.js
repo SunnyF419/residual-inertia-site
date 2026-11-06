@@ -24,13 +24,62 @@ const pages=Math.max(1,Math.ceil(data.total/data.page_size));root.querySelector(
 root.querySelector('.mw-footnote').innerHTML=insider?T('Form 3 是初始持股申报；Form 4 是持股变动；Form 5 是年度补充申报。窗口按申报日期筛选，交易可能发生在更早日期。P / S 可包含公开市场或私人买卖；授予、行权、缴税和赠与单独展示。修订申报保留 /A 标记，不与原申报合并统计交易金额。','Form 3 reports initial ownership; Form 4 reports changes; Form 5 is an annual supplemental filing. The window uses filing dates; transactions may be earlier. P / S can include open-market or private purchases and sales. Grants, exercises, tax payments and gifts remain separate. Amendments retain /A and are not added to original filings as transaction totals.'):T('FTD 是某结算日尚未交割的累计净余额，并非当日新增量，也不等于裸卖空。不同日期的余额不可相加。列表展示最新可得结算日，展开查看最近两个官方半月批次；参考金额为股数 × SEC 文件参考价，并非成交额或空头仓位。缺失日期不自动补零。','FTD is the aggregate net outstanding balance on a settlement date, not new daily failures or evidence of naked short selling. Do not sum balances across dates. The list shows the latest available settlement date; expand for the latest two official half-month batches. Reference value is shares × the SEC reference price, not turnover or a short position. Missing dates are not filled with zeros.');
 root.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=Number(b.dataset.page);load()});
 root.querySelectorAll('.mw-record').forEach(row=>{const button=row.querySelector('[data-detail]');button.setAttribute('aria-controls','mw-detail-'+button.dataset.row);row.onclick=e=>{if(e.target.closest('a'))return;if(window.getSelection()?.toString())return;detail(button)};});}
+function drawBuyerMix(body, mix) {
+  if (!mix) return;
+  const panel = document.createElement('section');
+  panel.className = 'mw-buyers';
+  body.querySelector('h3').after(panel);
+  const heading = T('买入金额占比', 'Share of purchase value');
+  panel.innerHTML = '<h4>'+heading+'</h4><small>'+esc(mix.start)+' — '+esc(mix.end)+'</small>';
+  if (!mix.buyers.length) {
+    panel.insertAdjacentHTML('beforeend', '<p>'+T('这家公司在窗口内暂无可归属到个人申报人的已知金额买入。','No priced purchases attributable to individual filers in this window.')+'</p>');
+    return;
+  }
+  const colors = ['#184b46','#65988b','#b08240','#467b9b','#a46160','#687655'];
+  const buyers = mix.buyers;
+  const total = buyers.reduce((sum, buyer) => sum + buyer.amount, 0);
+  const money = amount => new Intl.NumberFormat(en?'en-US':'zh-CN',{style:'currency',currency:'USD',currencyDisplay:'narrowSymbol'}).format(amount);
+  const percent = amount => new Intl.NumberFormat(en?'en-US':'zh-CN',{style:'percent',maximumFractionDigits:2}).format(amount / total);
+  const point = (r, angle) => [100+r*Math.sin(angle),100-r*Math.cos(angle)].join(' ');
+  let angle = 0;
+  const slices = buyers.map((buyer, i) => {
+    const start = angle;
+    angle += buyer.amount / total * Math.PI * 2;
+    const color = colors[i % colors.length];
+    if (buyers.length === 1) return '<circle data-slice="0" cx="100" cy="100" r="69" fill="none" stroke="'+color+'" stroke-width="34"/>';
+    const large = angle-start > Math.PI ? 1 : 0;
+    const path = 'M '+point(86,start)+' A86 86 0 '+large+' 1 '+point(86,angle)+' L '+point(52,angle)+' A52 52 0 '+large+' 0 '+point(52,start)+' Z';
+    return '<path data-slice="'+i+'" fill="'+color+'" d="'+path+'"/>';
+  }).join('');
+  panel.insertAdjacentHTML('beforeend','<div class="mw-mix-layout"><svg viewBox="0 0 200 200" aria-hidden="true">'+slices+'<text x="100" y="99">'+buyers.length+'</text><text x="100" y="116" class="mw-ring-label">'+T('位买家','buyers')+'</text></svg><div class="mw-mix-info" aria-live="polite"></div></div><div class="mw-mix-key">'+buyers.map((b,i)=>'<button type="button" aria-pressed="false" data-buyer="'+i+'"><i style="background:'+colors[i%colors.length]+'"></i>'+esc(b.name)+'</button>').join('')+'</div><small>'+T('按交易日汇总已解析的非衍生证券 P 类买入；仅计单一申报人、金额已知的原始申报。涉及修订的同人同报告期记录暂不计入。','Based on parsed, priced non-derivative P purchases by transaction date. Single-filer original reports only; amended owner-periods are excluded.')+'</small>');
+  const card = panel.querySelector('.mw-mix-info');
+  const select = index => {
+    const buyer = buyers[index];
+    card.classList.add('open');
+    panel.querySelectorAll('[data-slice]').forEach(el=>el.classList.toggle('selected',Number(el.dataset.slice)===index));
+    panel.querySelectorAll('[data-buyer]').forEach(el=>el.setAttribute('aria-pressed',String(Number(el.dataset.buyer)===index)));
+    card.innerHTML = '<small>'+T('买家','Buyer')+'</small><strong>'+esc(buyer.name)+'</strong><b>'+money(buyer.amount)+'</b><span>'+T('占已计入金额的 ','Share of included value: ')+percent(buyer.amount)+'</span>';
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      card.getAnimations().forEach(anim=>anim.cancel());
+      card.animate([{opacity:.65,transform:'translateY(5px)'},{opacity:1,transform:'none'}],{duration:220,easing:'ease-out'});
+    }
+  };
+  panel.onclick = event => {
+    const hit = event.target.closest('[data-slice],[data-buyer]');
+    if (hit) select(Number(hit.dataset.slice ?? hit.dataset.buyer));
+  };
+  card.textContent = T('点击色块或买家姓名，查看金额与占比。','Select a slice or buyer to see the amount and share.');
+}
 async function detail(button){const detailMode=mode,detailVersion=version;const box=root.querySelector('#mw-detail-'+button.dataset.row),body=box.querySelector('.mw-detail-content');if(box.classList.contains('open')){box.classList.remove('open');button.setAttribute('aria-expanded','false');return}box.classList.add('open');button.setAttribute('aria-expanded','true');body.textContent=T('正在读取详情…','Loading details…');
 try{const d=await get('/'+detailMode+'/detail?id='+encodeURIComponent(button.dataset.detail));if(detailVersion!==version||!box.isConnected)return;
 if(detailMode==='insider'){if(!d.payload){body.innerHTML=`<p>${T('该披露已收录，结构化详情正在补录。现在可以直接查看 SEC 原文。','This filing is indexed; structured details are still being processed. You can read the SEC original now.')}</p><a href="${safeLink(d.source)}" target="_blank" rel="noopener">SEC ↗</a>`;return}const p=d.payload;
 body.innerHTML=`<h3>${esc(p.issuer)} · Form ${esc(p.form)}</h3><p>${T('报告期','Report period')}: ${esc(p.period)} · ${esc(d.accession)}<br>10b5-1: ${p.plan_10b5_1==='1'||p.plan_10b5_1==='true'?T('已勾选','Checked'):T('未勾选或未披露','Not checked or not disclosed')}</p><div class="mw-list"><table><thead><tr>${[T('证券／日期','Security / date'),T('代码','Code'),T('股数','Shares'),T('每股价格','Price'),T('金额','Value'),T('交易后持有','Held after'),T('持有方式','Ownership')].map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${p.transactions.map(t=>`<tr><td>${esc(t.security)}<small>${esc(t.date||p.period)} · ${t.derivative?T('衍生证券','Derivative'):T('非衍生证券','Non-derivative')}</small></td><td>${esc(t.code||T('持仓','Holding'))}<small>${esc(code(t.code))}</small></td><td class="mw-number">${num(t.shares)}</td><td class="mw-number">${t.price==null?'—':'$'+num(t.price)}</td><td class="mw-number">${t.value==null?'—':'$'+num(t.value)}</td><td class="mw-number">${num(t.held_after)}</td><td>${esc(t.ownership)}<small>${esc(t.nature)}</small></td></tr>`).join('')}</tbody></table></div><p>${T('英文原始脚注（自动翻译暂未启用）','Original footnotes')}</p>${Object.entries(p.footnotes).map(([id,text])=>`<p><b>${esc(id)}</b> ${esc(text)}</p>`).join('')}<p>${esc(p.remarks||'')}</p><a href="${safeLink(d.source)}" target="_blank" rel="noopener">${T('查看 SEC 原始申报','Read original SEC filing')} ↗</a>`;
+drawBuyerMix(body,d.buyer_mix);
 }else{const h=d.history,max=Math.max(...h.map(r=>r.quantity),1);body.innerHTML=`<h3>${esc(h[0].ticker)} · ${esc(d.cusip)}</h3><p>${T('各结算日未交割余额；仅展示文件中存在的记录。','Outstanding balance by settlement date; only reported records are shown.')}</p><svg viewBox="0 0 800 160" role="img" aria-label="${T('未交割余额柱状图','FTD balance bar chart')}">${h.map((r,i)=>`<rect x="${i*780/h.length+10}" y="${130-r.quantity/max*115}" width="${Math.max(2,780/h.length-4)}" height="${r.quantity/max*115}" fill="#5d8f7e"><title>${esc(r.day)}: ${num(r.quantity)}</title></rect>`).join('')}<text x="10" y="155" font-size="12" fill="#526260">${esc(h[0].day)}</text><text x="690" y="155" font-size="12" fill="#526260">${esc(h.at(-1).day)}</text></svg><p>${T('窗口内单日峰值','Highest daily balance in window')}: ${num(max)} · ${T('最近记录','Latest record')}: ${esc(h.at(-1).day)}</p><a href="${safeLink(h.at(-1).batch)}" target="_blank" rel="noopener">${T('SEC 来源批次','SEC source batch')} ↗</a>`}
 }catch{body.textContent=T('详情暂不可用，请稍后重试。','Details unavailable. Please try again shortly.')}}
 root.querySelector('form').onsubmit=e=>{e.preventDefault();query=root.querySelector('input').value;page=1;load()};root.querySelector('select').onchange=e=>{form=e.target.value;page=1;load()};root.querySelector('.mw-refresh').onclick=()=>load();
 root.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{if(mode===b.dataset.tab)return;mode=b.dataset.tab;if(lastStatus)showStatus(lastStatus);page=1;query='';form='all';root.querySelector('input').value='';root.querySelector('select').value='all';root.querySelector('select').style.visibility=mode==='ftd'?'hidden':'';root.querySelector('select').disabled=mode==='ftd';root.querySelector('input').placeholder=mode==='ftd'?T('股票代码、公司或 CUSIP','Ticker, company or CUSIP'):T('股票代码、公司或内部人姓名','Ticker, company or insider name');root.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));load()});
+query = (new URLSearchParams(location.search).get('q') || '').trim().slice(0, 100);
+root.querySelector('.mw-search input').value = query;
 load();setInterval(()=>{if(!document.hidden&&!root.querySelector('.mw-detail.open'))load(true)},60000);
 })();

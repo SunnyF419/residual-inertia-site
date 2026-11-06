@@ -1,4 +1,5 @@
 import io
+import json
 from pathlib import Path
 TEST_ROOT=Path(__file__).resolve().parents[2]/".runtime"/"market-watch-tests"
 TEST_ROOT.mkdir(parents=True,exist_ok=True)
@@ -6,7 +7,7 @@ import tempfile
 import unittest
 import zipfile
 from datetime import date
-from service import Store, parse_ftd, parse_ownership
+from service import buyer_mix, Store, parse_ftd, parse_ownership
 
 
 class MarketWatchTests(unittest.TestCase):
@@ -30,6 +31,28 @@ class MarketWatchTests(unittest.TestCase):
             self.assertIsNone(p['transactions'][0]['price'])
             self.assertIsNone(p['transactions'][0]['value'])
             self.assertEqual(p['transactions'][0]['footnotes'], ['F1'])
+
+    def test_buyer_mix_attributes_only_eligible_purchases(self):
+        with tempfile.TemporaryDirectory(dir=TEST_ROOT) as directory:
+            store = Store(directory)
+            with store.connect() as db:
+                def add(key, names, value, **overrides):
+                    trade = dict(transaction=True, derivative=False, code='P', acquired_disposed='A',
+                                 date='2026-10-29', value=value)
+                    trade.update(overrides)
+                    filing = dict(issuer_cik='123', form='4', period='2026-10-29',
+                                  owners=[dict(cik=name, name=name) for name in names], transactions=[trade])
+                    db.execute('INSERT INTO filings(accession,filed,form,name,source,payload) VALUES(?,?,?,?,?,?)',
+                               (key, '2026-10-30', '4', '', '', json.dumps(filing)))
+                add('a', ['Buyer A'], 200)
+                add('b', ['Buyer A'], 100)
+                add('c', ['Buyer B'], 100)
+                add('d', ['Buyer A', 'Buyer B'], 600)
+                add('e', ['Buyer A'], 1000, derivative=True)
+                add('f', ['Buyer A'], None)
+                add('g', ['Buyer B'], 500, date='2026-09-15')
+                result = buyer_mix(db, '123', date(2026, 10, 30))
+                self.assertEqual([b['amount'] for b in result['buyers']], [300, 100])
 
     def test_ftd_balances_are_not_summed(self):
         data = io.BytesIO()

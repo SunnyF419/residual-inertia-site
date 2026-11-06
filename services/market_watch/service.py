@@ -95,6 +95,39 @@ def parse_ownership(raw):
             'footnotes': {x.get('id', ''): ''.join(x.itertext()) for x in root.findall('footnotes/footnote')}}
 
 
+def buyer_mix(db, issuer_cik, today):
+    """Attribute priced purchases to identified single filers within the transaction window."""
+    start = (today - timedelta(days=29)).isoformat()
+    end = today.isoformat()
+    totals = {}
+    if issuer_cik:
+        records = db.execute("""
+            SELECT payload FROM filings
+            WHERE json_extract(payload, '$.issuer_cik')=? AND filed BETWEEN ? AND ?
+            ORDER BY filed DESC, accession DESC
+        """, (issuer_cik, start, end))
+        filings = [json.loads(row[0]) for row in records]
+        # An amendment may replace only part of the original report. Omit the
+        # affected owner/period until reconciliation, instead of double counting.
+        corrected = {(owner['cik'], filing['period']) for filing in filings
+                     if filing['form'].endswith('/A') for owner in filing['owners']}
+        for filing in filings:
+            if filing['form'] not in ('4', '5') or len(filing['owners']) != 1:
+                continue
+            owner = filing['owners'][0]
+            if not owner['cik'] or (owner['cik'], filing['period']) in corrected:
+                continue
+            for trade in filing['transactions']:
+                if not (trade['transaction'] and not trade['derivative'] and trade['code'] == 'P'
+                        and trade['acquired_disposed'] == 'A' and start <= trade['date'] <= end
+                        and trade['value'] is not None and trade['value'] > 0):
+                    continue
+                buyer = totals.setdefault(owner['cik'], {'name': owner['name'], 'amount': 0})
+                buyer['amount'] += trade['value']
+    buyers = sorted(totals.values(), key=lambda item: (-item['amount'], item['name']))
+    return {'start': start, 'end': end, 'buyers': buyers}
+
+
 def parse_ftd(raw):
     with zipfile.ZipFile(io.BytesIO(raw)) as archive:
         entries = [x for x in archive.infolist() if x.filename.lower().endswith('.txt')]
@@ -132,6 +165,7 @@ class Store:
             CREATE TABLE IF NOT EXISTS filings(accession TEXT PRIMARY KEY, filed TEXT NOT NULL,
               form TEXT NOT NULL, name TEXT NOT NULL, source TEXT NOT NULL, payload TEXT,
               attempts INTEGER NOT NULL DEFAULT 0, error TEXT, updated TEXT);
+            CREATE INDEX IF NOT EXISTS filing_issuer ON filings(json_extract(payload, '$.issuer_cik'), filed);
             CREATE INDEX IF NOT EXISTS filing_date ON filings(filed DESC);
             CREATE TABLE IF NOT EXISTS ftd(day TEXT, cusip TEXT, ticker TEXT, name TEXT,
               quantity INTEGER, price REAL, batch TEXT, PRIMARY KEY(day,cusip));
@@ -218,8 +252,10 @@ class Store:
                 row = db.execute('SELECT * FROM filings WHERE accession=?', (key,)).fetchone()
                 if not row:
                     return None
-                return {'accession': key, 'filed': row['filed'], 'source': row['source'],
-                        'payload': json.loads(row['payload']) if row['payload'] else None}
+                payload = json.loads(row['payload']) if row['payload'] else None
+                return {'buyer_mix': buyer_mix(db, payload['issuer_cik'], sec_today()) if payload else None,
+                        'accession': key, 'filed': row['filed'], 'source': row['source'],
+                        'payload': payload}
             rows = [dict(x) for x in db.execute('SELECT * FROM ftd WHERE cusip=? ORDER BY day', (key,))]
             return {'cusip': key, 'history': rows} if rows else None
 
