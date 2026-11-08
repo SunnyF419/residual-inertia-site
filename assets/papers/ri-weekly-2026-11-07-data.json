@@ -1,0 +1,84 @@
+{
+  "researchId": "RI-WR-2026-W45",
+  "dataThrough": "2026-11-06",
+  "regime": {
+    "date": "2026-11-06",
+    "status": "PROVISIONAL",
+    "score": 64.7,
+    "state": "Caution",
+    "marketRisk": 87.9,
+    "participation": 54.1,
+    "financialStress": 28.5,
+    "fragility": 88.3,
+    "hmlRevisedCoverageAndEstimateRules": true,
+    "umdProxyRetained": true,
+    "directCrossVersionComparison": false
+  },
+  "weeklyRisk": {
+    "signalDate": "2026-11-06",
+    "effectiveDate": "2026-11-09",
+    "riskLevel": 6,
+    "referenceExposurePct": 15,
+    "status": "CURRENT_WITH_LAGGED_INPUTS"
+  },
+  "breadth": {
+    "compositeDate": "2026-10-31",
+    "compositePct": 44.2,
+    "monthEndAbove200dmaPct": 45.5,
+    "monthEnd12mOutperformBenchmarkPct": 42.85,
+    "dailyNowcastDate": "2026-11-06",
+    "dailyNowcastAbove200dmaPct": 43.1
+  },
+  "financialConditions": {
+    "date": "2026-10-30",
+    "nfci": -0.459,
+    "anfci": -0.435,
+    "spread": -0.024,
+    "nfci4wChange": 0.049,
+    "anfci4wChange": 0.095
+  },
+  "factorCrowding": {
+    "date": "2026-09-30",
+    "longShortNoMarketLevel": "L3",
+    "longOnlyBetaAdjustedLevel": "L4"
+  },
+  "factorValuation": {
+    "date": "2026-11-06",
+    "hmlHistoricalPercentile": 94.3
+  },
+  "livermoreS2": {
+    "date": "2026-11-06",
+    "score": 74.6,
+    "state": "Watch"
+  },
+  "hardware": {
+    "date": "2026-11-06",
+    "score": 0,
+    "raw": -34.2,
+    "priorEditionRaw": -12.7,
+    "smh20dPct": -23.1,
+    "relativeQQQpp": -10.4,
+    "above20dmaPct": 4,
+    "above50dmaPct": 4,
+    "stocks": 28,
+    "demand": 0,
+    "supplyChain": 0,
+    "selected20dReturnsPct": {
+      "NXPI": 9.1,
+      "MRVL": -48.7,
+      "INTC": -46.2,
+      "TER": -45.8
+    }
+  },
+  "acm": {
+    "date": "2026-11-03",
+    "startDate": "2026-10-02",
+    "observationIntervals": 21,
+    "fittedYieldPct": 4.922,
+    "expectedShortRatePct": 4.244,
+    "termPremiumPct": 0.677,
+    "fittedYieldChangeBp": -33.22,
+    "expectedShortRateChangeBp": -9.31,
+    "termPremiumChangeBp": -23.91
+  }
+}

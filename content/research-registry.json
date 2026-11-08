@@ -203,6 +203,20 @@
       "pdfSha256": "761f3517e89269db9909cb37c0ea2d7efd66a286dcea9d827062f1bdc08543dc",
       "author": "Taiyang Feng (Sunny)",
       "dataThrough": "2026-10-30"
+    },
+    {
+      "researchId": "RI-WR-2026-W45",
+      "slug": "market-letter-2026-11-07",
+      "title": "长端利率回落，美股内部承压",
+      "collection": "market",
+      "periodDate": "2026-11-07",
+      "preparedDate": "2026-11-08",
+      "registeredDate": "2026-11-08",
+      "version": "1.0",
+      "status": "published",
+      "pdfSha256": "46972c98d63e05e3b79d5174f98a886ed464195ac5e8116f73d110921baa66ae",
+      "author": "Taiyang Feng (Sunny)",
+      "dataThrough": "2026-11-06"
     }
   ],
   "englishEditions": [
@@ -347,6 +361,18 @@
       "pdf": "assets/papers/ri-weekly-2026-10-31-en.pdf",
       "pdfSha256": "8442b34c7d51fda33fba938d483da529ca58dc2f5dd61af4f1257edf649738de",
       "sourcePdfSha256": "761f3517e89269db9909cb37c0ea2d7efd66a286dcea9d827062f1bdc08543dc"
+    },
+    {
+      "researchId": "RI-WR-2026-W45",
+      "slug": "market-letter-2026-11-07",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-11-08",
+      "originalPreparedOrPublishedDate": "2026-11-08",
+      "dataThrough": "2026-11-06",
+      "pdf": "assets/papers/ri-weekly-2026-11-07-en.pdf",
+      "pdfSha256": "d0401a6c54636a831276ce7e6598a8f9df1fe296e489cb58e9c641fa717d1842",
+      "sourcePdfSha256": "46972c98d63e05e3b79d5174f98a886ed464195ac5e8116f73d110921baa66ae"
     }
   ]
 }

@@ -1,0 +1,67 @@
+{
+  "title": "长端利率回落，美股内部承压",
+  "title_en": "Long yields ease as equity internals weaken",
+  "subtitle": "风险模型进入 Level 6，半导体跌势仍未缓解",
+  "subtitle_en": "The risk model moves to Level 6 as semiconductor losses deepen",
+  "summary": "截至 11 月 6 日，美股综合风险评分为 64.7，处于谨慎区间，仍属暂定估算。周频风险模型进入 Level 6，参考风险敞口为 15%。市场风险和脆弱性均处压力区，半导体近 20 个交易日显著跑输 QQQ。长端利率回落减轻了部分估值压力，当前仍维持低风险敞口，等待市场广度和科技板块趋势出现持续修复。",
+  "summary_en": "As of November 6, the provisional U.S. composite regime risk score was 64.7, in the Caution range. The weekly risk model moved to Level 6, with 15% reference exposure. Market risk and fragility were both in the Stress range, and semiconductors sharply lagged QQQ over 20 sessions. Lower long yields ease some valuation pressure. The research stance keeps exposure low while waiting for sustained improvement in market breadth and technology sector trends.",
+  "slug": "market-letter-2026-11-07",
+  "published": "2026-11-08",
+  "periodDate": "2026-11-07",
+  "dataThrough": "2026-11-06",
+  "author": "Taiyang Feng (Sunny)",
+  "dateLabel": "发布日期",
+  "dateLabel_en": "Published",
+  "category": "周报",
+  "collection": "market",
+  "researchId": "RI-WR-2026-W45",
+  "version": "1.0",
+  "reviewStatus": "published",
+  "englishEditionDate": "2026-11-08",
+  "englishEditionVersion": "1.0",
+  "keywords": [
+    "market regime",
+    "weekly risk",
+    "market breadth",
+    "AI hardware",
+    "term premium"
+  ],
+  "references": [
+    {
+      "name": "本期冻结观察数据",
+      "name_en": "Frozen observations for this edition",
+      "url": "https://residualinertia.com/assets/papers/ri-weekly-2026-11-07-data.json"
+    },
+    {
+      "name": "余势美股市场看板",
+      "name_en": "RI U.S. market dashboard",
+      "url": "https://residualinertia.com/overview/"
+    },
+    {
+      "name": "芝加哥联储金融条件指数",
+      "name_en": "Chicago Fed financial conditions indices",
+      "url": "https://www.chicagofed.org/research/data/nfci/current-data"
+    },
+    {
+      "name": "纽约联储 ACM 期限溢价数据",
+      "name_en": "New York Fed ACM term premia",
+      "url": "https://www.newyorkfed.org/research/data-indicators/term-premia-tabs"
+    }
+  ],
+  "note": "中英文各 5 页，权益数据截至 11 月 6 日，ACM 利率数据截至 11 月 3 日。",
+  "note_en": "English edition prepared on 2026-11-08. Five pages. Equities through November 6 and ACM rates through November 3.",
+  "sourceNote": "余势美股研究看板、芝加哥联储 NFCI / ANFCI 与纽约联储 ACM 数据。综合风险评分为暂定估算。",
+  "sourceNote_en": "RI U.S. Market Research Dashboard, Chicago Fed NFCI / ANFCI, and New York Fed ACM data. The composite regime risk score is provisional.",
+  "markdown": "## 权益内部风险仍高\n\n11 月 6 日，美股综合风险评分为 64.7，处于谨慎区间。市场风险为 87.9，脆弱性为 88.3，两项均处压力区。参与度风险为 54.1，处于谨慎区间。金融压力为 28.5，仍属建设性。\n\n研究总览的综合广度仅为 44.2%，对应 10 月末两项广度指标的均值。官网 11 月 6 日的日频估计显示，约 43.1% 的股票位于 200 日均线上方。9 月末多空因子拥挤指标处于 L3，做多组合经贝塔调整后处于 L4。11 月 6 日，泡沫因子层的 HML 估值处在约第 94 历史分位，反映价值组合相对估值极低。Livermore S2 为 74.6，进入观察区，上涨动能衰竭值得关注。\n\n芝加哥联储 10 月 30 日的 NFCI 与 ANFCI 分别为 −0.459 和 −0.435，差值为 −0.024。两项指数仍低于零，近四周均有所上升。结合本期金融压力评分，压力主要集中于股票市场内部，广泛的金融条件收紧尚未得到确认。\n\n## 硬件综合分触底，原始分继续走弱\n\n截至 11 月 6 日，半导体与 AI 硬件综合分仍为 0，原始分为 −34.2，低于上期的 −12.7。SMH 近 20 个交易日下跌 23.1%，落后 QQQ 约 10.4 个百分点。相较于综合分的显示下限，原始分和相对表现更能反映这段时间的进一步走弱。\n\n28 只监测股票中，站上 20 日均线的比例约为 4%，站上 50 日均线的比例也约为 4%。需求动量与供应链确认均为 0。同期 NXPI 上涨 9.1%，而 MRVL、INTC 和 TER 分别下跌 48.7%、46.2% 和 45.8%。少数个股的韧性尚未扩散至板块。\n\n## 期限溢价主导长端利率回落\n\n截至 11 月 3 日，纽约联储发布的 ACM 模型 10 年期美债拟合收益率为 4.922%，其中预期短端利率分项为 4.244%，期限溢价为 0.677%。各项水平按显示精度取整。\n\n从 10 月 2 日到 11 月 3 日，拟合收益率下降 33.22 个基点。其中期限溢价贡献 −23.91 个基点，约占总降幅的 72%，预期短端利率分项贡献 −9.31 个基点。长端估值压力有所缓和，主要来自投资者持有长期国债所要求的补偿下降。\n\n## 维持低敞口，等待两项修复\n\n周频风控模型 11 月 6 日发出 Level 6 信号，对应 15% 参考风险敞口，自 11 月 9 日起生效。该信号使用部分滞后输入。长端利率回落为估值提供一定缓冲，当前仍维持低风险敞口。\n\n提高敞口前，观察市场广度能否持续扩大，以及半导体相对 QQQ 的表现能否企稳，并得到需求动量和供应链确认的共同支持。\n\n本周调整了 HML 数据覆盖门槛及估算规则，综合模型仍采用 UMD 代理输入，其他分项取各自最近可用数据。64.7 为暂定估算，不能直接与旧模型版本的评分做周环比。15% 为模型参考敞口，实际持仓另行记录。",
+  "articleBody": "## 权益内部风险仍高\n\n11 月 6 日，美股综合风险评分为 64.7，处于谨慎区间。市场风险为 87.9，脆弱性为 88.3，两项均处压力区。参与度风险为 54.1，处于谨慎区间。金融压力为 28.5，仍属建设性。\n\n研究总览的综合广度仅为 44.2%，对应 10 月末两项广度指标的均值。官网 11 月 6 日的日频估计显示，约 43.1% 的股票位于 200 日均线上方。9 月末多空因子拥挤指标处于 L3，做多组合经贝塔调整后处于 L4。11 月 6 日，泡沫因子层的 HML 估值处在约第 94 历史分位，反映价值组合相对估值极低。Livermore S2 为 74.6，进入观察区，上涨动能衰竭值得关注。\n\n芝加哥联储 10 月 30 日的 NFCI 与 ANFCI 分别为 −0.459 和 −0.435，差值为 −0.024。两项指数仍低于零，近四周均有所上升。结合本期金融压力评分，压力主要集中于股票市场内部，广泛的金融条件收紧尚未得到确认。\n\n## 硬件综合分触底，原始分继续走弱\n\n截至 11 月 6 日，半导体与 AI 硬件综合分仍为 0，原始分为 −34.2，低于上期的 −12.7。SMH 近 20 个交易日下跌 23.1%，落后 QQQ 约 10.4 个百分点。相较于综合分的显示下限，原始分和相对表现更能反映这段时间的进一步走弱。\n\n28 只监测股票中，站上 20 日均线的比例约为 4%，站上 50 日均线的比例也约为 4%。需求动量与供应链确认均为 0。同期 NXPI 上涨 9.1%，而 MRVL、INTC 和 TER 分别下跌 48.7%、46.2% 和 45.8%。少数个股的韧性尚未扩散至板块。\n\n## 期限溢价主导长端利率回落\n\n截至 11 月 3 日，纽约联储发布的 ACM 模型 10 年期美债拟合收益率为 4.922%，其中预期短端利率分项为 4.244%，期限溢价为 0.677%。各项水平按显示精度取整。\n\n从 10 月 2 日到 11 月 3 日，拟合收益率下降 33.22 个基点。其中期限溢价贡献 −23.91 个基点，约占总降幅的 72%，预期短端利率分项贡献 −9.31 个基点。长端估值压力有所缓和，主要来自投资者持有长期国债所要求的补偿下降。\n\n## 维持低敞口，等待两项修复\n\n周频风控模型 11 月 6 日发出 Level 6 信号，对应 15% 参考风险敞口，自 11 月 9 日起生效。该信号使用部分滞后输入。长端利率回落为估值提供一定缓冲，当前仍维持低风险敞口。\n\n提高敞口前，观察市场广度能否持续扩大，以及半导体相对 QQQ 的表现能否企稳，并得到需求动量和供应链确认的共同支持。\n\n本周调整了 HML 数据覆盖门槛及估算规则，综合模型仍采用 UMD 代理输入，其他分项取各自最近可用数据。64.7 为暂定估算，不能直接与旧模型版本的评分做周环比。15% 为模型参考敞口，实际持仓另行记录。",
+  "pdf": "assets/papers/ri-weekly-2026-11-07.pdf",
+  "coverImage": "assets/papers/ri-weekly-2026-11-07-cover-2160x2880.png",
+  "pdfSha256": "46972c98d63e05e3b79d5174f98a886ed464195ac5e8116f73d110921baa66ae",
+  "pdfLanguage": "zh-CN",
+  "markdown_en": "## Equity internals remain under stress\n\nThe U.S. composite regime risk score was 64.7 on November 6, in the Caution range. Market risk and fragility were both in Stress at 87.9 and 88.3. Participation risk was 54.1 (Caution), while financial stress remained Constructive at 28.5.\n\nThe research dashboard’s composite breadth reading was just 44.2%, the average of two October month-end breadth measures. The public November 6 daily nowcast put the share of stocks above their 200-day moving average at about 43.1%. At September month-end, long-short factor crowding was at L3 and beta-adjusted long-only crowding at L4. On November 6, the HML valuation measure in the bubble factor layer was near its 94th historical percentile, indicating unusually cheap valuations for the value leg relative to the growth leg. Livermore S2 entered Watch at 74.6, flagging the risk of upside exhaustion.\n\nThe Chicago Fed’s NFCI and ANFCI stood at −0.459 and −0.435 on October 30, a spread of −0.024. Both indices remained below zero and had risen over four weeks. Together with the financial stress reading, these measures point to pressure concentrated within equities and offer limited evidence of broad financial tightening.\n\n## Hardware weakens below the score floor\n\nThe semiconductor and AI hardware score remained at its floor of zero on November 6, but the raw reading fell from −12.7 in the prior edition to −34.2. SMH lost 23.1% over 20 sessions and trailed QQQ by about 10.4 percentage points. The raw score and relative return show deterioration below the displayed floor.\n\nAbout 4% of the 28 monitored stocks traded above their 20-day moving average. The share above the 50-day average was also about 4%. Demand momentum and supply-chain confirmation both scored zero. Over the same 20 sessions, NXPI gained 9.1%, while MRVL, INTC and TER fell 48.7%, 46.2% and 45.8%, respectively. Strength in individual names has yet to spread through the sector.\n\n## A lower term premium leads the yield decline\n\nOn November 3, the New York Fed’s published ACM model put the fitted 10-year Treasury yield at 4.922%. The expected short-rate component was 4.244% and the term premium was 0.677%. The displayed levels are rounded.\n\nFrom October 2 to November 3, the fitted yield fell 33.22 basis points. The term premium contributed −23.91 basis points, about 72% of the decline, while expected short rates contributed −9.31 basis points. The easing in long-rate valuation pressure mainly reflects a decline in the compensation investors required to hold longer-dated Treasuries.\n\n## Keep exposure low pending two signs of repair\n\nThe November 6 weekly risk signal moved to Level 6, with 15% reference exposure effective November 9. The signal uses some lagged inputs. Lower long yields offer some valuation relief. The research stance keeps risk exposure low.\n\nBefore raising exposure, look for sustained gains in broad-market participation and stabilization in semiconductors relative to QQQ, backed by stronger demand momentum and supply-chain confirmation.\n\nThis week’s composite uses revised HML data coverage gates and estimation rules. It retains a proxy for UMD and uses the latest eligible data for other inputs. The provisional 64.7 reading cannot be compared directly with scores from earlier model versions. The 15% figure is a model reference. Actual holdings are tracked separately.",
+  "articleBody_en": "## Equity internals remain under stress\n\nThe U.S. composite regime risk score was 64.7 on November 6, in the Caution range. Market risk and fragility were both in Stress at 87.9 and 88.3. Participation risk was 54.1 (Caution), while financial stress remained Constructive at 28.5.\n\nThe research dashboard’s composite breadth reading was just 44.2%, the average of two October month-end breadth measures. The public November 6 daily nowcast put the share of stocks above their 200-day moving average at about 43.1%. At September month-end, long-short factor crowding was at L3 and beta-adjusted long-only crowding at L4. On November 6, the HML valuation measure in the bubble factor layer was near its 94th historical percentile, indicating unusually cheap valuations for the value leg relative to the growth leg. Livermore S2 entered Watch at 74.6, flagging the risk of upside exhaustion.\n\nThe Chicago Fed’s NFCI and ANFCI stood at −0.459 and −0.435 on October 30, a spread of −0.024. Both indices remained below zero and had risen over four weeks. Together with the financial stress reading, these measures point to pressure concentrated within equities and offer limited evidence of broad financial tightening.\n\n## Hardware weakens below the score floor\n\nThe semiconductor and AI hardware score remained at its floor of zero on November 6, but the raw reading fell from −12.7 in the prior edition to −34.2. SMH lost 23.1% over 20 sessions and trailed QQQ by about 10.4 percentage points. The raw score and relative return show deterioration below the displayed floor.\n\nAbout 4% of the 28 monitored stocks traded above their 20-day moving average. The share above the 50-day average was also about 4%. Demand momentum and supply-chain confirmation both scored zero. Over the same 20 sessions, NXPI gained 9.1%, while MRVL, INTC and TER fell 48.7%, 46.2% and 45.8%, respectively. Strength in individual names has yet to spread through the sector.\n\n## A lower term premium leads the yield decline\n\nOn November 3, the New York Fed’s published ACM model put the fitted 10-year Treasury yield at 4.922%. The expected short-rate component was 4.244% and the term premium was 0.677%. The displayed levels are rounded.\n\nFrom October 2 to November 3, the fitted yield fell 33.22 basis points. The term premium contributed −23.91 basis points, about 72% of the decline, while expected short rates contributed −9.31 basis points. The easing in long-rate valuation pressure mainly reflects a decline in the compensation investors required to hold longer-dated Treasuries.\n\n## Keep exposure low pending two signs of repair\n\nThe November 6 weekly risk signal moved to Level 6, with 15% reference exposure effective November 9. The signal uses some lagged inputs. Lower long yields offer some valuation relief. The research stance keeps risk exposure low.\n\nBefore raising exposure, look for sustained gains in broad-market participation and stabilization in semiconductors relative to QQQ, backed by stronger demand momentum and supply-chain confirmation.\n\nThis week’s composite uses revised HML data coverage gates and estimation rules. It retains a proxy for UMD and uses the latest eligible data for other inputs. The provisional 64.7 reading cannot be compared directly with scores from earlier model versions. The 15% figure is a model reference. Actual holdings are tracked separately.",
+  "pdf_en": "assets/papers/ri-weekly-2026-11-07-en.pdf",
+  "coverImage_en": "assets/papers/ri-weekly-2026-11-07-en-cover-2160x2880.png",
+  "pdfSha256_en": "d0401a6c54636a831276ce7e6598a8f9df1fe296e489cb58e9c641fa717d1842",
+  "pdfLanguage_en": "en"
+}
