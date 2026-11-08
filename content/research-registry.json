@@ -214,7 +214,7 @@
       "registeredDate": "2026-11-08",
       "version": "1.0",
       "status": "published",
-      "pdfSha256": "46972c98d63e05e3b79d5174f98a886ed464195ac5e8116f73d110921baa66ae",
+      "pdfSha256": "7eef3624e9032feb471a653165bef4d1e2381f8e0cd1fdeb46572e9121cd5348",
       "author": "Taiyang Feng (Sunny)",
       "dataThrough": "2026-11-06"
     }
@@ -371,8 +371,8 @@
       "originalPreparedOrPublishedDate": "2026-11-08",
       "dataThrough": "2026-11-06",
       "pdf": "assets/papers/ri-weekly-2026-11-07-en.pdf",
-      "pdfSha256": "d0401a6c54636a831276ce7e6598a8f9df1fe296e489cb58e9c641fa717d1842",
-      "sourcePdfSha256": "46972c98d63e05e3b79d5174f98a886ed464195ac5e8116f73d110921baa66ae"
+      "pdfSha256": "8c3cc5747b5c1874246ae70cb0b66b2a3bc7d8de3579261df34473027c1b5f25",
+      "sourcePdfSha256": "7eef3624e9032feb471a653165bef4d1e2381f8e0cd1fdeb46572e9121cd5348"
     }
   ]
 }

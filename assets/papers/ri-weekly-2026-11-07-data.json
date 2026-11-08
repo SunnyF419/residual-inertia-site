@@ -17,7 +17,6 @@
   "weeklyRisk": {
     "signalDate": "2026-11-06",
     "effectiveDate": "2026-11-09",
-    "riskLevel": 6,
     "referenceExposurePct": 15,
     "status": "CURRENT_WITH_LAGGED_INPUTS"
   },
