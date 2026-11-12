@@ -1,0 +1,95 @@
+{
+  "observationDate": "2026-11-11",
+  "capturedAt": "2026-11-11T04:13:23.726Z",
+  "snapshotId": "snapshot-49f7dedcfb00aa64994b",
+  "contentHash": "dd87414a9ca1803d49aed7cf2ab77cf1ba9c4e81ee1106ba241e1be06f7af36d",
+  "market": {
+    "riskLevel": "Level 6",
+    "riskScore": 1.0206560953,
+    "targetExposure": 0,
+    "signalDate": "2026-11-06T00:00:00.000",
+    "effectiveDate": "2026-11-09T00:00:00.000",
+    "regimeState": "谨慎",
+    "regimeScore": 62.1007816084,
+    "regimeDate": "2026-11-09T00:00:00.000",
+    "breadth": 0.4603694875,
+    "breadthDate": "2026-11-10T00:00:00.000",
+    "pillars": [
+      {
+        "name": "Financial Stress",
+        "state": "建设性",
+        "score": 28.4727551804
+      },
+      {
+        "name": "Fragility",
+        "state": "压力",
+        "score": 89.3854748603
+      },
+      {
+        "name": "Market Risk",
+        "state": "压力",
+        "score": 87.8741366078
+      },
+      {
+        "name": "Participation",
+        "state": "中性",
+        "score": 42.6707597851
+      }
+    ]
+  },
+  "brief": {
+    "asOf": "2026-11-10",
+    "headline": "存在 2 条严重告警，今日先处理风险与数据问题",
+    "posture": "综合状态 谨慎，得分 62.1 / 100，市场宽度 46%。",
+    "dataStatus": "4/5 数据源最新，5/5 质量门禁可用"
+  },
+  "sources": [
+    {
+      "id": "marketResearch",
+      "name": "市场研究",
+      "asOf": "2026-11-10",
+      "status": "stale",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "strategyPerformance",
+      "name": "策略表现",
+      "asOf": "2026-11-10",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "holdings",
+      "name": "持仓档案",
+      "asOf": "2026-11",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "fomc",
+      "name": "FOMC 政策研究",
+      "asOf": "2026-10-28",
+      "status": "current",
+      "qualityStatus": "pass"
+    },
+    {
+      "id": "acm",
+      "name": "ACM 利率观察台",
+      "asOf": "2026-11-09",
+      "status": "current",
+      "qualityStatus": "pass"
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "critical",
+      "title": "市场脆弱度处于高位",
+      "detail": "Fragility 89 / 100"
+    },
+    {
+      "severity": "critical",
+      "title": "Market Risk进入高风险区",
+      "detail": "88 / 100"
+    }
+  ]
+}

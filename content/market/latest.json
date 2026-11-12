@@ -1,7 +1,7 @@
 {
   "kind": "current",
-  "observationDate": "2026-11-10",
-  "capturedAt": "2026-11-10T02:04:41.734582+00:00",
+  "observationDate": "2026-11-12",
+  "capturedAt": "2026-11-12T02:45:20.330003+00:00",
   "market": {
     "riskLevel": "Level 6",
     "riskScore": 1.0206560953,
@@ -9,10 +9,10 @@
     "signalDate": "2026-11-06T00:00:00.000",
     "effectiveDate": "2026-11-09T00:00:00.000",
     "regimeState": "谨慎",
-    "regimeScore": 61.8813083442,
-    "regimeDate": "2026-11-09T00:00:00.000",
-    "breadth": 0.4691321205,
-    "breadthDate": "2026-11-09T00:00:00.000",
+    "regimeScore": 62.4261863622,
+    "regimeDate": "2026-11-11T00:00:00.000",
+    "breadth": 0.4693938489,
+    "breadthDate": "2026-11-11T00:00:00.000",
     "pillars": [
       {
         "name": "Financial Stress",
@@ -22,17 +22,17 @@
       {
         "name": "Fragility",
         "state": "压力",
-        "score": 88.5075818037
+        "score": 89.3056664006
       },
       {
         "name": "Market Risk",
         "state": "压力",
-        "score": 87.8741366078
+        "score": 89.4858019954
       },
       {
         "name": "Participation",
         "state": "中性",
-        "score": 42.6707597851
+        "score": 42.4405218726
       }
     ],
     "modelVersion": "HML_DUAL99_ESTIMATE_REGIME_V1",
@@ -48,8 +48,8 @@
       {
         "component_id": "bubble_factor",
         "component_name": "Bubble Factor Layer",
-        "data_date": "2026-11-09T00:00:00.000",
-        "effective_date": "2026-11-09T00:00:00.000"
+        "data_date": "2026-11-11T00:00:00.000",
+        "effective_date": "2026-11-11T00:00:00.000"
       },
       {
         "component_id": "factor_crowding",
@@ -60,8 +60,8 @@
       {
         "component_id": "livermore_s2",
         "component_name": "Livermore S2",
-        "data_date": "2026-11-09T00:00:00.000",
-        "effective_date": "2026-11-09T00:00:00.000"
+        "data_date": "2026-11-11T00:00:00.000",
+        "effective_date": "2026-11-11T00:00:00.000"
       },
       {
         "component_id": "weekly_risk",
@@ -78,8 +78,8 @@
       {
         "component_id": "market_breadth",
         "component_name": "Market Breadth",
-        "data_date": "2026-11-09T00:00:00.000",
-        "effective_date": "2026-11-09T00:00:00.000"
+        "data_date": "2026-11-11T00:00:00.000",
+        "effective_date": "2026-11-11T00:00:00.000"
       }
     ],
     "modules": {
@@ -141,20 +141,20 @@
       },
       "factors": {
         "hml": {
-          "date": "2026-11-06T00:00:00.000",
-          "metric_value": 7.7169504156,
-          "percentile_all_history": 94.2650988776,
+          "date": "2026-11-10T00:00:00.000",
+          "metric_value": 7.7683535766,
+          "percentile_all_history": 94.6985891407,
           "publication_allowed": true,
           "status": "MASSIVE_DAILY_ESTIMATE_RELEASED",
-          "company_coverage": 0.9893075356,
-          "formation_me_reference_coverage": 0.9990175137,
+          "company_coverage": 0.9867617108,
+          "formation_me_reference_coverage": 0.9984141401,
           "minimum_company_coverage": 0.97,
           "minimum_formation_me_reference_coverage": 0.99
         },
         "umd": {
-          "date": "2026-11-09T00:00:00.000",
-          "metric_value": 0.4413942873,
-          "percentile_all_history": 28.8536788761,
+          "date": "2026-11-11T00:00:00.000",
+          "metric_value": 0.436946613,
+          "percentile_all_history": 28.15727022,
           "publication_allowed": true,
           "status": "IDENTITY_VERIFIED_ESTIMATE",
           "company_coverage": null,
@@ -164,190 +164,190 @@
         }
       },
       "hmlPending": {
-        "date": "2026-11-09T00:00:00.000",
+        "date": "2026-11-11T00:00:00.000",
         "publication_allowed": false,
         "status": "WAITING_DATED_SOURCE"
       },
       "ai": {
         "pillars": [
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "composite",
             "pillar": "AI Hardware Regime / AI 硬件状态",
-            "score": 0.0,
-            "raw_score": -13.9483547988,
+            "score": 12.0967313721,
+            "raw_score": 12.0967313721,
             "state": "Weak",
             "state_zh": "弱",
             "direction": "constructive",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "demand_momentum",
             "pillar": "AI Demand Momentum / AI 需求动量",
             "score": 0.0,
-            "raw_score": -45.8812046187,
+            "raw_score": -3.3468354725,
             "state": "Weak",
             "state_zh": "弱",
             "direction": "constructive",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "leadership_breadth",
             "pillar": "Leadership Breadth / 领导力宽度",
-            "score": 13.2142857143,
-            "raw_score": 13.2142857143,
+            "score": 28.9285714286,
+            "raw_score": 28.9285714286,
             "state": "Weak",
             "state_zh": "弱",
             "direction": "constructive",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "relative_risk_appetite",
             "pillar": "Relative Risk Appetite / 相对风险偏好",
-            "score": 19.3060233569,
-            "raw_score": 19.3060233569,
+            "score": 34.3299180138,
+            "raw_score": 34.3299180138,
             "state": "Weak",
             "state_zh": "弱",
             "direction": "constructive",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "supply_chain_confirmation",
             "pillar": "Supply Chain Confirmation / 供应链确认",
-            "score": 0.0,
-            "raw_score": -24.8251055923,
+            "score": 9.9622820661,
+            "raw_score": 9.9622820661,
             "state": "Weak",
             "state_zh": "弱",
             "direction": "constructive",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "crowding_heat",
             "pillar": "Crowding / Heat / 拥挤与热度",
-            "score": 43.7248829365,
-            "raw_score": 43.7248829365,
+            "score": 54.9814436393,
+            "raw_score": 54.9814436393,
             "state": "Contained",
             "state_zh": "风险可控",
             "direction": "risk",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "pillar_id": "divergence_fragility",
             "pillar": "Divergence Fragility / 分化脆弱性",
-            "score": 81.4285714286,
-            "raw_score": 81.4285714286,
+            "score": 75.7142857143,
+            "raw_score": 75.7142857143,
             "state": "Hot / Fragile",
             "state_zh": "偏热/脆弱",
             "direction": "risk",
-            "above_20dma_ratio": 0.1785714286,
-            "above_50dma_ratio": 0.1428571429
+            "above_20dma_ratio": 0.4642857143,
+            "above_50dma_ratio": 0.2142857143
           }
         ],
         "etfs": [
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "symbol": "QQQ",
-            "ret_1d": 0.0354366712,
-            "ret_5d": -0.0025547284,
-            "ret_20d": -0.0893919897,
-            "ret_20d_vs_spy": -0.0567355188
+            "ret_1d": 0.0231489715,
+            "ret_5d": -0.0022689501,
+            "ret_20d": -0.0529117223,
+            "ret_20d_vs_spy": -0.0401908284
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "symbol": "SMH",
-            "ret_1d": 0.0505431503,
-            "ret_5d": -0.0411166414,
-            "ret_20d": -0.1752652329,
-            "ret_20d_vs_spy": -0.142608762
+            "ret_1d": 0.0482393565,
+            "ret_5d": 0.0053344438,
+            "ret_20d": -0.1023125686,
+            "ret_20d_vs_spy": -0.0895916746
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "symbol": "SOXQ",
-            "ret_1d": 0.0703061501,
-            "ret_5d": -0.0285257593,
-            "ret_20d": -0.1795430945,
-            "ret_20d_vs_spy": -0.1468866236
+            "ret_1d": 0.0570593468,
+            "ret_5d": 0.0288188002,
+            "ret_20d": -0.0953779228,
+            "ret_20d_vs_spy": -0.0826570288
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "symbol": "SOXX",
-            "ret_1d": 0.0749285871,
-            "ret_5d": -0.6764906867,
-            "ret_20d": -0.730641461,
-            "ret_20d_vs_spy": -0.6979849901
+            "ret_1d": 0.0600995975,
+            "ret_5d": -0.6549810173,
+            "ret_20d": -0.7008201455,
+            "ret_20d_vs_spy": -0.6880992516
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "symbol": "SPY",
-            "ret_1d": 0.0236641325,
-            "ret_5d": 0.0007844702,
-            "ret_20d": -0.0326564709,
+            "ret_1d": 0.0131880734,
+            "ret_5d": -0.0091287281,
+            "ret_20d": -0.012720894,
             "ret_20d_vs_spy": 0.0
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "symbol": "XSD",
-            "ret_1d": 0.0693228816,
-            "ret_5d": 0.0103141968,
-            "ret_20d": -0.1265981892,
-            "ret_20d_vs_spy": -0.0939417183
+            "ret_1d": 0.0465802556,
+            "ret_5d": 0.0410504211,
+            "ret_20d": -0.0448518749,
+            "ret_20d_vs_spy": -0.0321309809
           }
         ],
         "groups": [
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "group": "Analog, MCU & Power / 模拟、MCU 与功率",
             "members": 8,
-            "avg_ret_20d": -0.0596277061,
-            "above_20dma_ratio": 0.375
+            "avg_ret_20d": 0.007863296,
+            "above_20dma_ratio": 0.75
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "group": "Foundry & Equipment / 晶圆代工与设备",
             "members": 7,
-            "avg_ret_20d": -0.2179992344,
-            "above_20dma_ratio": 0.0
+            "avg_ret_20d": -0.1266622483,
+            "above_20dma_ratio": 0.4285714286
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
             "group": "AI Accelerators / AI 加速器",
             "members": 5,
-            "avg_ret_20d": -0.2285308249,
-            "above_20dma_ratio": 0.0
-          },
-          {
-            "date": "2026-11-09T00:00:00.000",
-            "group": "Servers & Networking / 服务器与网络硬件",
-            "members": 5,
-            "avg_ret_20d": -0.2687131884,
+            "avg_ret_20d": -0.1413428536,
             "above_20dma_ratio": 0.4
           },
           {
-            "date": "2026-11-09T00:00:00.000",
+            "date": "2026-11-11T00:00:00.000",
+            "group": "Servers & Networking / 服务器与网络硬件",
+            "members": 5,
+            "avg_ret_20d": -0.1441134186,
+            "above_20dma_ratio": 0.4
+          },
+          {
+            "date": "2026-11-11T00:00:00.000",
             "group": "Memory & Storage / 存储",
             "members": 3,
-            "avg_ret_20d": -0.279294136,
+            "avg_ret_20d": -0.1595896262,
             "above_20dma_ratio": 0.0
           }
         ]
       },
       "livermore": {
-        "date": "2026-11-09",
-        "S2_score": 74.96905453272815,
-        "S2A_score": 72.06991500059858,
-        "S2B_score": 81.7337134410305,
+        "date": "2026-11-11",
+        "S2_score": 79.81894366950372,
+        "S2A_score": 79.11430281268701,
+        "S2B_score": 81.46310566874274,
         "S2_state": "Watch"
       },
       "wqs": {
@@ -418,14 +418,14 @@
     }
   },
   "brief": {
-    "asOf": "2026-11-09",
-    "posture": "综合状态 谨慎，得分 61.9 / 100，市场宽度 47%。"
+    "asOf": "2026-11-11",
+    "posture": "综合状态 谨慎，得分 62.4 / 100，市场宽度 47%。"
   },
   "sources": [
     {
       "id": "marketResearch",
       "name": "市场研究",
-      "asOf": "2026-11-09",
+      "asOf": "2026-11-11",
       "status": "current",
       "qualityStatus": "pass"
     }
