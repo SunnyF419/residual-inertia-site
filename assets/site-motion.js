@@ -5,9 +5,10 @@
     group.querySelector('summary').addEventListener('click', () => {
       groups.forEach(other => { if (other !== group) other.open = false; });
     });
-    group.addEventListener('focusout', event => {
-      if (!group.contains(event.relatedTarget)) group.open = false;
-    });
+  });
+  // Close after focus lands elsewhere, never between pointerdown and link activation.
+  document.addEventListener('focusin', event => {
+    groups.forEach(group => { if (!group.contains(event.target)) group.open = false; });
   });
   document.addEventListener('pointerdown', event => {
     groups.forEach(group => { if (!group.contains(event.target)) group.open = false; });

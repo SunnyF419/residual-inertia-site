@@ -107,3 +107,42 @@ state=boot();state.cardEvents.pointermove({clientX:500,clientY:100,pointerType:'
 state.finePointer.matches=false;state.fineEvents.change();
 assert.equal(state.frames.size,0);
 console.log('PASS: reduced motion, live preference change, batched scroll/parallax, visibility, touch fallback and map isolation.');
+
+// Dropdown links remain mounted during null-target focusout (pointer activation).
+{
+  const listeners = {};
+  const makeGroup = () => {
+    const handlers = {}, summaryHandlers = {};
+    const group = {open: true, handlers, summaryHandlers,
+      contains: target => target === group || target === group.link || target === group.summary,
+      addEventListener: (name, cb) => {handlers[name] = cb;}};
+    group.link = {};
+    group.summary = {addEventListener: (name, cb) => {summaryHandlers[name] = cb;}, focus: () => {group.focused = true;}};
+    group.querySelector = () => group.summary;
+    return group;
+  };
+  const market = makeGroup(), tools = makeGroup();
+  vm.runInNewContext(source, {document: {
+    querySelectorAll: () => [market, tools],
+    addEventListener: (name, cb) => {listeners[name] = cb;},
+    body: {classList: {contains: () => true}}
+  }});
+  listeners.pointerdown({target: market.link});
+  market.handlers.focusout?.({relatedTarget: null});
+  assert.equal(market.open, true);
+  assert.equal(tools.open, false);
+  listeners.focusin({target: market.link});
+  assert.equal(market.open, true);
+  listeners.focusin({target: {}});
+  assert.equal(market.open, false);
+  tools.open = true;
+  listeners.keydown({key: 'Escape'});
+  assert.equal(tools.open, false);
+  assert.equal(tools.focused, true);
+  market.open = tools.open = true;
+  tools.summaryHandlers.click();
+  assert.equal(market.open, false);
+  assert.equal(tools.open, true);
+  listeners.pointerdown({target: {}});
+  assert.equal(tools.open, false);
+}

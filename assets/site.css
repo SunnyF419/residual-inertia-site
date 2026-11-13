@@ -549,3 +549,6 @@ body .masthead nav .account-link{width:112px}
 @media(prefers-reduced-motion:reduce){.nav-group summary>span,.home-tools a{transition:none}}
 
 @media(max-width:360px){body .masthead .brand img{width:128px;height:44px}.primary-navigation{gap:8px}}
+
+/* Closed navigation panels must never intercept another menu. */
+.nav-group:not([open]) > .nav-dropdown{display:none}
