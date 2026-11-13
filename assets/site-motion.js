@@ -1,5 +1,25 @@
 'use strict';
 (() => {
+  const groups = [...document.querySelectorAll('.nav-group')];
+  groups.forEach(group => {
+    group.querySelector('summary').addEventListener('click', () => {
+      groups.forEach(other => { if (other !== group) other.open = false; });
+    });
+    group.addEventListener('focusout', event => {
+      if (!group.contains(event.relatedTarget)) group.open = false;
+    });
+  });
+  document.addEventListener('pointerdown', event => {
+    groups.forEach(group => { if (!group.contains(event.target)) group.open = false; });
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    groups.forEach(group => {
+      if (!group.open) return;
+      group.open = false;
+      group.querySelector('summary').focus();
+    });
+  });
   // A fixed map workspace keeps all gestures and scrolling inside its panels.
   if (document.body.classList.contains('global-page')) return;
   const isHome = document.body.classList.contains('home-page');

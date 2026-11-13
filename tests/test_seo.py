@@ -85,8 +85,8 @@ class SEOTests(unittest.TestCase):
                 self.assertEqual([a['content'] for a in head.meta if a.get('name') == 'description'], [description])
                 self.assertEqual(head.canonical(), ORIGIN + prefix)
                 self.assertEqual(head.alternates(), {'zh-CN': ORIGIN, 'en': ORIGIN + 'en/', 'x-default': ORIGIN})
-                self.assertIn('<p class="brand-definition">' + description + '</p>', text)
-                self.assertLess(text.index('class="brand-definition"'), text.index('class="home-featured"'))
+                self.assertIn('class="home-about"', text)
+                self.assertLess(text.index('class="home-editorial"'), text.index('class="home-about"'))
                 self.assertIn(build.CONFIG['hero_en' if prefix else 'hero'].replace('，', '，<br>'), text)
                 self.assertEqual(len(head.graphs), 1)
                 payload = head.graphs[0]

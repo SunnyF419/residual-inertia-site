@@ -706,12 +706,22 @@ def footer(home=False):
 
 def shell(title, content, section='', description=None, indexable=True, schema_nodes=(), record=None):
     lang_attr = 'en' if LANG == 'en' else 'zh-CN'
-    nav = ''.join(anchor(path, name, 'active' if section == key else '') for key, path, name in [
-        ('home', 'index.html', L('nav_home')), ('overview', 'overview.html', L('nav_overview')),
+    text = lambda zh, en: zh if LANG == 'zh' else en
+    def nav_link(key, path, label):
+        attrs = ' class="active" aria-current="page"' if section == key else ''
+        return f'<a href="{url(path)}"{attrs}>{E(label)}</a>'
+    def nav_group(label, items):
+        active = any(section == key for key, _, _ in items)
+        links = ''.join(nav_link(*item) for item in items)
+        return f'<details class="nav-group{" is-current" if active else ""}"><summary>{E(label)}<span aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12" fill="none"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></summary><div class="nav-dropdown">{links}</div></details>'
+    nav = '<div class="primary-navigation">' + nav_link('research', 'research/index.html', L('nav_research'))
+    nav += nav_group(text('市场观察', 'Markets'), [
+        ('overview', 'overview.html', text('市场概览', 'Market Overview')),
         ('global', 'global/index.html', L('nav_global')),
-        ('factors', 'factors/index.html', '因子查询' if LANG == 'zh' else 'Factor Research'),
-        ('market-watch', 'market-watch/index.html', '市场追踪' if LANG == 'zh' else 'Market Watch'),
-        ('research', 'research/index.html', L('nav_research')), ('about', 'about.html', L('nav_about'))])
+        ('market-watch', 'market-watch/index.html', text('市场追踪', 'Market Watch'))])
+    nav += nav_group(text('研究工具', 'Tools'), [
+        ('factors', 'factors/index.html', text('因子查询', 'Factor Research'))])
+    nav += nav_link('about', 'about.html', L('nav_about')) + '</div>'
     toggle_label = 'EN' if LANG == 'zh' else '中文'
     canonical = production_url(ROUTE, LANG)
     desc = description or CONFIG.get('description_en' if LANG == 'en' else 'description', CONFIG['description'])
@@ -891,26 +901,35 @@ def cover():
     return f'''<section class="brand-cover" id="hero" aria-label="Residual Inertia">
 <div class="cover-copy"><p class="eyebrow">{eyebrow}</p>
 <h1>{hero}</h1><div class="cover-description"><span class="cover-rule" aria-hidden="true"></span>
-<p>{L('cover_system')}<span>{L('cover_system_sub')}</span></p></div>
-<p class="cover-founder">{L('home_founder')} · {anchor('about.html#founder', E(CONFIG['founder']))}</p>
+<p>{L('cover_system')}</p></div>
 <div class="cover-actions">{anchor('research/index.html', action_content(L('cover_read')), 'cover-primary')}{action_link('overview.html', L('cover_overview'), 'cover-secondary')}</div></div>
 <div class="cover-emblem"><span class="emblem-wordmark">Residual Inertia | 余势</span>
 <img src="{url('assets/brand/RI-symbol-reverse.svg')}" alt="" width="232" height="164">
-<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p></div></div>{cover_kline()}
+<div class="emblem-caption"><p>{E(CONFIG['brandLine'])}</p></div></div>
 </section>
 '''
 
 
 def homepage(latest, research):
-    featured = [r for r in research if r.get('ssrnUrl')][:2] or research[:2]
-    content = cover() + f'<p class="brand-definition">{E(L("home_desc"))}</p>'
+    text = lambda zh, en: zh if LANG == 'zh' else en
+    featured = sorted(research, key=lambda r: r['published'], reverse=True)[:3]
+    content = cover()
     if featured:
-        content += f'<section class="home-featured" aria-labelledby="featured-title"><div class="editorial-heading"><div><p class="eyebrow">SELECTED PAPERS</p><h2 id="featured-title">{L("featured_research")}</h2></div>{action_link("research/index.html", L("browse_research"))}</div>{research_cards(featured)}</section>'
-    updates = [(latest['observationDate'], L('current_title') if latest.get('kind') == 'current' else L('latest_snapshot'), L('nav_overview'), reading_route(latest))]
-    updates += [(r['published'], rfield(r, 'title'), category_label(r['category']), 'research/' + r['slug'] + '.html') for r in research]
-    updates.sort(key=lambda item: item[0], reverse=True)
-    rows = ''.join(f'<li><time class="mono" datetime="{E(day)}">{E(day)}</time>{anchor(route, E(title))}<span>{E(kind)}</span></li>' for day, title, kind, route in updates[:3])
-    content += f'<section class="home-updates" aria-labelledby="updates-title"><div><p class="eyebrow">NOTEBOOK</p><h2 id="updates-title">{L("recent_updates")}</h2></div><ul class="update-list">{rows}</ul></section>'
+        cards = []
+        for i, r in enumerate(featured):
+            title = E(rfield(r, 'title'))
+            summary = f'<p class="home-story-summary">{E(rfield(r, "summary"))}</p>' if i == 0 else ''
+            cards.append(f'<article class="home-story{" home-story-lead" if i == 0 else ""}"><a href="{url("research/"+r["slug"]+".html")}"><div class="home-story-meta"><span>{E(category_label(r["category"]))}</span><time datetime="{E(r["published"])}">{E(r["published"])}</time></div><h3>{title}</h3>{summary}</a></article>')
+        content += f'<section class="home-editorial" aria-labelledby="featured-title"><div class="editorial-heading"><h2 id="featured-title">{text("最新研究", "Latest research")}</h2>{action_link("research/index.html", text("全部研究", "All research"))}</div><div class="home-stories">{"".join(cards)}</div></section>'
+    m = latest['market']
+    content += f'''<section class="home-market" aria-labelledby="home-market-title"><div><h2 id="home-market-title">{text('市场观察', 'Market snapshot')}</h2><p class="home-market-date">{L('data_as_of')} {shortdate(m['regimeDate'])}</p>{action_link('overview.html', text('查看市场概览', 'Market overview'))}</div><div class="home-market-reading"><span>{text('综合市场状态', 'Market regime')}</span><strong class="tone-{score_tone(m['regimeScore'])}">{E(state_label(m['regimeState']))}</strong></div><div class="home-market-score"><span>{text('风险评分', 'Risk score')}</span><strong>{number(m['regimeScore'])}<small> / 100</small></strong></div></section>'''
+    tools = [
+        ('factors/index.html', text('因子查询', 'Factor Research'), text('查询公司画像、因子评分与历史排名。', 'Explore company profiles, factor scores and historical ranks.')),
+        ('market-watch/index.html', text('市场追踪', 'Market Watch'), text('追踪内部人交易与交割失败披露。', 'Follow insider filings and failures to deliver.')),
+        ('global/index.html', text('全球态势', 'Global Pulse'), text('从地图观察全球事件与航运变化。', 'Explore global events and shipping developments on the map.'))]
+    entries = ''.join(f'<a href="{url(route)}"><h3>{E(title)}</h3><p>{E(desc)}</p></a>' for route, title, desc in tools)
+    content += f'<section class="home-tools" aria-labelledby="home-tools-title"><h2 id="home-tools-title">{text("研究与观察工具", "Research & monitoring tools")}</h2><div>{entries}</div></section>'
+    content += f'<section class="home-about"><h2>{text("关于余势", "About Residual Inertia")}</h2><div><p>{text("以市场观察、实证研究与可验证的方法，建立独立的投资研究与决策系统。", "Independent investment research and decision systems, grounded in market observation, empirical research and verifiable methods.")}</p>{action_link("about.html", text("了解我们", "Our approach"))}</div></section>'
     return content
 
 

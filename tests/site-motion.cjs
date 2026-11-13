@@ -25,7 +25,7 @@ function boot({reduced = false, global = false, supported = true, fine = true} =
     disconnect() {this.disconnected = true;}
   }
   const document = {body, hidden: false, querySelector: () => ({offsetHeight: 400}), getElementById: () => clip,
-    querySelectorAll: selector => selector === '.report-card,.reading-card' ? [card, reading] : selector === '.report-card' ? [card] : [element, card, reading], addEventListener(name, cb) {documentEvents[name] = cb;}};
+    querySelectorAll: selector => selector === '.nav-group' ? [] : selector === '.report-card,.reading-card' ? [card, reading] : selector === '.report-card' ? [card] : [element, card, reading], addEventListener(name, cb) {documentEvents[name] = cb;}};
   const window = {scrollY: 0, matchMedia: query => query.includes('reduced-motion') ? preference : finePointer, IntersectionObserver: supported ? Observer : undefined,
     requestAnimationFrame(cb) {frames.set(++requested, cb); return requested;}, cancelAnimationFrame(id) {frames.delete(id);},
     addEventListener(name, cb) {events[name] = cb;}};
