@@ -579,3 +579,12 @@ body .masthead nav .account-link{width:112px}
 footer.site-footer{margin-top:48px}.footer-signature{padding:28px 0}
 @media(max-width:760px){.home-stories{grid-template-columns:1fr;gap:0}.home-story-lead a{padding:24px;min-height:0}.home-story-lead h3{font-size:25px}.home-story:not(.home-story-lead) a{padding:24px 0}.home-tools>div{grid-template-columns:1fr}.home-tools a{min-height:160px}.home-about{grid-template-columns:1fr;gap:16px}}
 @media(prefers-reduced-motion:reduce){.home-tools a{transition:none}.home-tools a:hover{transform:none}}
+
+/* Shared fluid page edges: align the brand, content and footer on wide screens. */
+:root{--page-gutter:clamp(20px,3vw,64px)}
+.wrap,body .masthead .header-inner{width:calc(100% - var(--page-gutter)*2)}
+.primary-navigation{margin-right:0}
+@media(min-width:1101px){body .masthead .header-inner{min-height:88px;gap:28px}body .masthead nav{justify-content:flex-end}}
+@media(min-width:601px) and (max-width:1100px){.primary-navigation{margin-right:auto}}
+@media(max-width:600px){:root{--page-gutter:16px}.primary-navigation{margin-right:0}}
+@media print{.wrap{width:100%}}
