@@ -217,6 +217,20 @@
       "pdfSha256": "7eef3624e9032feb471a653165bef4d1e2381f8e0cd1fdeb46572e9121cd5348",
       "author": "Taiyang Feng (Sunny)",
       "dataThrough": "2026-11-06"
+    },
+    {
+      "researchId": "RI-WR-2026-W46",
+      "slug": "market-letter-2026-11-14",
+      "title": "防御格局延续，硬件修复待确认",
+      "collection": "market",
+      "periodDate": "2026-11-14",
+      "preparedDate": "2026-11-15",
+      "registeredDate": "2026-11-15",
+      "version": "1.0",
+      "status": "published",
+      "pdfSha256": "eb51b2bcce00ecb7b48f84abee79a074cf46336f6eebcb57430068495f4468d9",
+      "author": "Taiyang Feng (Sunny)",
+      "dataThrough": "2026-11-13"
     }
   ],
   "englishEditions": [
@@ -373,6 +387,18 @@
       "pdf": "assets/papers/ri-weekly-2026-11-07-en.pdf",
       "pdfSha256": "8c3cc5747b5c1874246ae70cb0b66b2a3bc7d8de3579261df34473027c1b5f25",
       "sourcePdfSha256": "7eef3624e9032feb471a653165bef4d1e2381f8e0cd1fdeb46572e9121cd5348"
+    },
+    {
+      "researchId": "RI-WR-2026-W46",
+      "slug": "market-letter-2026-11-14",
+      "language": "en",
+      "version": "1.0",
+      "editionPreparedDate": "2026-11-15",
+      "originalPreparedOrPublishedDate": "2026-11-15",
+      "dataThrough": "2026-11-13",
+      "pdf": "assets/papers/ri-weekly-2026-11-14-en.pdf",
+      "pdfSha256": "e11cac14ffaf330cee94049add2f6ffc0e8e2d936f95f76be70cff201c5c72fe",
+      "sourcePdfSha256": "eb51b2bcce00ecb7b48f84abee79a074cf46336f6eebcb57430068495f4468d9"
     }
   ]
 }

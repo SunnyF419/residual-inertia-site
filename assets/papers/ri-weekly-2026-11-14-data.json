@@ -1,0 +1,116 @@
+{
+  "researchId": "RI-WR-2026-W46",
+  "dataThrough": "2026-11-13",
+  "provenance": {
+    "marketSource": "RI published research dashboard",
+    "sourceCaptureDate": "2026-11-15T02:10:04.604142+00:00",
+    "sourceCommit": "b4b54ba7708361b4343abd7c816c325eb5ff7ad8",
+    "sourceSnapshotSha256": "f437c1562f5cab607a83fac122ca3532393e5b823aa33f6405eeb85ffda543bf",
+    "ratesSource": "RI ACM monitor supplied screenshots, New York Fed ACM model",
+    "ratesDate": "2026-11-12"
+  },
+  "regime": {
+    "date": "2026-11-13",
+    "status": "PROVISIONAL",
+    "score": 67.7,
+    "state": "Defensive",
+    "marketRisk": 81.9,
+    "participation": 47.0,
+    "financialStress": 53.6,
+    "fragility": 88.3,
+    "hmlRevisedCoverageAndEstimateRules": true,
+    "umdProxyRetained": true,
+    "directCrossVersionComparison": false
+  },
+  "breadth": {
+    "date": "2026-11-13",
+    "above200dmaPct": 44.8,
+    "status": "daily nowcast"
+  },
+  "financialConditions": {
+    "date": "2026-11-06T00:00:00.000",
+    "nfci": -0.462,
+    "anfci": -0.477,
+    "nfci_minus_anfci": 0.015,
+    "nfci_4w_change": 0.025,
+    "anfci_4w_change": -0.013
+  },
+  "livermoreS2": {
+    "date": "2026-11-13",
+    "score": 82.3,
+    "state": "Active"
+  },
+  "hardware": {
+    "date": "2026-11-13",
+    "score": 15.2,
+    "headlineRoundedScore": 15,
+    "state": "Weak",
+    "smh5dPct": 4.9,
+    "smh20dPct": -9.8,
+    "relativeQQQpp": -5.6,
+    "above20dmaPct": 25,
+    "above50dmaPct": 21.4,
+    "stocks": 28,
+    "demand": 8,
+    "supplyChain": 16,
+    "leadership": 22,
+    "relativeRiskAppetite": 34,
+    "divergenceFragility": 80,
+    "selected20dReturnsPct": {
+      "NXPI": 15.6,
+      "MPWR": 14.8,
+      "ANET": 11.5,
+      "INTC": -33.6,
+      "MRVL": -31.2,
+      "NVDA": -23.9
+    },
+    "groups": [
+      {
+        "date": "2026-11-13T00:00:00.000",
+        "group": "Analog, MCU & Power / 模拟、MCU 与功率",
+        "members": 8,
+        "avg_ret_20d": -0.012903098,
+        "above_20dma_ratio": 0.375
+      },
+      {
+        "date": "2026-11-13T00:00:00.000",
+        "group": "Servers & Networking / 服务器与网络硬件",
+        "members": 5,
+        "avg_ret_20d": -0.0921135598,
+        "above_20dma_ratio": 0.4
+      },
+      {
+        "date": "2026-11-13T00:00:00.000",
+        "group": "Foundry & Equipment / 晶圆代工与设备",
+        "members": 7,
+        "avg_ret_20d": -0.1123367935,
+        "above_20dma_ratio": 0.0
+      },
+      {
+        "date": "2026-11-13T00:00:00.000",
+        "group": "AI Accelerators / AI 加速器",
+        "members": 5,
+        "avg_ret_20d": -0.1298891908,
+        "above_20dma_ratio": 0.4
+      },
+      {
+        "date": "2026-11-13T00:00:00.000",
+        "group": "Memory & Storage / 存储",
+        "members": 3,
+        "avg_ret_20d": -0.1323817994,
+        "above_20dma_ratio": 0.0
+      }
+    ]
+  },
+  "acm": {
+    "date": "2026-11-12",
+    "startDate": "2026-10-13",
+    "observationIntervals": 21,
+    "fittedYieldPct": 5.066,
+    "expectedShortRatePct": 4.39,
+    "termPremiumPct": 0.675,
+    "fittedYieldChangeBp": -12.65,
+    "expectedShortRateChangeBp": 5.22,
+    "termPremiumChangeBp": -17.87
+  }
+}
