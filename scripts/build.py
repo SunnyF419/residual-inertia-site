@@ -927,7 +927,11 @@ def homepage(latest, research):
         ('factors/index.html', text('因子查询', 'Factor Research'), text('查询公司画像、因子评分与历史排名。', 'Explore company profiles, factor scores and historical ranks.')),
         ('market-watch/index.html', text('市场追踪', 'Market Watch'), text('追踪内部人交易与交割失败披露。', 'Follow insider filings and failures to deliver.')),
         ('global/index.html', text('全球态势', 'Global Pulse'), text('从地图观察全球事件与航运变化。', 'Explore global events and shipping developments on the map.'))]
-    entries = ''.join(f'<a href="{url(route)}"><h3>{E(title)}</h3><p>{E(desc)}</p></a>' for route, title, desc in tools)
+    tool_icons = [
+        '<path d="M4 28V18h6v10m7 0V10h6v18m7 0V3h6v25"/>',
+        '<path d="M2 25l9-11 8 5L31 4m-1 15h7M33.5 15.5v7"/><circle cx="10" cy="14" r="3"/>',
+        '<circle cx="20" cy="16" r="14"/><ellipse cx="20" cy="16" rx="7" ry="14"/><path d="M6 16h28M9 7h22M9 25h22"/>']
+    entries = ''.join(f'<a href="{url(route)}"><svg class="tool-mark" viewBox="0 0 40 32" aria-hidden="true">{icon}</svg><h3>{E(title)}</h3><p>{E(desc)}</p></a>' for (route, title, desc), icon in zip(tools, tool_icons))
     content += f'<section class="home-tools" aria-labelledby="home-tools-title"><h2 id="home-tools-title">{text("研究与观察工具", "Research & monitoring tools")}</h2><div>{entries}</div></section>'
     content += f'<section class="home-about"><h2>{text("关于余势", "About Residual Inertia")}</h2><div><p>{text("以市场观察、实证研究与可验证的方法，建立独立的投资研究与决策系统。", "Independent investment research and decision systems, grounded in market observation, empirical research and verifiable methods.")}</p>{action_link("about.html", text("了解我们", "Our approach"))}</div></section>'
     return content
