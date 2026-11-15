@@ -1,0 +1,67 @@
+{
+  "title": "防御格局延续，硬件修复待确认",
+  "title_en": "Equities stay defensive as hardware recovery remains fragile",
+  "subtitle": "金融压力进入谨慎区间，行业反弹仍缺广泛确认",
+  "subtitle_en": "Financial stress enters Caution while the sector rebound lacks broad confirmation",
+  "summary": "截至 11 月 13 日，美股综合风险评分为 67.7，处于防御区间。市场风险与脆弱性仍高，金融压力为 53.6，进入谨慎区间。半导体与 AI 硬件综合分回升至约 15，SMH 近 20 个交易日仍下跌 9.8%。期限溢价压缩推动近 21 个观测日的长端利率回落。配置继续防御，等待市场广度与行业动量持续改善。综合评分沿用暂定估算口径，跨版本不作直接比较。",
+  "summary_en": "As of November 13, the provisional U.S. composite regime risk score was 67.7, in the Defensive range. Market risk and fragility remained elevated, while financial stress entered Caution at 53.6. The semiconductor and AI hardware score recovered to about 15, but SMH was still down 9.8% over 20 sessions. Term premium compression drove the decline in long yields over 21 observation intervals. The research stance remains defensive pending sustained improvement in market breadth and industry momentum. Scores are not directly comparable across model versions.",
+  "slug": "market-letter-2026-11-14",
+  "published": "2026-11-15",
+  "periodDate": "2026-11-14",
+  "dataThrough": "2026-11-13",
+  "author": "Taiyang Feng (Sunny)",
+  "dateLabel": "发布日期",
+  "dateLabel_en": "Published",
+  "category": "周报",
+  "collection": "market",
+  "researchId": "RI-WR-2026-W46",
+  "version": "1.0",
+  "reviewStatus": "published",
+  "englishEditionDate": "2026-11-15",
+  "englishEditionVersion": "1.0",
+  "keywords": [
+    "market regime",
+    "market breadth",
+    "AI hardware",
+    "financial conditions",
+    "term premium"
+  ],
+  "references": [
+    {
+      "name": "本期冻结观察数据",
+      "name_en": "Frozen observations for this edition",
+      "url": "https://residualinertia.com/assets/papers/ri-weekly-2026-11-14-data.json"
+    },
+    {
+      "name": "余势美股市场看板",
+      "name_en": "RI U.S. market dashboard",
+      "url": "https://residualinertia.com/overview/"
+    },
+    {
+      "name": "芝加哥联储金融条件指数",
+      "name_en": "Chicago Fed financial conditions indices",
+      "url": "https://www.chicagofed.org/research/data/nfci/current-data"
+    },
+    {
+      "name": "纽约联储 ACM 期限溢价数据",
+      "name_en": "New York Fed ACM term premia",
+      "url": "https://www.newyorkfed.org/research/data-indicators/term-premia-tabs"
+    }
+  ],
+  "note": "中英文各 5 页，权益数据截至 11 月 13 日，ACM 利率数据截至 11 月 12 日。",
+  "note_en": "English edition prepared on 2026-11-15. Five pages. Equities through November 13 and ACM rates through November 12.",
+  "sourceNote": "余势美股研究看板、芝加哥联储 NFCI / ANFCI 与纽约联储 ACM 数据。综合风险评分为暂定估算。",
+  "sourceNote_en": "RI U.S. Market Research Dashboard, Chicago Fed NFCI / ANFCI, and New York Fed ACM data. The composite regime risk score is provisional.",
+  "markdown": "## 综合状态防御，内部支撑仍弱\n\n11 月 13 日，美股综合风险评分为 67.7，处于防御区间。市场风险为 81.9，脆弱性为 88.3，两项均处压力区。参与度风险为 47.0，处于中性区间。金融压力为 53.6，进入谨慎区间。\n\n市场广度不足、因子拥挤和趋势脆弱性继续约束风险偏好。当日约 44.8% 的股票位于 200 日均线上方，参与面仍未过半。Livermore S2 为 82.3，处于 Active 状态，提示上涨趋势衰竭风险。市场内部仍缺少足够支撑。\n\n综合模型采用的金融条件数据截至 11 月 6 日，NFCI 为 −0.462，ANFCI 为 −0.477，差值为 +0.015。两项指数均低于零。金融压力评分进入谨慎区间，需要继续观察信用与融资条件，现有证据尚不足以确认系统性流动性危机。\n\n## 硬件有所修复，行业确认仍不足\n\n截至 11 月 13 日，半导体与 AI 硬件综合分回升至 15.2，页面整数显示为 15，整体仍处弱势。SMH 近 5 个交易日上涨 4.9%，近 20 个交易日仍下跌 9.8%，同期落后 QQQ 约 5.6 个百分点。短期反弹尚未扭转相对弱势。\n\n28 只监测股票中，25% 站上 20 日均线，约 21% 站上 50 日均线。需求动量仅为 8，供应链确认为 16，领导广度为 22，相对风险偏好为 34。分化脆弱性仍高达 80，行业修复缺少广泛确认。\n\n近 20 个交易日，NXPI、MPWR 和 ANET 分别上涨 15.6%、14.8% 和 11.5%，INTC、MRVL 和 NVDA 分别下跌 33.6%、31.2% 和 23.9%。晶圆代工与设备、存储两组均无成员站上 20 日均线，修复仍不均衡。\n\n## 期限溢价压缩，抵消利率预期上行\n\n截至 11 月 12 日，纽约联储发布的 ACM 模型 10 年期美债拟合收益率为 5.066%，预期短端利率分项为 4.390%，期限溢价为 0.675%。各项水平按显示精度取整。\n\n从 10 月 13 日到 11 月 12 日的 21 个观测日间隔内，拟合收益率下降 12.65 个基点。预期短端利率分项贡献 +5.22 个基点，期限溢价贡献 −17.87 个基点。两项方向相反，长端净回落来自期限溢价压缩幅度超过利率预期的上行。\n\n这一变化缓和了部分长端估值压力。利率预期分项仍在上行，权益配置还需结合市场广度和行业动量的修复程度。\n\n## 继续防御，等待广度与动量改善\n\n当前继续维持防御配置，控制高拥挤资产敞口。半导体反弹已有局部改善，需求动量、供应链确认和领导广度仍弱，承担更多风险所需的证据尚不充分。\n\n提高仓位前，观察市场广度能否持续扩大，以及半导体相对 QQQ 的弱势能否缓解，并由需求与供应链指标共同确认。金融压力进入谨慎区间后，也需关注信用与融资条件是否进一步收紧。\n\n本周继续调整 HML 数据覆盖门槛及估算口径，UMD 仍采用代理输入。67.7 为暂定估算，跨模型版本不作直接比较。权益与硬件数据截至 11 月 13 日，金融条件输入截至 11 月 6 日，ACM 截至 11 月 12 日；各模块采用各自最近可用数据。",
+  "articleBody": "## 综合状态防御，内部支撑仍弱\n\n11 月 13 日，美股综合风险评分为 67.7，处于防御区间。市场风险为 81.9，脆弱性为 88.3，两项均处压力区。参与度风险为 47.0，处于中性区间。金融压力为 53.6，进入谨慎区间。\n\n市场广度不足、因子拥挤和趋势脆弱性继续约束风险偏好。当日约 44.8% 的股票位于 200 日均线上方，参与面仍未过半。Livermore S2 为 82.3，处于 Active 状态，提示上涨趋势衰竭风险。市场内部仍缺少足够支撑。\n\n综合模型采用的金融条件数据截至 11 月 6 日，NFCI 为 −0.462，ANFCI 为 −0.477，差值为 +0.015。两项指数均低于零。金融压力评分进入谨慎区间，需要继续观察信用与融资条件，现有证据尚不足以确认系统性流动性危机。\n\n## 硬件有所修复，行业确认仍不足\n\n截至 11 月 13 日，半导体与 AI 硬件综合分回升至 15.2，页面整数显示为 15，整体仍处弱势。SMH 近 5 个交易日上涨 4.9%，近 20 个交易日仍下跌 9.8%，同期落后 QQQ 约 5.6 个百分点。短期反弹尚未扭转相对弱势。\n\n28 只监测股票中，25% 站上 20 日均线，约 21% 站上 50 日均线。需求动量仅为 8，供应链确认为 16，领导广度为 22，相对风险偏好为 34。分化脆弱性仍高达 80，行业修复缺少广泛确认。\n\n近 20 个交易日，NXPI、MPWR 和 ANET 分别上涨 15.6%、14.8% 和 11.5%，INTC、MRVL 和 NVDA 分别下跌 33.6%、31.2% 和 23.9%。晶圆代工与设备、存储两组均无成员站上 20 日均线，修复仍不均衡。\n\n## 期限溢价压缩，抵消利率预期上行\n\n截至 11 月 12 日，纽约联储发布的 ACM 模型 10 年期美债拟合收益率为 5.066%，预期短端利率分项为 4.390%，期限溢价为 0.675%。各项水平按显示精度取整。\n\n从 10 月 13 日到 11 月 12 日的 21 个观测日间隔内，拟合收益率下降 12.65 个基点。预期短端利率分项贡献 +5.22 个基点，期限溢价贡献 −17.87 个基点。两项方向相反，长端净回落来自期限溢价压缩幅度超过利率预期的上行。\n\n这一变化缓和了部分长端估值压力。利率预期分项仍在上行，权益配置还需结合市场广度和行业动量的修复程度。\n\n## 继续防御，等待广度与动量改善\n\n当前继续维持防御配置，控制高拥挤资产敞口。半导体反弹已有局部改善，需求动量、供应链确认和领导广度仍弱，承担更多风险所需的证据尚不充分。\n\n提高仓位前，观察市场广度能否持续扩大，以及半导体相对 QQQ 的弱势能否缓解，并由需求与供应链指标共同确认。金融压力进入谨慎区间后，也需关注信用与融资条件是否进一步收紧。\n\n本周继续调整 HML 数据覆盖门槛及估算口径，UMD 仍采用代理输入。67.7 为暂定估算，跨模型版本不作直接比较。权益与硬件数据截至 11 月 13 日，金融条件输入截至 11 月 6 日，ACM 截至 11 月 12 日；各模块采用各自最近可用数据。",
+  "pdf": "assets/papers/ri-weekly-2026-11-14.pdf",
+  "coverImage": "assets/papers/ri-weekly-2026-11-14-cover-2160x2880.png",
+  "pdfSha256": "eb51b2bcce00ecb7b48f84abee79a074cf46336f6eebcb57430068495f4468d9",
+  "pdfLanguage": "zh-CN",
+  "markdown_en": "## Defensive conditions and weak internal support\n\nThe U.S. composite regime risk score was 67.7 on November 13, in the Defensive range. Market risk and fragility were both in Stress at 81.9 and 88.3. Participation risk was Neutral at 47.0, while financial stress entered Caution at 53.6.\n\nLimited breadth, factor crowding and trend fragility continue to constrain risk appetite. About 44.8% of stocks traded above their 200-day moving average that day, leaving participation below half. Livermore S2 was Active at 82.3, flagging the risk of upside exhaustion. Internal support remains weak.\n\nThe financial conditions inputs used by the composite were dated November 6. The NFCI was −0.462 and the ANFCI −0.477, a spread of +0.015. Both indices remained below zero. The Caution reading for financial stress warrants continued attention to credit and funding conditions. The evidence remains insufficient to establish a systemic liquidity crisis.\n\n## Hardware improves with limited confirmation\n\nThe semiconductor and AI hardware composite recovered to 15.2 on November 13, displayed as 15 on the headline card, but remained Weak. SMH gained 4.9% over five sessions and was still down 9.8% over 20 sessions, trailing QQQ by about 5.6 percentage points. The short rebound has yet to reverse its relative weakness.\n\nOf the 28 monitored stocks, 25% traded above their 20-day moving average and about 21% above their 50-day average. Demand momentum scored just 8, supply-chain confirmation 16, leadership breadth 22 and relative risk appetite 34. Divergence fragility remained high at 80, leaving the recovery without broad confirmation.\n\nOver 20 sessions, NXPI, MPWR and ANET gained 15.6%, 14.8% and 11.5%, respectively. INTC, MRVL and NVDA fell 33.6%, 31.2% and 23.9%. No monitored stocks in either the foundry and equipment group or the memory and storage group stood above their 20-day moving average. The recovery remains uneven.\n\n## Term premium compression offsets higher expected rates\n\nOn November 12, the New York Fed’s published ACM model put the fitted 10-year Treasury yield at 5.066%. The expected short-rate component was 4.390% and the term premium was 0.675%. Displayed levels are rounded.\n\nAcross the 21 observation intervals from October 13 to November 12, the fitted yield fell 12.65 basis points. Expected short rates contributed +5.22 basis points and the term premium −17.87 basis points. The components moved in opposite directions. Term premium compression more than offset the rise in expected rates.\n\nThe net decline eases some long-rate valuation pressure. With expected short rates still contributing upward pressure, the equity allocation case also depends on progress in market breadth and industry momentum.\n\n## Stay defensive pending broader participation\n\nThe research stance remains defensive, with exposure to highly crowded assets kept in check. The semiconductor rebound shows some localized improvement, while demand momentum, supply-chain confirmation and leadership breadth remain weak. Evidence for taking more risk is still limited.\n\nBefore raising exposure, look for sustained improvement in market breadth and stabilization in semiconductors relative to QQQ, supported by demand and supply-chain indicators. With financial stress in Caution, further tightening in credit and funding conditions also merits attention.\n\nHML coverage gates and estimation rules continued to change this week, while UMD retains a proxy input. The 67.7 reading is provisional and cannot be compared directly across model versions. Equity and hardware observations end November 13, financial conditions inputs end November 6, and ACM data end November 12. Each module uses its latest eligible observations.",
+  "articleBody_en": "## Defensive conditions and weak internal support\n\nThe U.S. composite regime risk score was 67.7 on November 13, in the Defensive range. Market risk and fragility were both in Stress at 81.9 and 88.3. Participation risk was Neutral at 47.0, while financial stress entered Caution at 53.6.\n\nLimited breadth, factor crowding and trend fragility continue to constrain risk appetite. About 44.8% of stocks traded above their 200-day moving average that day, leaving participation below half. Livermore S2 was Active at 82.3, flagging the risk of upside exhaustion. Internal support remains weak.\n\nThe financial conditions inputs used by the composite were dated November 6. The NFCI was −0.462 and the ANFCI −0.477, a spread of +0.015. Both indices remained below zero. The Caution reading for financial stress warrants continued attention to credit and funding conditions. The evidence remains insufficient to establish a systemic liquidity crisis.\n\n## Hardware improves with limited confirmation\n\nThe semiconductor and AI hardware composite recovered to 15.2 on November 13, displayed as 15 on the headline card, but remained Weak. SMH gained 4.9% over five sessions and was still down 9.8% over 20 sessions, trailing QQQ by about 5.6 percentage points. The short rebound has yet to reverse its relative weakness.\n\nOf the 28 monitored stocks, 25% traded above their 20-day moving average and about 21% above their 50-day average. Demand momentum scored just 8, supply-chain confirmation 16, leadership breadth 22 and relative risk appetite 34. Divergence fragility remained high at 80, leaving the recovery without broad confirmation.\n\nOver 20 sessions, NXPI, MPWR and ANET gained 15.6%, 14.8% and 11.5%, respectively. INTC, MRVL and NVDA fell 33.6%, 31.2% and 23.9%. No monitored stocks in either the foundry and equipment group or the memory and storage group stood above their 20-day moving average. The recovery remains uneven.\n\n## Term premium compression offsets higher expected rates\n\nOn November 12, the New York Fed’s published ACM model put the fitted 10-year Treasury yield at 5.066%. The expected short-rate component was 4.390% and the term premium was 0.675%. Displayed levels are rounded.\n\nAcross the 21 observation intervals from October 13 to November 12, the fitted yield fell 12.65 basis points. Expected short rates contributed +5.22 basis points and the term premium −17.87 basis points. The components moved in opposite directions. Term premium compression more than offset the rise in expected rates.\n\nThe net decline eases some long-rate valuation pressure. With expected short rates still contributing upward pressure, the equity allocation case also depends on progress in market breadth and industry momentum.\n\n## Stay defensive pending broader participation\n\nThe research stance remains defensive, with exposure to highly crowded assets kept in check. The semiconductor rebound shows some localized improvement, while demand momentum, supply-chain confirmation and leadership breadth remain weak. Evidence for taking more risk is still limited.\n\nBefore raising exposure, look for sustained improvement in market breadth and stabilization in semiconductors relative to QQQ, supported by demand and supply-chain indicators. With financial stress in Caution, further tightening in credit and funding conditions also merits attention.\n\nHML coverage gates and estimation rules continued to change this week, while UMD retains a proxy input. The 67.7 reading is provisional and cannot be compared directly across model versions. Equity and hardware observations end November 13, financial conditions inputs end November 6, and ACM data end November 12. Each module uses its latest eligible observations.",
+  "pdf_en": "assets/papers/ri-weekly-2026-11-14-en.pdf",
+  "coverImage_en": "assets/papers/ri-weekly-2026-11-14-en-cover-2160x2880.png",
+  "pdfSha256_en": "e11cac14ffaf330cee94049add2f6ffc0e8e2d936f95f76be70cff201c5c72fe",
+  "pdfLanguage_en": "en"
+}
