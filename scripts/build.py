@@ -1270,7 +1270,7 @@ def research_article(r, research=()):
     body += head(category_label(r['category']) + ' / RESEARCH', rfield(r, 'title'), dates)
     if r.get('subtitle'):
         body += '<p class="paper-subtitle">' + E(rfield(r, 'subtitle')) + '</p>'
-    intro_label = ('本期判断' if LANG == 'zh' else 'Our view') if r.get('articleBody') else L('intro_heading')
+    intro_label = rfield(r, 'introLabel') if r.get('introLabel') else (('本期判断' if LANG == 'zh' else 'Our view') if r.get('articleBody') else L('intro_heading'))
     body += '<article class="prose"><section class="article-intro"><h2>' + intro_label + '</h2><p>' + E(rfield(r, 'summary')) + '</p>'
     body += '<p class="caption">' + L('author_label') + author_links(r) + '</p>'
     if r.get('researchId'):
@@ -1318,9 +1318,13 @@ def research_article(r, research=()):
     elif LANG == 'zh' and '\n## 方法与数据\n' in manuscript and r.get('articleBody'):
         manuscript, notes = manuscript.split('\n## 方法与数据\n',1)
         notes = '## 方法与数据\n'+notes
+    elif LANG == 'en' and '\n## Methods and data\n' in manuscript and r.get('articleBody'):
+        manuscript, notes = manuscript.split('\n## Methods and data\n',1)
+        notes = '## Methods and data\n'+notes
     body += markdown(manuscript)
     if notes:
-        body += '<details class="report-notes"><summary>数据说明与参考来源</summary>' + markdown(notes) + '</details>'
+        notes_label = '数据说明与参考来源' if LANG == 'zh' else 'Data notes and methodology'
+        body += '<details class="report-notes"><summary>' + notes_label + '</summary>' + markdown(notes) + '</details>'
     source = rfield(r, 'sourceNote') or ( '来源：Residual Inertia 研究门户的历史报告。' if LANG == 'zh' else 'Source: historical reports from the Residual Inertia research portal.')
     body += '<h2>' + L('sources_heading') + '</h2><p>' + E(source) + '</p>'
     if r.get('references'):
@@ -1342,6 +1346,15 @@ def markdown(text):
     while i < len(lines):
         line = lines[i].strip()
         if not line: i += 1; continue
+        figure = re.fullmatch(r'!\[([^\]]+)\]\((assets/insights/[A-Za-z0-9_./-]+\.svg)\)', line)
+        if figure:
+            caption, asset = figure.groups()
+            local = (ROOT / asset).resolve()
+            assert local.is_relative_to((ROOT/'assets/insights').resolve()) and local.is_file(), 'Figure must be a published insight asset'
+            version = hashlib.sha256(local.read_bytes()).hexdigest()[:12]
+            body_image = '<img src="' + E(url(asset + '?v=' + version)) + '" alt="' + E(caption) + '" loading="lazy" decoding="async">'
+            out.append('<figure class="insight-figure">' + body_image + '<figcaption>' + inline(caption) + '</figcaption></figure>')
+            i += 1; continue
         if line.startswith('|'):
             rows = []
             while i < len(lines) and lines[i].strip().startswith('|'):
