@@ -1,6 +1,6 @@
 {
-  "windowStart": "2021-11-18",
-  "windowEnd": "2026-11-18",
+  "windowStart": "2021-11-20",
+  "windowEnd": "2026-11-20",
   "source": "市场研究 Dashboard · market_regime_estimate_history",
   "modelVersion": "HML_DUAL99_ESTIMATE_REGIME_V1",
   "missingDates": [
@@ -60,16 +60,6 @@
     "2026-11-01"
   ],
   "points": [
-    {
-      "date": "2021-11-18",
-      "score": 48.15016414738842,
-      "state": "中性"
-    },
-    {
-      "date": "2021-11-19",
-      "score": 48.901720780366055,
-      "state": "中性"
-    },
     {
       "date": "2021-11-22",
       "score": 48.562007451403495,
@@ -6316,7 +6306,17 @@
     },
     {
       "date": "2026-11-18",
-      "score": 73.1367937116155,
+      "score": 73.63639403135971,
+      "state": "防御"
+    },
+    {
+      "date": "2026-11-19",
+      "score": 75.29365609584472,
+      "state": "防御"
+    },
+    {
+      "date": "2026-11-20",
+      "score": 78.77921760826182,
       "state": "防御"
     }
   ]
